@@ -3,12 +3,37 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer, { rootSaga } from './modules';
+import createSagaMiddleware from 'redux-saga';
+
+const sagaMiddleware = createSagaMiddleware();
+const store = configureStore({
+  reducer: rootReducer, // combineReducers로 리듀서를 묶은 리덕스 모듈 파일
+  middleware: [sagaMiddleware], // 사용할 미들웨어들을 나열
+  devTools: true, // 기본은 true로 설정되어있다. 개발자 도구의 사용 여부를 정한다.
+  preloadedState: {
+    // loading: {
+    //   loadingState: true,
+    //   loadingTest: '123 Loading!',
+    // },
+  }, // 리덕스 스토어가 생성될 때, 초기값을 정의한다.
+});
+
+sagaMiddleware.run(rootSaga);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <Provider store={store}>
+    <BrowserRouter>
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
+    </BrowserRouter>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
