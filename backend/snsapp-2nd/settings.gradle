@@ -12,5 +12,5 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.4.0'
 }
 
-rootProject.name = 'snsapp'
-include('app-server')
+rootProject.name = 'snsapp-2nd'
+include('spring-server')
