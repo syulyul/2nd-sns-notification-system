@@ -11,7 +11,7 @@ const { PORT, NODE_ENV, COOKIE_SECRET } = process.env;
 
 const app = express();
 app.set("port", PORT || 4000);
-// mongodbConnect(); // 몽고디비 미세팅 상태
+mongodbConnect();
 
 if (NODE_ENV === "production") {
   app.use(morgan("combined"));
