@@ -10,7 +10,8 @@ const mongodbConnect = () => {
   }
   mongoose
     .connect(MONGO_URL, {
-      dbName: "",
+      dbName: "sns-tp",
+      useNewUrlParser: true,
     })
     .then(() => {
       console.log("MongoDB 연결성공");
