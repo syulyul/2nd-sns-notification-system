@@ -4,7 +4,7 @@ const mongodbConnect = () => {
   const { NODE_ENV, MONGO_URI, MONGODB_USER, MONGODB_PASS } = process.env;
 
   console.log("MONGODB연결 시작");
-  const MONGO_URL = `mongodb://${MONGODB_USER}:${MONGODB_PASS}@${MONGO_URI}`;
+  const MONGO_URL = `mongodb://${MONGODB_USER}:${MONGODB_PASS}@${MONGO_URI}?directConnection=true`;
   if (NODE_ENV !== "production") {
     mongoose.set("debug", true);
   }
