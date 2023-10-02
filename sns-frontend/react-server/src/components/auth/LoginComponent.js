@@ -75,7 +75,7 @@ const SubmitButton = styled(Button)`
   outline: none;
 `;
 
-const LoginComponent = ({}) => {
+const LoginComponent = ({ onChange, onSubmit }) => {
   return (
     <AuthTemplate>
       <img src="/images/logo.png" alt="로고" class="logo" />
@@ -86,9 +86,21 @@ const LoginComponent = ({}) => {
         </p>
       </div>
       <LoginForm>
-        <StyledInput type="text" name="phoneNumber" placeholder="전화번호" />
-        <StyledInput type="password" name="password" placeholder="비밀번호" />
-        <SubmitButton type="submit">로그인</SubmitButton>
+        <StyledInput
+          type="text"
+          name="phoneNumber"
+          placeholder="전화번호"
+          onChange={onChange}
+        />
+        <StyledInput
+          type="password"
+          name="password"
+          placeholder="비밀번호"
+          onChange={onChange}
+        />
+        <SubmitButton type="submit" onClick={onSubmit}>
+          로그인
+        </SubmitButton>
         <label class="left-align">
           <input type="checkbox" name="savePhoneNumber" id="savePhoneNumber" />
           전화번호 저장
