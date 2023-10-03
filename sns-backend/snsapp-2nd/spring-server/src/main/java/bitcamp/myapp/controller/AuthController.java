@@ -6,11 +6,13 @@ import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.service.NcpObjectStorageService;
 import bitcamp.myapp.service.NotificationService;
+import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.service.SmsService;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import bitcamp.myapp.vo.MyPage;
 import java.util.HashSet;
+import java.util.UUID;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +53,8 @@ public class AuthController {
   NcpObjectStorageService ncpObjectStorageService;
   @Autowired
   ServletContext context;
+  @Autowired
+  RedisService redisService;
 
   {
     System.out.println("AuthController 생성됨!");
@@ -92,7 +96,10 @@ public class AuthController {
       if (loginUser != null) {
         // 로그인 성공 시 처리
         // 쿠키 설정
-        Cookie cookie = new Cookie("test", phoneNumber);
+
+        String sessionId = UUID.randomUUID().toString();
+        redisService.getHashOps().put("sessionId", sessionId, Integer.toString(loginUser.getNo()));
+        Cookie cookie = new Cookie("sessionId", sessionId);
         response.addCookie(cookie);
 
         // 세션에 로그인 사용자 정보 저장
