@@ -21,6 +21,10 @@ const mongodbConnect = () => {
     });
 };
 
+import Chat from "./chat";
+import Room from "./room";
+import User from "./user";
+
 mongoose.connection.on("error", (error) => {
   console.error("몽고디비 연결 에러", error);
 });
