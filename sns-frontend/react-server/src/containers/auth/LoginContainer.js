@@ -47,9 +47,10 @@ const LoginContainer = () => {
     if (user) {
       console.log('로그인 성공');
       console.log(user);
-      navigate(`/myPage/${user.no}`);
+      navigate(`/`);
+      // navigate(`/myPage/${user.no}`);
     } else {
-      dispatch(check());
+      // dispatch(check()); // 쿠키가 지워지는게 느려서 로그인 정보를 받아오는 오류 발생
       // 세션 확인 기능 구현 필요
     }
   }, [user, authError, dispatch]);

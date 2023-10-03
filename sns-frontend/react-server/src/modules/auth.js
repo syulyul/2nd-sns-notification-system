@@ -4,6 +4,7 @@ import createRequestSaga, {
   createRequestActionTypes,
 } from '../lib/createRequestSaga';
 import * as authAPI from '../lib/api/auth';
+import { useCookies } from 'react-cookie';
 
 const CHANGE_FIELD = 'auth/CHANGE_FIELD';
 const INITIALIZE_FORM = 'auth/INITIALIZE_FORM';
@@ -15,7 +16,9 @@ const [LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE] =
 
 const [CHECK, CHECK_SUCCESS, CHECK_FAILURE] =
   createRequestActionTypes('auth/CHECK');
-const LOGOUT = 'auth/LOGOUT';
+
+const [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAILURE] =
+  createRequestActionTypes('auth/LOGOUT');
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -45,11 +48,13 @@ export const logout = createAction(LOGOUT);
 const registerSaga = createRequestSaga(REGISTER, authAPI.register);
 const loginSaga = createRequestSaga(LOGIN, authAPI.login);
 const checkSaga = createRequestSaga(CHECK, authAPI.check);
+const logoutSaga = createRequestSaga(LOGOUT, authAPI.logout);
 
 export function* authSaga() {
   yield takeLatest(REGISTER, registerSaga);
   yield takeLatest(LOGIN, loginSaga);
   yield takeLatest(CHECK, checkSaga);
+  yield takeLatest(LOGOUT, logoutSaga);
 }
 
 const initialState = {
@@ -97,7 +102,7 @@ const auth = handleActions(
 
     [CHECK_SUCCESS]: (state, { payload: user }) => ({
       ...state,
-      user,
+      user: user === '' ? null : user,
       authError: null,
     }),
     [CHECK_FAILURE]: (state, { payload: error }) => ({

@@ -89,27 +89,30 @@ const HeaderUserIcon = styled.img`
   border-radius: 50%;
 `;
 
-const Header = ({}) => {
-  const loginUser = { no: 1, nick: '닉네임', photo: 'testUrl' };
-  const myPage = { no: 10 };
+const Header = ({ user, onLogout }) => {
+  if (user == null) {
+    return <div>로그인이 필요합니다</div>;
+  }
+
+  const myPage = { no: 10 }; // 테스트용 임시 데이터
   // const myPage = null;
   const notReadNotiCount = 10;
-  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${loginUser.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
+  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
 
   return (
     <>
       <HeaderBlock>
         <Wrapper>
-          <Link to={`/myPage/${loginUser.no}`}>
+          <Link to={`/myPage/${user.no}`}>
             <img src="/images/logo.png" alt="로고" class="logo" />
           </Link>
           <HeaderNav>
-            <Link to={`/myPage/${loginUser.no}`}>마이페이지</Link>
+            <Link to={`/myPage/${user.no}`}>마이페이지</Link>
             <Link to="/board/list?category=1">게시글</Link>
             {myPage != null ? (
               <Link to={`/guestBook/${myPage.no}`}>방명록</Link>
             ) : (
-              <Link to={`/guestBook/${loginUser.no}`}>방명록</Link>
+              <Link to={`/guestBook/${user.no}`}>방명록</Link>
             )}
           </HeaderNav>
           <HeaderProfile>
@@ -117,7 +120,7 @@ const Header = ({}) => {
               <span id="notReadNotiCount">{notReadNotiCount}</span>
               <HeaderNotificationIcon src="/images/noti.png" alt="알림" />
             </Link>
-            {loginUser.photo != null ? (
+            {user.photo != null ? (
               <Link to={profileUrl}>
                 <HeaderUserIcon src={profileUrl} />
               </Link>
@@ -125,9 +128,9 @@ const Header = ({}) => {
               <HeaderUserIcon src="/images/default.jpg" />
             )}
 
-            <span class="headerUserNick">{loginUser.nick}</span>
+            <span class="headerUserNick">{user.nick}</span>
             <div class="logout">
-              <Link to="/auth/logout">로그아웃</Link>
+              <Link onClick={onLogout}>로그아웃</Link>
             </div>
           </HeaderProfile>
         </Wrapper>

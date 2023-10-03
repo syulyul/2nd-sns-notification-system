@@ -15,4 +15,4 @@ export const register = ({ phoneNumber, password, nick, name, email, photo }) =>
 
 export const check = () => client.get('/spring/auth/check');
 
-export const logout = () => client.post('/spring/auth/logout');
+export const logout = () => client.get('/spring/auth/logout');

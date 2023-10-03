@@ -6,11 +6,14 @@ import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.service.NcpObjectStorageService;
 import bitcamp.myapp.service.NotificationService;
+import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.service.SmsService;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import bitcamp.myapp.vo.MyPage;
 import java.util.HashSet;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +54,8 @@ public class AuthController {
   NcpObjectStorageService ncpObjectStorageService;
   @Autowired
   ServletContext context;
+  @Autowired
+  RedisService redisService;
 
   {
     System.out.println("AuthController 생성됨!");
@@ -92,7 +97,11 @@ public class AuthController {
       if (loginUser != null) {
         // 로그인 성공 시 처리
         // 쿠키 설정
-        Cookie cookie = new Cookie("test", phoneNumber);
+
+        String sessionId = UUID.randomUUID().toString();
+        redisService.getValuleOps()
+            .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.HOURS);
+        Cookie cookie = new Cookie("sessionId", sessionId);
         response.addCookie(cookie);
 
         // 세션에 로그인 사용자 정보 저장
@@ -112,6 +121,63 @@ public class AuthController {
       // 예외 발생 시 처리
     }
     return loginUserObject;
+  }
+
+  @GetMapping("/check")
+  public LoginUser check(
+      HttpServletRequest request) {
+
+    LoginUser loginUserObject = null;
+    try {
+      for (Cookie cookie : request.getCookies()) {
+        if (cookie.getName().equals("sessionId")) {
+          String sessionId = cookie.getValue();
+          // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
+//          String temp = (String) redisService.getValuleOps()
+//              .getAndExpire(sessionId, 1, TimeUnit.DAYS);
+          String temp = (String) redisService.getValuleOps().get(sessionId);
+          if (temp != null) {
+            int loginUserNo = Integer.parseInt(temp);
+            loginUserObject = new LoginUser(memberService.get(loginUserNo));
+            loginUserObject.setFollowMemberSet(
+                new HashSet<>(myPageService.followingList(loginUserNo)));
+            loginUserObject.setLikeBoardSet(
+                new HashSet<>(boardService.likelist(loginUserNo)));
+            loginUserObject.setLikedGuestBookSet(
+                new HashSet<>(guestBookService.likelist(loginUserNo)));
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+    }
+    return loginUserObject;
+  }
+
+  @GetMapping("logout")
+  public String logout(
+      HttpSession session,
+      HttpServletRequest request,
+      HttpServletResponse response)
+      throws Exception {
+
+    String sessionId = null;
+    for (Cookie cookie : request.getCookies()) {
+      if (cookie.getName().equals("sessionId")) {
+        sessionId = cookie.getValue();
+      }
+    }
+    if (sessionId != null) {
+      // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
+//      redisService.getValuleOps().getAndDelete(sessionId);
+    }
+
+    Cookie cookie = new Cookie("sessionId", "invalidate");
+    cookie.setMaxAge(0);
+    response.addCookie(cookie);
+
+    return null;
   }
 
   @PostMapping("add")
@@ -146,12 +212,6 @@ public class AuthController {
   public String find(HttpSession session) throws Exception {
     session.invalidate();
     return "auth/loginfind";
-  }
-
-  @GetMapping("logout")
-  public String logout(HttpSession session) throws Exception {
-    session.invalidate();
-    return "redirect:/";
   }
 
   @PostMapping("phoneAuth")
