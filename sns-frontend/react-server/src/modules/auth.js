@@ -76,8 +76,16 @@ const auth = handleActions(
       ...state,
       [key]: value,
     }),
-    [INITIALIZE_FORM]: () => ({
-      initialState,
+    [INITIALIZE_FORM]: (state) => ({
+      ...state,
+
+      phoneNumber: '',
+      password: '',
+
+      nick: '',
+      name: '',
+      email: '',
+      photo: '',
     }),
 
     [REGISTER_SUCCESS]: (state, { payload: user }) => ({
