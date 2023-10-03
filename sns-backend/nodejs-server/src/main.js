@@ -10,7 +10,7 @@ import mongodbConnect from "./schemas";
 const { PORT, NODE_ENV, COOKIE_SECRET } = process.env;
 
 const app = express();
-app.set("port", PORT || 4000);
+app.set("port", PORT);
 mongodbConnect();
 
 if (NODE_ENV === "production") {
