@@ -89,7 +89,7 @@ const HeaderUserIcon = styled.img`
   border-radius: 50%;
 `;
 
-const Header = ({ user }) => {
+const Header = ({ user, onLogout }) => {
   if (user == null) {
     return <div>로그인이 필요합니다</div>;
   }
@@ -130,7 +130,7 @@ const Header = ({ user }) => {
 
             <span class="headerUserNick">{user.nick}</span>
             <div class="logout">
-              <Link to="/auth/logout">로그아웃</Link>
+              <Link onClick={onLogout}>로그아웃</Link>
             </div>
           </HeaderProfile>
         </Wrapper>
