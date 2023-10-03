@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer, { rootSaga } from './modules';
 import createSagaMiddleware from 'redux-saga';
+import { check } from './modules/auth';
 
 const sagaMiddleware = createSagaMiddleware();
 const store = configureStore({
@@ -24,7 +25,16 @@ const store = configureStore({
   }, // 리덕스 스토어가 생성될 때, 초기값을 정의한다.
 });
 
+function loadUser() {
+  try {
+    store.dispatch(check());
+  } catch (e) {
+    console.log('store.dispatch(check()) is not working!');
+  }
+}
+
 sagaMiddleware.run(rootSaga);
+loadUser();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

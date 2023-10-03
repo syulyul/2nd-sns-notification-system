@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LoginComponent from '../../components/auth/LoginComponent';
 import { useState } from 'react';
-import { changeField, check, initializeForm, login } from '../../modules/auth';
+import { changeField, initializeForm, login } from '../../modules/auth';
 import { useEffect } from 'react';
 
 const LoginContainer = () => {
@@ -30,11 +30,12 @@ const LoginContainer = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(login({ phoneNumber, password }));
+    dispatch(initializeForm());
   };
 
   //컴포넌트 초기 렌터링 때 form 초기화
   useEffect(() => {
-    dispatch(initializeForm('login'));
+    dispatch(initializeForm());
   }, [dispatch]);
 
   useEffect(() => {
@@ -49,9 +50,6 @@ const LoginContainer = () => {
       console.log(user);
       navigate(`/`);
       // navigate(`/myPage/${user.no}`);
-    } else {
-      // dispatch(check()); // 쿠키가 지워지는게 느려서 로그인 정보를 받아오는 오류 발생
-      // 세션 확인 기능 구현 필요
     }
   }, [user, authError, dispatch]);
 
