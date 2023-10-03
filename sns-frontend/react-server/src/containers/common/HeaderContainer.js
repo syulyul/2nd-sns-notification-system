@@ -1,8 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Header from '../../components/common/Header';
 
 const HeaderContainer = () => {
-  return <Header />;
+  const { user } = useSelector(({ auth }) => ({
+    user: auth.user,
+  }));
+  return <Header user={user} />;
 };
 
 export default HeaderContainer;
