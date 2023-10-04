@@ -107,6 +107,7 @@ const LoginComponent = ({ phoneNumber, password, onChange, onSubmit }) => {
           <input type="checkbox" name="savePhoneNumber" id="savePhoneNumber" />
           전화번호 저장
         </label>
+
         <div className="between">
           <Link to="/auth/register" class="userField">
             🌱 회원가입
