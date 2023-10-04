@@ -10,8 +10,7 @@ import BoardDetailPage from './pages/BoardDetailPage';
 import NotificationListPage from './pages/NotificationListPage';
 import MemberInfoPage from './pages/MemberInfoPage';
 import MemberInfoUpdatePage from './pages/MemberInfoUpdatePage';
-
-
+import GuestBookPage from "./pages/GuestBookPage";
 
 function App() {
   return (
@@ -29,7 +28,7 @@ function App() {
         <Route element={<NotificationListPage />} path={'/notification/list'} />
         <Route element={<MemberInfoPage />} path={'/myPage'} />
         <Route element={<MemberInfoUpdatePage />} path={'/myPage/info'} />
-
+        <Route element={<GuestBookPage />} path={'/guestBook/1'} />
       </Routes>
     </>
   );
