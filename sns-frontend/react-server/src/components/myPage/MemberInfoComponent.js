@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import defaultImage from '../../images/default.jpg';
+
 
 const Sidebar = styled.div`
     float: left;
@@ -70,16 +70,14 @@ const StateMessage = styled.textarea`
     margin-bottom: 10px;
 `;
 
+const StateMessageTextarea = styled.textarea`
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    resize: none;
+`;
 
-
-const MemberInfoComponent = () => {
-  const myPageData = {
-    visitCount: 1234, // 임시 데이터
-    photo: defaultImage, // 임시 이미지 경로
-    nick: "연궁이", // 임시 닉네임
-    stateMessage: "상태메세지 예시", // 임시 상태 메시지
-    no: 1 // 임시 번호
-  };
+const MemberInfoComponent = ({ myPageData }) => {
 
   return (
       <Sidebar>
@@ -91,14 +89,8 @@ const MemberInfoComponent = () => {
         <h2>{myPageData.nick}</h2>
         <StateMessageLabel>상태메시지</StateMessageLabel>
         <EditInfoLink to={`/myPage/${myPageData.no}/info`}>내 정보 수정</EditInfoLink>
-        <textarea
+        <StateMessageTextarea
             name="stateMessage"
-            style={{
-              border: 'none',
-              backgroundColor: 'transparent',
-              width: '100%',
-              resize: 'none'
-            }}
             readOnly
             value={myPageData.stateMessage || "상태 메시지가 없습니다."}
         />

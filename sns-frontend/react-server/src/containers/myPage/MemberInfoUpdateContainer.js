@@ -15,30 +15,29 @@ const MemberInfoUpdateContainer = () => {
     gender: "1", // 임시 성별 (1: 남자, 2: 여자)
     no: 1 // 임시 번호
   });
-
-  // 이미지 변경 이벤트 핸들러
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setMyPageData(prev => ({ ...prev, photo: event.target.result }));
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
-
-  // 폼 제출 이벤트 핸들러
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // 서버에 업데이트 요청 보내기 등의 로직이 필요합니다.
-    console.log("Updated data:", myPageData);
-  };
+  //
+  // // 이미지 변경 이벤트 핸들러
+  // const handleImageChange = (e) => {
+  //   if (e.target.files[0]) {
+  //     const reader = new FileReader();
+  //     reader.onload = (event) => {
+  //       setMyPageData(prev => ({ ...prev, photo: event.target.result }));
+  //     };
+  //     reader.readAsDataURL(e.target.files[0]);
+  //   }
+  // };
+  //
+  // // 폼 제출 이벤트 핸들러
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log("Updated data:", myPageData);
+  // };
 
   return (
       <MemberInfoUpdateComponent
           myPageData={myPageData}
-          handleImageChange={handleImageChange}
-          handleSubmit={handleSubmit}
+          // handleImageChange={handleImageChange}
+          // handleSubmit={handleSubmit}
       />
   );
 };

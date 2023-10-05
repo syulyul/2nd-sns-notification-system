@@ -102,10 +102,14 @@ const FormFileInput = styled.input`
     }
 `;
 
+const StyledH1 = styled.h1`
+    text-align: center;
+`;
+
 const MemberInfoUpdateComponent = ({ myPageData }) => {
   return (
       <FormContainer>
-        <h1>내 정보 수정</h1>
+        <StyledH1>내 정보 수정</StyledH1>
 
         <FormGroup>
           <FormLabel>🌱 사진</FormLabel>
@@ -118,32 +122,32 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
 
         <FormGroup>
           <FormLabel>🌱 이름</FormLabel>
-          <FormInput type="text" id="name" name="name" value={myPageData.name} readOnly />
+          <FormInput type="text" name="name" value={myPageData.name} readOnly />
         </FormGroup>
 
         <FormGroup>
           <FormLabel>🌱 닉네임</FormLabel>
-          <FormInput type="text" id="nick" name="nick" value={myPageData.nick} />
+          <FormInput type="text" name="nick" value={myPageData.nick} />
         </FormGroup>
 
         <FormGroup>
           <FormLabel htmlFor="birthday">🌱 생일</FormLabel>
-          <FormInput type="date" id="birthday" name="birthday" value={myPageData.birthday} />
+          <FormInput type="date" name="birthday" value={myPageData.birthday} />
         </FormGroup>
 
         <FormGroup>
           <FormLabel htmlFor="email">🌱 이메일</FormLabel>
-          <FormInput type="email" id="email" name="email" value={myPageData.email} />
+          <FormInput type="email"  name="email" value={myPageData.email} />
         </FormGroup>
 
         <FormGroup>
           <FormLabel htmlFor="phone">🌱 전화번호</FormLabel>
-          <FormInput type="tel" id="phone" name="phoneNumber" value={myPageData.phoneNumber} />
+          <FormInput type="tel"  name="phoneNumber" value={myPageData.phoneNumber} />
         </FormGroup>
 
         <FormGroup>
           <FormLabel htmlFor="password">🌱 암호</FormLabel>
-          <FormInput type="password" id="password" name="password" />
+          <FormInput type="password"  name="password" />
         </FormGroup>
 
         <FormGroup>

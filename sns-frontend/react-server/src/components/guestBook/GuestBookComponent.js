@@ -1,210 +1,275 @@
 import styled from 'styled-components';
-import Button from "../common/Button";
+import React from 'react';
 
-const StyledInput = styled.input`
-  border: none;
-  border-bottom: 1px solid #f2f2f2;
-  margin-bottom: 20px;
-  border-radius: 3px;
-  outline: none;
-  padding: 0px 0px 5px 5px;
-  height: 60px;
-  width: 420px;
-
-  ::placeholder {
-    color: #3a3a3a;
-  }
+const GuestbookTitle = styled.div`
+    text-align: center;
 `;
 
-const GuestBookContainer = styled.div`
-  max-width: 800px;
+const AddGuestbookForm = styled.div`
+    text-align: center;
+`;
+
+const StyledForm = styled.form`
+    display: inline-block;
+    text-align: left;
+`;
+
+const StyledTable = styled.table`
+  width: 40%;
+  border-collapse: collapse;
   margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-`;
-
-const GuestBookItem = styled.div`
-  border: 1px solid #ddd;
   margin-bottom: 20px;
-  padding: 10px;
-  border-radius: 4px;
-
-  .meta-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  &,
+  th,
+  td {
+    border: 1px solid #f2f2f2;
   }
-
-  .first-row {
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+  th {
     background-color: #f2f2f2;
   }
+`;
 
-  .second-row {
-    background-color: white;
-    height: 200px;
-  }
 
-  .clock-icon {
-    width: 16px;
-    height: 16px;
-  }
+const StyledTh = styled.th`
+    text-align: left;
+    width: 200px;
+`;
 
-  .horizontal-layout {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
+const StyledInput = styled.input`
+    font-size: 18px;
+    border: none;
+    width: 100%;
+`;
 
-  .writer-cell {
-    width: 15%;
-  }
-
-  .content-like-cell {
-    width: 35%;
-    position: relative;
-    display: flex;
-    flex-direction: column; /* 수정: 내부 요소를 세로로 정렬하기 위해 flex-direction 추가 */
-  }
-
-  .guestBook_textarea {
-    flex: 1;
-    min-height: 7em;
-    border-color: transparent;
+const StyledTextarea = styled.textarea`
+    font-size: 18px;
+    border: none;
+    width: 100%;
+    overflow: hidden;
     resize: none;
-  }
+`;
 
-  .like-buttons {
+const StyledButton = styled.button`
     padding: 5px 10px;
-    background-color: transparent;
-    color: black;
+    background-color: #426B1F;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin-top: 10px;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+    float: inherit;
+
+     &.actions {
+     margin: 5px;
   }
 `;
 
-const SubmitButton = styled(Button)`
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  background-color: #426b1f;
-  cursor: pointer;
-  margin-top: 10px;
-  margin-left: 600px;
+const StyledDiv = styled.div`
+    text-align: center;
+    margin-left: 37%;
+    margin-bottom: 2%;
 `;
+
+const ScrollableTable = styled.div`
+    max-height: 300px;
+    overflow-y: scroll;
+`;
+
+const Actions = styled.div`
+    text-align: center;
+    padding: 16px;
+    line-height: 15;
+`;
+
+
+const ContentTable = styled.table`
+    border: none;
+    border-collapse: collapse;
+
+    td {
+        border: none;
+    }
+`;
+
+const MetaInfo = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+`;
+
+const ClockIcon = styled.img`
+    width: 16px;
+    height: 16px;
+`;
+
+const HorizontalLayout = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+`;
+
+const ProfilePicture = styled.div`
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+`;
+
+const PaginationLink = styled.a`
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    margin-right: 4px;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    text-decoration: none;
+    color: black;
+
+    &.active {
+        background-color: #426B1F;
+        color: white;
+    }
+`;
+
+const PageLabel = styled.div`
+    margin-top: 60px;
+    text-align: center;
+`;
+
+const GuestBookTextarea = styled.textarea`
+    width: 100%;
+    min-height: 7em;
+    border-color: transparent;
+    resize: none;
+`;
+
+
+
+const Container = styled.div`
+    // 다른 container 스타일 속성 추가
+`;
+
+
+const NoCell = styled.td`
+    text-align: center;
+`;
+
+const TitleMetaCell = styled.td`
+    // 다른 TitleMetaCell 스타일 속성 추가
+`;
+
+
+
+const WriterCell = styled.td`
+    text-align: center;
+`;
+
+
+const ContentLikeCell = styled.td`
+    position: relative;
+`;
+
+
 
 const GuestBookComponent = ({
   title,
   content,
   onChange,
   onSubmit,
-  guestBookList
+  guestBookList,
+  guestBookOwnerNick
 }) => {
   return (
-      <GuestBookContainer>
-        <div data-th-replace="header :: header"></div>
-        <h2 style={{textAlign: 'center'}}>🌱래시포드의 방명록🌱</h2>
-        <tr>
-          <th style={{textAlign: 'left', width: '200px'}}>🌱 제목</th>
-          <td>
-            <StyledInput
-                type="text"
-                name="title"
-                placeholder="제목을 입력하세요"
-                value={title}
-                onChange={onChange}
-            />
-          </td>
-        </tr>
-        <tr>
-          <th style={{textAlign: 'left', width: '200px'}}>🌱 내용</th>
-          <td>
-            <StyledInput
-                type="textarea"
-                name="content"
-                placeholder="내용을 입력하세요"
-                value={content}
-                onChange={onChange}
-            />
-          </td>
-        </tr>
-        <SubmitButton type="submit" onClick={onSubmit}>
-          작성
-        </SubmitButton>
-        {guestBookList.map((guestBook) => (
-            <GuestBookItem key={guestBook.no}>
-              {/* 게시글 내용을 출력하는 부분 */}
-              <div className="first-row">
-                <span>{`No. ${guestBook.no}`}</span>
-                <div className="horizontal-layout">
-                  <span style={{
-                    flex: 1,
-                    textAlign: 'center'
-                  }}>{guestBook.title}</span>
-                  <div className="meta-info">
-                    <img className="clock-icon" src="/images/clock.png"
-                         alt="Clock Icon"/>
-                    <span>{guestBook.createdAt}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="second-row">
-                <div className="writer-cell" style={{textAlign: 'center'}}>
-                  <div className="profile-picture">
-                    <img
-                        src={
-                          guestBook.writer.photo
-                              ? `/images/sns_member/${guestBook.writer.photo}`
-                              : '/images/avatar.png'
-                        }
-                        alt="프로필 사진"
+      <div>
+        <GuestbookTitle>
+          <h2>🌱 {guestBookOwnerNick ? `${guestBookOwnerNick} 의 방명록 🌱` : ''}</h2>
+        </GuestbookTitle>
+
+        <AddGuestbookForm>
+          <StyledForm method="post" action="/guestBook/add">
+            <StyledTable>
+              <tbody>
+                <tr>
+                  <StyledTh>🌱 제목</StyledTh>
+                  <td>
+                    <StyledInput
+                        type="text"
+                        name="title"
+                        id="title"
+                        placeholder="제목을 입력하세요"
+                        required
                     />
-                    <a
-                        href={`/myPage/${guestBook.writer.no}`}
-                        style={{textDecoration: 'none', color: 'black'}}
-                    >
-                      {guestBook.writer.nick}
-                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <StyledTh>🌱 내용</StyledTh>
+                  <td>
+                    <StyledTextarea
+                        name="content"
+                        id="content"
+                        rows="6"
+                        cols="150"
+                        placeholder="내용을 입력하세요"
+                        required
+                    ></StyledTextarea>
+                  </td>
+                </tr>
+              </tbody>
+            </StyledTable>
+            <StyledDiv>
+              <StyledButton type="submit">작성</StyledButton>
+            </StyledDiv>
+          </StyledForm>
+        </AddGuestbookForm>
+
+        <Container>
+          <ContentTable>
+            <tbody>
+              <tr>
+                <NoCell>
+                  <span>No. 예시번호</span>
+                </NoCell>
+                <TitleMetaCell colSpan="3">
+                  <HorizontalLayout>
+                    <span>예시 제목</span>
+                    <MetaInfo>
+                      <ClockIcon src="/images/clock.png" />
+                      <span>2023-10-05</span>
+                    </MetaInfo>
+                  </HorizontalLayout>
+                </TitleMetaCell>
+              </tr>
+              <tr>
+                <WriterCell>
+                  <ProfilePicture>
+                    <img src="/images/avatar.png" alt="프로필 사진" />
+                  </ProfilePicture>
+                  <div style={{ marginTop: "5px" }}>
+                    예시 사용자
                   </div>
-                </div>
-                <div className="content-like-cell">
-                  <div className="guestBook_textarea-wrapper">
-                <textarea
-                    className="guestBook_textarea"
-                    readOnly
-                    value={guestBook.content || '내용입니다!'}
-                />
-                    <div className="like-buttons">
-                      <input type="hidden" value={guestBook.no}/>
-                      <input className="toggleBox" type="checkbox"/>
-                      <label
-                          className="checkedLabel"
-                          onClick={() => console.log('Unlike clicked')}
-                      >
-                        ❤️
-                      </label>
-                      <label
-                          className="uncheckedLabel"
-                          onClick={() => console.log('Like clicked')}
-                      >
-                        🤍
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </GuestBookItem>
-        ))}
-        <SubmitButton type="submit" onClick={onSubmit}>
-          삭제
-        </SubmitButton>
-      </GuestBookContainer>
+                </WriterCell>
+                <ContentLikeCell colSpan="3">
+                  <GuestBookTextarea readOnly>
+                    예시 내용
+                  </GuestBookTextarea>
+                </ContentLikeCell>
+              </tr>
+            </tbody>
+          </ContentTable>
+        </Container>
+      </div>
   );
 };
 
