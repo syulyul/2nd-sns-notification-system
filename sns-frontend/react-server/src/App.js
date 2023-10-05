@@ -11,6 +11,9 @@ import NotificationListPage from './pages/NotificationListPage';
 import MemberInfoPage from './pages/MemberInfoPage';
 import MemberInfoUpdatePage from './pages/MemberInfoUpdatePage';
 import GuestBookPage from "./pages/GuestBookPage";
+import MyPagePage from "./pages/MyPagePage";
+import FollowPage from "./pages/FollowPage";
+import PwFindPage from "./pages/PwFindPage";
 
 
 function App() {
@@ -23,9 +26,6 @@ function App() {
         <Route element={<ExamplePage />} path={'/'} />
         <Route element={<LoginPage />} path={'/auth/login'} />
         <Route element={<RegisterPage />} path={'/auth/register'} />
-<<<<<<< HEAD
-
-=======
         <Route element={<WriteFormPage />} path={'/board/write'} />
         <Route element={<BoardListPage />} path={'/board/list'} />
         <Route element={<BoardDetailPage />} path={'/board/detail'} />
@@ -33,7 +33,9 @@ function App() {
         <Route element={<MemberInfoPage />} path={'/myPage'} />
         <Route element={<MemberInfoUpdatePage />} path={'/myPage/info'} />
         <Route element={<GuestBookPage />} path={'/guestBook/1'} />
->>>>>>> dev
+        <Route element={<PwFindPage />} path={'/auth/find'} />
+        <Route element={<MyPagePage />} path={'/myPage/detail'} />
+        <Route element={<FollowPage />} path={'/myPage/follow'} />
       </Routes>
     </>
   );
