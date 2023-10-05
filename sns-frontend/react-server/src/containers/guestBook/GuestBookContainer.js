@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import GuestBookComponent from '../../components/guestBook/GuestBookComponent';
 
 const GuestBookContainer = () => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
   const [guestBookList] = useState([
     {
       no: 1,
@@ -27,7 +30,31 @@ const GuestBookContainer = () => {
     },
   ]);
 
-  return <GuestBookComponent guestBookList={guestBookList} />;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === 'title') {
+      setTitle(value);
+    } else if (name === 'content') {
+      setContent(value);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setTitle('');
+    setContent('');
+  };
+
+  return (
+      <GuestBookComponent
+          title={title}
+          content={content}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          guestBookList={guestBookList}
+      />
+  );
 };
 
 export default GuestBookContainer;
