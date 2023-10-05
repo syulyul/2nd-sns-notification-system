@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const WriteFormContainer = styled.div`
+const BoardFormContainer = styled.div`
     padding: 20px;
     background-color: #f2f2f2;
     width: 700px;
@@ -69,9 +69,9 @@ const StyledButton = styled.button`
     margin: 10px auto;
 `;
 
-const WriteFormComponent = () => {
+const BoardFormComponent = ({ boardFormData }) => {
   return (
-      <WriteFormContainer>
+      <BoardFormContainer>
         <TitleStyle>🌱글쓰기🌱</TitleStyle>
         <StyledForm>
           <StyledInput
@@ -91,8 +91,8 @@ const WriteFormComponent = () => {
           />
           <StyledButton type="submit">등록</StyledButton>
         </StyledForm>
-      </WriteFormContainer>
+      </BoardFormContainer>
   );
 };
 
-export default WriteFormComponent;
+export default BoardFormComponent;
