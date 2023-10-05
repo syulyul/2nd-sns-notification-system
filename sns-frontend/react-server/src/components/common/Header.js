@@ -90,6 +90,7 @@ const HeaderUserIcon = styled.img`
 `;
 
 const Header = ({ user, onLogout }) => {
+
   if (user == null) {
     return <div>로그인이 필요합니다</div>;
   }
