@@ -15,6 +15,8 @@ const SearchInput = styled.input`
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-right: 10px;
+    margin-left: 20px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 `;
 
 const Button = styled.button`
@@ -22,6 +24,7 @@ const Button = styled.button`
     color: white;
     padding: 5px 10px;
     text-decoration: none;
+    border: none;  // 테두리 제거
     border-radius: 4px;
     margin-right: ${props => props.main ? '300px' : props.write ? '10px' : '0'};
     &:hover {
@@ -107,26 +110,47 @@ const Pagination = styled.div`
     }
 `;
 
+const ActionButtonsContainer = styled.div`
+  text-align: right;
+  margin-right: 20px;
+  margin-top: -30px;
+  margin-bottom: 20px;
+`;
 
-const BoardListComponent = ({ boards, onSearch, onWriteClick, onMainClick, currentPage, totalPages, onPageChange }) => {
+const SearchButton = styled(Button)`
+    margin-right: 10px;
+`;
+
+const MainButton = styled(Button)`
+    margin-right: 500px;
+`;
+
+const BoardLink = styled.a`
+    color: black;
+    text-decoration: none;
+`;
+
+const AuthorLink = styled.a`
+    text-decoration-line: none;
+    color: black;
+`;
+
+const BoardListComponent = ({ boardListData, totalPages, currentPage, onPageChange }) => {
   return (
       <Container>
-        <div data-th-replace="header :: header"></div>
-        <div style={{ marginBottom: '100px' }}></div>
-
         <SearchBox>
           <form>
             <p>🔍️ 게시글 찾기
               <SearchInput type="text" placeholder="검색어를 입력해주세요." />
-              <Button onClick={onSearch}>검색</Button>
+              <SearchButton>검색</SearchButton>
             </p>
           </form>
         </SearchBox>
 
-        <div style={{ textAlign: 'right', marginRight: '20px', marginTop: '-30px', marginBottom: '20px' }}>
-          <Button write onClick={onWriteClick}>글쓰기</Button>
-          <Button main onClick={onMainClick}>메인</Button>
-        </div>
+        <ActionButtonsContainer>
+          <Button>글쓰기</Button>
+          <MainButton>메인</MainButton>
+        </ActionButtonsContainer>
 
         <BoardTable>
           <thead>
@@ -140,16 +164,16 @@ const BoardListComponent = ({ boards, onSearch, onWriteClick, onMainClick, curre
             </tr>
           </thead>
           <tbody>
-            {boards.map(board => (
+            {boardListData.map(board => (
                 <tr key={board.no}>
                   <td>{board.no}</td>
-                  <td><a href={`/board/detail/${board.category}/${board.no}`}>{board.title || '제목없음'}</a></td>
+                  <td><BoardLink href={`/board/detail/${board.category}/${board.no}`}>{board.title || '제목없음'}</BoardLink></td>
                   <td>
                     <ProfileAuthor>
                       <ProfilePicture>
                         <img src={board.writer.photo || '/images/avatar.png'} alt="profile"/>
                       </ProfilePicture>
-                      <a href={`/myPage/${board.writer.no}`}>{board.writer.nick}</a>
+                      <AuthorLink href={`/myPage/${board.writer.no}`}>{board.writer.nick}</AuthorLink>
                     </ProfileAuthor>
                   </td>
                   <td>{board.likes}</td>
@@ -171,8 +195,6 @@ const BoardListComponent = ({ boards, onSearch, onWriteClick, onMainClick, curre
               </a>
           ))}
         </Pagination>
-        
-        <div data-th-replace="footer :: footer"></div>
       </Container>
   );
 };
