@@ -19,17 +19,26 @@ import ChatPage from './pages/ChatPage';
 
 function App() {
   return (
-    <>
-      <Helmet>
-        <title>BitSNS</title>
-      </Helmet>
-      <Routes>
-        <Route element={<ExamplePage />} path={'/'} />
-        <Route element={<LoginPage />} path={'/auth/login'} />
-        <Route element={<RegisterPage />} path={'/auth/register'} />
-      </Routes>
-    </>
+      <>
+        <Helmet>
+          <title>BitSNS</title>
+        </Helmet>
+        <Routes>
+          <Route element={<ExamplePage />} path={'/'} />
+          <Route element={<LoginPage />} path={'/auth/login'} />
+          <Route element={<RegisterPage />} path={'/auth/register'} />
+          <Route element={<PwFindPage />} path={'/auth/find'} />
+          <Route element={<BoardFormPage />} path={'/board/form'} />
+          <Route element={<BoardListPage />} path={'/board/list'} />
+          <Route element={<BoardDetailPage />} path={'/board/detail'} />
+          <Route element={<NotificationListPage />} path={'/notification/list'} />
+          <Route element={<MemberInfoPage />} path={'/myPage'} />
+          <Route element={<MemberInfoUpdatePage />} path={'/myPage/info'} />
+          <Route element={<GuestBookPage />} path={'/guestBook/1'} />
+          <Route element={<MyPagePage />} path={'/myPage/detail'} />
+          <Route element={<FollowPage />} path={'/myPage/follow'} />
+        </Routes>
+      </>
   );
 }
-
 export default App;
