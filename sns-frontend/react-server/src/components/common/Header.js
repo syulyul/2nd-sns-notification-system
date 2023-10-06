@@ -105,7 +105,11 @@ const Header = ({ user, onLogout }) => {
       <HeaderBlock>
         <Wrapper>
           <Link to={`/myPage/${user.no}`}>
-            <img src="/images/logo.png" alt="로고" class="logo" />
+            <img
+              src={process.env.PUBLIC_URL + '/images/logo.png'}
+              alt="로고"
+              class="logo"
+            />
           </Link>
           <HeaderNav>
             <Link to={`/myPage/${user.no}`}>마이페이지</Link>
@@ -119,14 +123,19 @@ const Header = ({ user, onLogout }) => {
           <HeaderProfile>
             <Link to="/notification/list">
               <span id="notReadNotiCount">{notReadNotiCount}</span>
-              <HeaderNotificationIcon src="/images/noti.png" alt="알림" />
+              <HeaderNotificationIcon
+                src={process.env.PUBLIC_URL + '/images/noti.png'}
+                alt="알림"
+              />
             </Link>
             {user.photo != null ? (
               <Link to={profileUrl}>
                 <HeaderUserIcon src={profileUrl} />
               </Link>
             ) : (
-              <HeaderUserIcon src="/images/default.jpg" />
+              <HeaderUserIcon
+                src={process.env.PUBLIC_URL + '/images/default.jpg'}
+              />
             )}
 
             <span class="headerUserNick">{user.nick}</span>
