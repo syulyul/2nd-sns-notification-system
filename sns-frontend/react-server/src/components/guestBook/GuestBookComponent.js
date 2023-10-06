@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useState } from 'react';
 
 const GuestbookTitle = styled.div`
     text-align: center;
@@ -87,6 +87,8 @@ const Actions = styled.div`
 
 
 const ContentTable = styled.table`
+    width: 40%;
+  margin: 0 auto;
     border: none;
     border-collapse: collapse;
 
@@ -94,6 +96,10 @@ const ContentTable = styled.table`
         border: none;
     }
 `;
+
+const ContentContainer = styled.div`
+  text-align: center;
+`
 
 const MetaInfo = styled.div`
     display: flex;
@@ -158,7 +164,9 @@ const GuestBookTextarea = styled.textarea`
 
 
 const Container = styled.div`
-    // 다른 container 스타일 속성 추가
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 
@@ -170,29 +178,85 @@ const TitleMetaCell = styled.td`
     // 다른 TitleMetaCell 스타일 속성 추가
 `;
 
-
-
-const WriterCell = styled.td`
-    text-align: center;
+const FirstRow = styled.tr`
+  background-color: #f2f2f2;
 `;
 
+const SecondRow = styled.tr`
+    background-color: white;
+    height: 200px;
+`;
+
+const WriterCell = styled.td`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NickNameDiv = styled.div`
+    margin-top: 5px;
+`;
 
 const ContentLikeCell = styled.td`
     position: relative;
 `;
 
+const LikeButtonContainer = styled.div`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+`;
+
+const HiddenInput = styled.input`
+    width: 0;
+`;
+
+const LikeLabel = styled.label`
+    background-color: transparent;
+`;
+
+const Table = styled.table`
+    // 필요한 스타일을 추가합니다.
+`;
+
+const ButtonContainer = styled.div`
+`;
+
+const DeleteButton = styled.button`
+    text-align: center; 
+    margin-left:37%; 
+    margin-bottom:2%;
+    padding: 5px 10px;
+    background-color: #426B1F;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+`;
+
+const DeleteButtonContainer = styled.div`
+    text-align: center;
+    margin-top: 10px;
+`;
 
 
-const GuestBookComponent = ({
-  title,
-  content,
-  onChange,
-  onSubmit,
-  guestBookList,
-  guestBookOwnerNick
-}) => {
+
+const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList, guestBookOwnerNick }) => {
+
+  const [likes, setLikes] = useState(guestBookList.map(() => false));
+
+  const toggleLike = (index) => {
+    const newLikes = [...likes];
+    newLikes[index] = !newLikes[index];
+    setLikes(newLikes);
+  };
+
   return (
-      <div>
+      <>
         <GuestbookTitle>
           <h2>🌱 {guestBookOwnerNick ? `${guestBookOwnerNick} 의 방명록 🌱` : ''}</h2>
         </GuestbookTitle>
@@ -207,7 +271,6 @@ const GuestBookComponent = ({
                     <StyledInput
                         type="text"
                         name="title"
-                        id="title"
                         placeholder="제목을 입력하세요"
                         required
                     />
@@ -218,7 +281,6 @@ const GuestBookComponent = ({
                   <td>
                     <StyledTextarea
                         name="content"
-                        id="content"
                         rows="6"
                         cols="150"
                         placeholder="내용을 입력하세요"
@@ -234,42 +296,51 @@ const GuestBookComponent = ({
           </StyledForm>
         </AddGuestbookForm>
 
-        <Container>
-          <ContentTable>
-            <tbody>
-              <tr>
-                <NoCell>
-                  <span>No. 예시번호</span>
-                </NoCell>
-                <TitleMetaCell colSpan="3">
-                  <HorizontalLayout>
-                    <span>예시 제목</span>
-                    <MetaInfo>
-                      <ClockIcon src="/images/clock.png" />
-                      <span>2023-10-05</span>
-                    </MetaInfo>
-                  </HorizontalLayout>
-                </TitleMetaCell>
-              </tr>
-              <tr>
-                <WriterCell>
-                  <ProfilePicture>
-                    <img src="/images/avatar.png" alt="프로필 사진" />
-                  </ProfilePicture>
-                  <div style={{ marginTop: "5px" }}>
-                    예시 사용자
-                  </div>
-                </WriterCell>
-                <ContentLikeCell colSpan="3">
-                  <GuestBookTextarea readOnly>
-                    예시 내용
-                  </GuestBookTextarea>
-                </ContentLikeCell>
-              </tr>
-            </tbody>
-          </ContentTable>
-        </Container>
-      </div>
+
+        {guestBookList.map((guestBook,index) => (
+            <Container key={guestBook.no}>
+              <ContentContainer>
+              <ContentTable>
+                <tbody>
+                  <FirstRow>
+                    <NoCell>
+                      <span>No. {guestBook.no}</span>
+                    </NoCell>
+                    <TitleMetaCell colSpan="3">
+                      <HorizontalLayout>
+                        <span>{guestBook.title}</span>
+                        <MetaInfo>
+                          <ClockIcon src="/images/clock.png" />
+                          <span>{guestBook.createdAt}</span>
+                        </MetaInfo>
+                      </HorizontalLayout>
+                    </TitleMetaCell>
+                  </FirstRow>
+                  <SecondRow>
+                    <WriterCell>
+                      <ProfilePicture>
+                        <img src={guestBook.writer?.photo || "/images/avatar.png"} alt="프로필 사진" />
+                      </ProfilePicture>
+                      <NickNameDiv>{guestBook.writer?.nick || "임시 닉네임"}</NickNameDiv>
+                    </WriterCell>
+                    <ContentLikeCell colSpan="3">
+                      <GuestBookTextarea readOnly>
+                        {guestBook.content || "내용"}
+                      </GuestBookTextarea>
+                      <LikeButtonContainer onClick={() => toggleLike(index)}>
+                        {likes[index] ? '❤️' : '🤍'}
+                      </LikeButtonContainer>
+                    </ContentLikeCell>
+                  </SecondRow>
+                </tbody>
+              </ContentTable>
+              </ContentContainer>
+              <DeleteButtonContainer>
+                <StyledButton>삭제</StyledButton>
+              </DeleteButtonContainer>
+            </Container>
+        ))}
+      </>
   );
 };
 
