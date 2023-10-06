@@ -5,7 +5,7 @@ const NotificationListStyledContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 70vh;
+    //height: 30vh;
     flex-direction: column;
     margin-left: 35px;
 `;
@@ -75,23 +75,33 @@ const PageLabel = styled.div`
     text-align: center;
 `;
 
-const NotificationListComponent = ({ notifications }) => {
+const NotificationTitle = styled.h2`
+    margin-left: 5%;
+`;
+
+const NotificationLink = styled.a`
+    margin-left: 4%;
+    color: black;
+    text-decoration: none;
+`;
+
+const NotificationListComponent = ({ notificationData }) => {
   return (
       <NotificationListStyledContainer>
         <ListContainer>
           <NotificationTitleContainer>
-            <h2 className="notification-title">🌱 알림내용</h2>
+            <NotificationTitle>🌱 알림내용</NotificationTitle>
             <form>
               <input value="1" name="notiState" type="hidden" />
               <StyledButton>모두 읽음</StyledButton>
             </form>
           </NotificationTitleContainer>
 
-          {notifications.map(noti => (
+          {notificationData.map(noti => (
               <NotificationItem key={noti.id}>
-                <a href={noti.url} style={{marginLeft: '4%', color: 'black', textDecoration: 'none'}}>
+                <NotificationLink href={noti.url}>
                   {noti.content}
-                </a>
+                </NotificationLink>
                 <span>{noti.notiState === 0 ? '안읽음' : '읽음'}</span>
               </NotificationItem>
           ))}
