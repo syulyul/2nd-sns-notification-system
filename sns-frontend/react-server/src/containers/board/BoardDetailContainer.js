@@ -9,7 +9,8 @@ const BoardDetailContainer = () => {
     writer: { nick: 'Loading...' },
     createdAt: 'Loading...',
     viewCount: 0,
-    likes: []
+    likes: [],
+    attachedFiles: [],
   });
 
   const [comments, setComments] = useState([]);
@@ -23,7 +24,8 @@ const BoardDetailContainer = () => {
       writer: { nick: '임시 작성자' },
       createdAt: new Date().toLocaleDateString(),
       viewCount: 100,
-      likes: ['유저1', '유저2', '유저3', '유저4']
+      likes: ['유저1', '유저2', '유저3', '유저4'],
+      attachedFiles: ['사진1', '사진2'],
     };
 
     const fetchedComments = [
@@ -64,17 +66,17 @@ const BoardDetailContainer = () => {
   };
 
   return (
-      <BoardDetailComponent
-          board={board}
-          comments={comments}
-          onLike={likeButtonClicked}
-          onUnlike={unlikeButtonClicked}
-          onNavigateToList={navigateToList}
-          onEdit={handleEdit}
-          onReset={handleReset}
-          onDelete={handleDelete}
-          onCommentSubmit={handleCommentSubmit}
-      />
+    <BoardDetailComponent
+      board={board}
+      comments={comments}
+      onLike={likeButtonClicked}
+      onUnlike={unlikeButtonClicked}
+      onNavigateToList={navigateToList}
+      onEdit={handleEdit}
+      onReset={handleReset}
+      onDelete={handleDelete}
+      onCommentSubmit={handleCommentSubmit}
+    />
   );
 };
 
