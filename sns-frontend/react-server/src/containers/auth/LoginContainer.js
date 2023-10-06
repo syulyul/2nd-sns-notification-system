@@ -48,8 +48,8 @@ const LoginContainer = () => {
     if (user) {
       console.log('로그인 성공');
       console.log(user);
-      navigate(`/`);
-      // navigate(`/myPage/${user.no}`);
+      // navigate(`/`);
+      navigate(`/myPage/${user.no}`);
     }
   }, [user, authError, dispatch]);
 
