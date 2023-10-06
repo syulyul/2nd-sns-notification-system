@@ -65,31 +65,62 @@ const SubmitButton = styled(Button)`
   font-size: 25px;
 `;
 
-const SendCodeButton = styled(Button)`
+const CodeButton = styled(Button)`
   padding: 5px 10px;
   background-color: #426B1F;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-left: 30px;
-  width: 140px;
+  margin-left: 10px;
+  width: 150px;
   font-size: 20px;
 `;
 
-const VerifyButton = styled(Button)`
-  padding: 5px 10px;
-  background-color: #426B1F;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  margin-left: 30px;
-  width: 140px;
-  font-size: 20px;
+const PhoneNumberWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
+const VerifyWrapper = styled.div`
+  display: flex;
+  flexDirection: 'column';
+  marginRight: '-170px';
+`;
+
+const ButtonFlexWrapper = styled.div`
+  display: flex;
+  alignItems: 'baseline';
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const HorizontalWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const StyledInput2 = styled.input`
+  width: 200px;
+
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 16px;
+  margin-left: 5px;
+
+  ::placeholder {
+    color: #3a3a3a;
+  }
+`;
 const RegisterComponent = ({ name, nick, phoneNumber, password, photofile, onSubmit }) => {
   return (
       <AuthTemplate>
@@ -109,20 +140,19 @@ const RegisterComponent = ({ name, nick, phoneNumber, password, photofile, onSub
           </InputBlock>
           <InputBlock>
             <Label>🌱 전화번호</Label>
-            <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-              <InputWrapper>
-                <StyledInput type='text' name='phoneNumber' placeholder="전화번호를 입력하세요"/>
-              </InputWrapper>
-              <StyledInput type='text' name='verificationCode' placeholder="인증번호를 입력하세요"/>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', marginRight: '-170px' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                <SendCodeButton type="sendCode" onClick={onSubmit}>인증번호전송</SendCodeButton>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                <VerifyButton type="verifyCode" onClick={onSubmit}>인증번호확인</VerifyButton>
-              </div>
-            </div>
+            <PhoneNumberWrapper>
+              <Wrapper>
+                <HorizontalWrapper>
+                  <StyledInput width='200px' type='text' name='phoneNumber' placeholder="전화번호를 입력하세요"/>
+                  <CodeButton type="sendCode" onClick={onSubmit}>인증번호전송</CodeButton>
+                </HorizontalWrapper>
+
+                <HorizontalWrapper>
+                  <StyledInput width='200px' type='text' name='verificationCode' placeholder="인증번호를 입력하세요"/>
+                  <CodeButton type="verifyCode" onClick={onSubmit}>인증번호확인</CodeButton>
+                </HorizontalWrapper>
+              </Wrapper>
+            </PhoneNumberWrapper>
           </InputBlock>
           <InputBlock>
             <Label>🌱 비밀번호</Label>
