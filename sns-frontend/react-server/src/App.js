@@ -14,23 +14,31 @@ import GuestBookPage from "./pages/GuestBookPage";
 import MyPagePage from "./pages/MyPagePage";
 import FollowPage from "./pages/FollowPage";
 import PwFindPage from "./pages/PwFindPage";
-
 import ChatPage from './pages/ChatPage';
 
 function App() {
   return (
-    <>
-      <Helmet>
-        <title>BitSNS</title>
-      </Helmet>
-      <Routes>
-        <Route element={<ExamplePage />} path={'/'} />
-        <Route element={<LoginPage />} path={'/auth/login'} />
-        <Route element={<RegisterPage />} path={'/auth/register'} />
-        <Route element={<ChatPage />} path={'/chat'} />
+      <>
+        <Helmet>
+          <title>BitSNS</title>
+        </Helmet>
+        <Routes>
+          <Route element={<ExamplePage />} path={'/'} />
+          <Route element={<LoginPage />} path={'/auth/login'} />
+          <Route element={<RegisterPage />} path={'/auth/register'} />
+          <Route element={<PwFindPage />} path={'/auth/find'} />
+          <Route element={<BoardFormPage />} path={'/board/form'} />
+          <Route element={<BoardListPage />} path={'/board/list'} />
+          <Route element={<BoardDetailPage />} path={'/board/detail'} />
+          <Route element={<NotificationListPage />} path={'/notification/list'} />
+          <Route element={<MemberInfoPage />} path={'/myPage'} />
+          <Route element={<MemberInfoUpdatePage />} path={'/myPage/info'} />
+          <Route element={<GuestBookPage />} path={'/guestBook/1'} />
+          <Route element={<MyPagePage />} path={'/myPage/detail'} />
+          <Route element={<FollowPage />} path={'/myPage/follow'} />
+          <Route element={<ChatPage />} path={'/chat'} />
       </Routes>
-    </>
+      </>
   );
 }
-
 export default App;
