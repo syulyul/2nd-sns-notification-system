@@ -1,19 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
-import defaultImage from '../../images/default.jpg';
+import { useSelector } from 'react-redux';
+import client from '../../lib/api/client'; // axios client를 가져옵니다.
 
 const MemberInfoContainer = () => {
-  // 임시 데이터
-  const [myPageData, setMyPageData] = useState({
-    visitCount: 1234, // 임시 데이터
-    photo: defaultImage, // 임시 이미지 경로
-    nick: "연궁이", // 임시 닉네임
-    stateMessage: "하이하이", // 임시 상태 메시지
-    no: 1 // 임시 번호
-  });
+  const { user } = useSelector(({ auth }) => ({
+    user: auth.user,
+  }));
 
+  useEffect(() => {
+    // user 정보가 변경될 때마다 실행되도록 useEffect를 사용합니다.
+    if (user) {
+      const { visitCount, photo, nick, no } = user;
+      const url = `/spring/myPage/${no}`; // URL을 동적으로 생성합니다.
+      const config = {
+        params: { visitCount, photo, nick, no },
+      };
 
-  return <MemberInfoComponent myPageData={myPageData} />;
+      // Axios를 사용하여 GET 요청을 보냅니다.
+      client
+      .get(url, config)
+      .then((response) => {
+        // 성공적인 응답 처리
+        console.log(response.data);
+      })
+      .catch((error) => {
+        // 오류 처리
+        console.error(error);
+      });
+    }
+  }, [user]);
+
+  return <MemberInfoComponent user={user} />;
 };
 
 export default MemberInfoContainer;
