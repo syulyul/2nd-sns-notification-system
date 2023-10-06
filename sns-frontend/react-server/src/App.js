@@ -27,6 +27,7 @@ function App() {
         <Route element={<ExamplePage />} path={'/'} />
         <Route element={<LoginPage />} path={'/auth/login'} />
         <Route element={<RegisterPage />} path={'/auth/register'} />
+        <Route element={<ChatPage />} path={'/chat'} />
       </Routes>
     </>
   );

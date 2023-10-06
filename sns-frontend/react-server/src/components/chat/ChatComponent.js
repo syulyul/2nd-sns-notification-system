@@ -153,7 +153,7 @@ const StyledChatBtn = styled.button`
     }
 `;
 
-const ChatComponent = ({mno, nick, chat}) => {
+const ChatComponent = () => {
   return (
     <ChatContainer>
       <TitleStyle>🌱 쫀떠기 🌱</TitleStyle>
@@ -163,7 +163,7 @@ const ChatComponent = ({mno, nick, chat}) => {
             <StyledChatMine
                 type="text"
                 name="chat"
-            >내가 쓴 채팅 어떻게 받아오지 잘 모르겠네아아아아아ㅏ아아아아아아아아아ㅏㅇ{chat}</StyledChatMine>
+            >내가 쓴 채팅 어떻게 받아오지 잘 모르겠네아아아아아ㅏ아아아아아아아아아ㅏㅇ</StyledChatMine>
           </div>
           </ChatMessage>
           <ChatMessage>
