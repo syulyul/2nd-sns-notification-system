@@ -1,33 +1,28 @@
 import React, { useState } from 'react';
 import FollowComponent from "../../components/myPage/FollowComponent";
+import defaultImage from '../../images/default.jpg';
 
-      const FollowContainer = () => {
-  const [myPageList2, setPageDetailList] = useState([
-    {
-      no: 1,
-      title: '첫 번째 게시글',
-      content: '안녕하세요. 첫 번째 게시글입니다.',
-      createdAt: '2023-10-04 14:30:00',
-      writer: {
-        no: 1,
-        nick: 'User1',
-        photo: 'user1.jpg',
-      },
-    },
-    {
-      no: 2,
-      title: '두 번째 게시글',
-      content: '두 번째 게시글 내용입니다.',
-      createdAt: '2023-10-04 15:45:00',
-      writer: {
-        no: 2,
-        nick: 'User2',
-        photo: 'user2.jpg',
-      },
-    },
-  ]);
+const FollowContainer = () => {
+  // 임시 회원 목록
+  const followList = [
+    { no: 1, nick: '지나가율', photo: defaultImage },
+    { no: 2, nick: '연궁이', photo: defaultImage },
+    { no: 3, nick: '산준으로', photo: defaultImage }
+  ];
 
-  return (<FollowComponent myPageList2={myPageList2} />);
+  // 임시 세션 데이터
+  const session = {
+    loginUser: {
+      followMemberSet: [2]
+    }
+  };
+
+  return (
+      <FollowComponent
+          followList={followList}
+          session={session}
+      />
+  );
 };
 
 export default FollowContainer;
