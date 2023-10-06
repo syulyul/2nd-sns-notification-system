@@ -1,37 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
 import { useSelector } from 'react-redux';
-import client from '../../lib/api/client'; // axios client를 가져옵니다.
+import client from '../../lib/api/client';
 
 const MemberInfoContainer = () => {
   const { user } = useSelector(({ auth }) => ({
     user: auth.user,
   }));
 
-  useEffect(() => {
-    // user 정보가 변경될 때마다 실행되도록 useEffect를 사용합니다.
-    if (user) {
-      const { visitCount, photo, nick, no } = user;
-      const url = `/spring/myPage/${no}`; // URL을 동적으로 생성합니다.
-      const config = {
-        params: { visitCount, photo, nick, no },
-      };
+  // 받아온 데이터를 저장할 상태
+  const [myPageData, setMyPageData] = useState(null);
 
-      // Axios를 사용하여 GET 요청을 보냅니다.
+  useEffect(() => {
+    if (user) {
+      const { no } = user; // 사용자 번호 추출
+
+      // 백엔드 서버로 데이터 요청
       client
-      .get(url, config)
+      .get(`/spring/myPage/${no}`) // API 엔드포인트 확인
       .then((response) => {
-        // 성공적인 응답 처리
-        console.log(response.data);
+        // 성공적으로 데이터를 받아왔을 때 처리
+        const data = response.data; // 받아온 데이터
+        setMyPageData(data); // 데이터를 상태에 저장
       })
       .catch((error) => {
-        // 오류 처리
-        console.error(error);
+        // 데이터 요청 실패 또는 오류 처리
+        console.error('Error fetching myPageData:', error);
       });
     }
-  }, [user]);
+  }, [user, myPageData]);
 
-  return <MemberInfoComponent user={user} />;
+  return (
+      <div>
+        {/* myPageData가 로딩 중이거나 없을 때의 처리 */}
+        {myPageData ? (
+            <MemberInfoComponent myPageData={myPageData} user={user} />
+        ) : (
+            <p>Loading...</p>
+        )}
+      </div>
+  );
 };
 
 export default MemberInfoContainer;

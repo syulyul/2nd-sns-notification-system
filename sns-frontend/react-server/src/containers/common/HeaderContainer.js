@@ -17,7 +17,7 @@ const HeaderContainer = () => {
     e.preventDefault();
     removeCookie('sessionId');
     dispatch(logout());
-    navigate(`auth/login`);
+    navigate(`/auth/login`);
   };
 
   return <Header user={user} onLogout={onLogout} />;
