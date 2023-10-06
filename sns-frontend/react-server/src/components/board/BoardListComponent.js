@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
 `;
@@ -148,7 +149,9 @@ const BoardListComponent = ({ boardListData, totalPages, currentPage, onPageChan
         </SearchBox>
 
         <ActionButtonsContainer>
-          <Button>글쓰기</Button>
+          <Link to="/board/form">
+            <Button>글쓰기</Button>
+          </Link>
           <MainButton>메인</MainButton>
         </ActionButtonsContainer>
 
