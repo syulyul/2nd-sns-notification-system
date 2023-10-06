@@ -77,27 +77,27 @@ const StateMessageTextarea = styled.textarea`
     resize: none;
 `;
 
-const MemberInfoComponent = ({ myPageData }) => {
+const MemberInfoComponent = ({ user }) => {
 
   return (
       <Sidebar>
-        <p>🌱 총 방문자 수 {myPageData.visitCount}</p>
-        {myPageData.photo
-            ? <ProfilePic src={myPageData.photo} alt="프로필 사진" />
-            : <ProfilePic src='/images/default.jpg' alt="기본 이미지" />
+        <p>🌱 총 방문자 수 {user.visitCount}</p>
+        {user.photo
+            ? <ProfilePic src={user.photo} alt="프로필 사진" />
+            : <ProfilePic src='../../images/default.jpg' alt="기본 이미지" />
         }
-        <h2>{myPageData.nick}</h2>
+        <h2>{user.nick}</h2>
         <StateMessageLabel>상태메시지</StateMessageLabel>
-        <EditInfoLink to={`/myPage/${myPageData.no}/info`}>내 정보 수정</EditInfoLink>
+        <EditInfoLink to={`/myPage/${user.no}/info`}>내 정보 수정</EditInfoLink>
         <StateMessageTextarea
             name="stateMessage"
             readOnly
-            value={myPageData.stateMessage || "상태 메시지가 없습니다."}
+            value={user.stateMessage || "상태 메시지가 없습니다."}
         />
 
         <ButtonContainer>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followings`}>팔로잉</SidebarButton>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
+          <SidebarButton href={`/myPage/${user.no}?show=followings`}>팔로잉</SidebarButton>
+          <SidebarButton href={`/myPage/${user.no}?show=followers`}>팔로워</SidebarButton>
         </ButtonContainer>
       </Sidebar>
   );

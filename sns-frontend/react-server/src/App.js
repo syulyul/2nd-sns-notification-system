@@ -31,7 +31,7 @@ function App() {
         <Route element={<BoardListPage />} path={'/board/list'} />
         <Route element={<BoardDetailPage />} path={'/board/detail'} />
         <Route element={<NotificationListPage />} path={'/notification/list'} />
-        <Route element={<MemberInfoPage />} path={'/myPage'} />
+        <Route element={<MemberInfoPage />} path={'/myPage/:userNo'} />
         <Route element={<MemberInfoUpdatePage />} path={'/myPage/info'} />
         <Route element={<GuestBookPage />} path={'/guestBook/1'} />
         <Route element={<MyPagePage />} path={'/myPage/detail'} />
