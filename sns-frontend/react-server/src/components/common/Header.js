@@ -105,7 +105,7 @@ const Header = ({ user, onLogout }) => {
       <HeaderBlock>
         <Wrapper>
           <Link to={`/myPage/${user.no}`}>
-            <img src="/images/logo.png" alt="로고" class="logo" />
+            <img src="../../images/logo.png" alt="로고" className="logo" />
           </Link>
           <HeaderNav>
             <Link to={`/myPage/${user.no}`}>마이페이지</Link>
