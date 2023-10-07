@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Header from '../common/Header';
 
 const NotificationListStyledContainer = styled.div`
     display: flex;
@@ -87,6 +88,8 @@ const NotificationLink = styled.a`
 
 const NotificationListComponent = ({ notificationData }) => {
   return (
+      <>
+      <Header /> {/* 상단에 Header 컴포넌트 렌더링 */}
       <NotificationListStyledContainer>
         <ListContainer>
           <NotificationTitleContainer>
@@ -115,6 +118,7 @@ const NotificationListComponent = ({ notificationData }) => {
           ))}
         </PageLabel>
       </NotificationListStyledContainer>
+      </>
   );
 };
 
