@@ -3,13 +3,13 @@ import { all } from 'redux-saga/effects';
 import loading from './loading';
 import object, { objectSaga } from './exampleAction';
 import auth, { authSaga } from './auth';
-import mypage, { myPageSaga } from './mypage';
+import myPage, { myPageSaga } from './myPage';
 
 const rootReducer = combineReducers({
   loading,
   object,
   auth,
-  mypage
+  myPage
 });
 
 export function* rootSaga() {

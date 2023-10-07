@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import auth from "../../modules/auth";
 
 
 const Sidebar = styled.div`
@@ -77,27 +78,27 @@ const StateMessageTextarea = styled.textarea`
     resize: none;
 `;
 
-const MemberInfoComponent = ({ myPageData, user }) => {
+const MemberInfoComponent = ({ myPage, user, visitCount, stateMessage, no }) => {
   const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
       <Sidebar>
-        <p>🌱 총 방문자 수 {myPageData.visitCount}</p>
-        {myPageData.photo
+        <p>🌱 총 방문자 수 {visitCount}</p>
+        {user.photo
             ? <ProfilePic src='/images/default.jpg' alt="기본 이미지" />
             : <ProfilePic src={profileUrl} alt="프로필 사진" />
         }
         <h2>{user.nick}</h2>
         <StateMessageLabel>상태메시지</StateMessageLabel>
-        <EditInfoLink to={`/myPage/${myPageData.no}/info`}>내 정보 수정</EditInfoLink>
+        <EditInfoLink to={`/myPage/${no.no}/info`}>내 정보 수정</EditInfoLink>
         <StateMessageTextarea
             name="stateMessage"
             readOnly
-            value={myPageData.stateMessage || "상태 메시지가 없습니다."}
+            value={stateMessage.stateMessage || "상태 메시지가 없습니다."}
         />
 
         <ButtonContainer>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followings`}>팔로잉</SidebarButton>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
+          <SidebarButton href={`/myPage/${no.no}?show=followings`}>팔로잉</SidebarButton>
+          <SidebarButton href={`/myPage/${no.no}?show=followers`}>팔로워</SidebarButton>
         </ButtonContainer>
       </Sidebar>
   );
