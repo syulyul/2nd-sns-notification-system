@@ -11,7 +11,7 @@ const userSchema = new Schema ({
     type: String,
     required: true,
   },
-  rooms: [{
+  rooms: [{ // 사용자가 참여하고 있는 채팅방 전체
     type: ObjectId,
     ref: 'Room',
   }],
