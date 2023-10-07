@@ -17,15 +17,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/board")
 public class BoardController {
 
@@ -110,8 +113,9 @@ public class BoardController {
     return "board/detail";
   }
 
+
   @GetMapping("list")
-  public String list(@RequestParam int category,
+  public List<Board> list(@RequestParam int category,
       @RequestParam(defaultValue = "") String keyword,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int pageSize,
@@ -140,7 +144,7 @@ public class BoardController {
     model.addAttribute("category", category);
 
     if (category == 1) {
-      return "board/list"; // 카테고리가 1일 때 "list.html"을 실행
+      return boardList; // 카테고리가 1일 때 "list.html"을 실행
 
     } else {
       throw new Exception("유효하지 않은 카테고리입니다.");

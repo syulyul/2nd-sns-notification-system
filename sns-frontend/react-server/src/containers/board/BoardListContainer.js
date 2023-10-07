@@ -1,32 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import BoardListComponent from '../../components/board/BoardListComponent';
+import { list } from '../../modules/board';
 
 const BoardListContainer = () => {
-  const [boardListData, setBoardListData] = useState([
-    { no: 1, title: '임시 제목 1', writer: { nick: '작성자1', photo: null }, likes: 10, viewCount: 100, createdAt: new Date() },
-    { no: 2, title: '임시 제목 2', writer: { nick: '작성자2', photo: null }, likes: 15, viewCount: 120, createdAt: new Date() },
-  ]);
+  const dispatch = useDispatch();
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = 5; //임시
+  // redux store에서 게시글 목록 데이터와 에러 정보를 가져옵니다.
+  const { boardList, error, category } = useSelector(({ board }) => ({
+    boardList: board.boardList,
+    error: board.boardError,
+    category: board.category,
+  }));
 
-  // const onSearch = (keyword) => {
-  //   console.log(`Searching for ${keyword}`);
-  // };
-  //
-  // const onWriteClick = () => {
-  //   console.log('글쓰기 버튼 클릭');
-  // };
-  //
-  // const onMainClick = () => {
-  //   console.log('메인 버튼 클릭');
-  // };
-  //
-  // const onPageChange = (pageNumber) => {
-  //   setCurrentPage(pageNumber);
-  // };
+  // 컴포넌트가 마운트될 때 게시글 목록을 요청합니다.
+  useEffect(() => {
+    dispatch(list(category));
+  }, [dispatch, category]);
 
-  return <BoardListComponent boardListData = {boardListData} />
+  // 에러가 발생하면 에러 메시지를 출력합니다.
+  if (error) {
+    return <div>오류가 발생했습니다: {error.message}</div>;
+  }
+
+  return <BoardListComponent boardListData={boardList} />
 };
 
 export default BoardListContainer;
