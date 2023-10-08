@@ -92,7 +92,7 @@ const HeaderUserIcon = styled.img`
 const Header = ({ user, onLogout }) => {
   // user = { no: 1, nick: '임시 닉네임', photo: '주소' };
   if (user == null) {
-    return <div>로그인이 필요합니다</div>;
+    return <Link to="/auth/login">로그인이 필요합니다</Link>;
   }
 
   const myPage = { no: 10 }; // 테스트용 임시 데이터
