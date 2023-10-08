@@ -7,14 +7,14 @@ module.exports = function (app) {
     })
   );
 
-  // app.use(
-  //   createProxyMiddleware(['/api', '/img', '/sse', '/socket.io'], {
-  //     target: 'http://localhost:3001/',
-  //     changeOrigin: true,
-  //     ws: true,
-  //     router: {
-  //       '/socket.io': 'ws://localhost:3001/',
-  //     },
-  //   })
-  // );
+  app.use(
+    createProxyMiddleware(['/node', '/img', '/socket.io'], {
+      target: 'http://localhost:3001/',
+      changeOrigin: true,
+      ws: true,
+      router: {
+        '/socket.io': 'ws://localhost:3001/',
+      },
+    })
+  );
 };
