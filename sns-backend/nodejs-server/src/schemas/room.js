@@ -2,13 +2,10 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 const roomSchema = new Schema({
-  title: { // 방 제목
+  title : { // 방 제목(회원 닉네임)
     type: String,
     required: true,
-  },
-  createdAt: { // 생성 시간
-    type: Date,
-    default: Date.now,
+    ref: 'User',
   },
 });
 

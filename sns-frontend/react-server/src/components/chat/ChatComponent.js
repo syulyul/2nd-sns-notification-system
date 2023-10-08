@@ -6,7 +6,7 @@ const ChatContainer = styled.div`
     background-color: #f2f2f2;
     width: 650px;
     margin: auto;
-    margin-top: 100px;
+    margin-left: 20px;
     height: 700px;
     display: flex;
     flex-direction: column;
