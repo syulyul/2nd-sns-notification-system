@@ -6,7 +6,8 @@ const csrfTokenCookie = cookies.find((cookie) =>
 );
 const csrfToken = csrfTokenCookie ? csrfTokenCookie.split('=')[1] : null;
 
-const client = axios.create();
-client.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+const nodeClient = axios.create();
+nodeClient.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+nodeClient.defaults.baseURL = 'http://localhost:3001/node/';
 
-export default client;
+export default nodeClient;
