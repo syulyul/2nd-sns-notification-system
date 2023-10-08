@@ -167,7 +167,7 @@ const BoardListComponent = ({ boardListData, totalPages, currentPage, onPageChan
             </tr>
           </thead>
           <tbody>
-            {boardListData.map(board => (
+            {boardListData && boardListData.map(board => (
                 <tr key={board.no}>
                   <td>{board.no}</td>
                   <td><BoardLink href={`/board/detail/${board.category}/${board.no}`}>{board.title || '제목없음'}</BoardLink></td>
