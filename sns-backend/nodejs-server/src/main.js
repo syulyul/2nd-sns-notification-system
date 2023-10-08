@@ -1,5 +1,6 @@
 require("dotenv").config();
 import express from "express";
+import cors from "cors";
 import morgan from "morgan";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -18,6 +19,13 @@ if (NODE_ENV === "production") {
 } else {
   app.use(morgan("dev"));
 }
+
+var corsOptions = {
+  origin: "http://localhost:3000",
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
+
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
