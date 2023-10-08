@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
 import { useSelector } from 'react-redux';
-import client from '../../lib/api/client';
+import client from '../../lib/api/springClient';
 
 const MemberInfoContainer = () => {
   const { user } = useSelector(({ auth }) => ({
