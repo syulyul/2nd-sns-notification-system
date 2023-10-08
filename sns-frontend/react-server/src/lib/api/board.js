@@ -15,14 +15,12 @@ export const list = (category) =>
 
 // 게시글 수정
 export const updatePost = ({ id, title, content, files, category }) =>
-    client.put(`/spring/board/${id}`, {
-      title,
-      content,
-      files,
-      category,
-    });
+  client.put(`/spring/board/${id}`, {
+    title,
+    content,
+    files,
+    category,
+  });
 
 // 게시글 삭제
-export const deletePost = (postId) =>
-    client.delete(`/spring/board/${postId}`);
-
+export const deletePost = (postId) => client.delete(`/spring/board/${postId}`);

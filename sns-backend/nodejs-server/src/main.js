@@ -34,7 +34,7 @@ app.use(
   })
 );
 
-app.use("/api", api);
+app.use("/node", api);
 
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
