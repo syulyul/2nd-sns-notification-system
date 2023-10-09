@@ -4,16 +4,18 @@ import loading from './loading';
 import object, { objectSaga } from './exampleAction';
 import auth, { authSaga } from './auth';
 import board, { boardSaga } from './board';
+import notification, { notificationSaga } from './notification';
 
 const rootReducer = combineReducers({
   loading,
   object,
   auth,
-  board
+  board,
+  notification,
 });
 
 export function* rootSaga() {
-  yield all([objectSaga(), authSaga(), boardSaga()]);
+  yield all([objectSaga(), authSaga(), boardSaga(), notificationSaga()]);
 }
 
 export default rootReducer;

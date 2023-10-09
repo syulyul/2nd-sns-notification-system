@@ -83,9 +83,7 @@ public class AuthController {
   @PostMapping("/login")
   public LoginUser login(
       @RequestBody Member member,
-      HttpSession session,
-      HttpServletResponse response,
-      Model model) {
+      HttpServletResponse response) {
     String phoneNumber = member.getPhoneNumber();
     String password = member.getPassword();
     System.out.println(member);
@@ -99,10 +97,11 @@ public class AuthController {
         // 쿠키 설정
 
         String sessionId = UUID.randomUUID().toString();
+        Cookie cookie = new Cookie("sessionId", sessionId);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         redisService.getValuleOps()
             .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.HOURS);
-        Cookie cookie = new Cookie("sessionId", sessionId);
-        response.addCookie(cookie);
 
         // 세션에 로그인 사용자 정보 저장
         loginUserObject = new LoginUser(loginUser);

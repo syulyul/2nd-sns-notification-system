@@ -4,8 +4,8 @@ import * as notiCtrl from './notification.ctrl';
 const notification = express.Router();
 
 notification.post('/add', notiCtrl.addLog);
-notification.post('/notReadNotiCount', notiCtrl.notReadNotiCount);
-notification.post('/list', notiCtrl.listNotiLog);
+notification.get('/notReadNotiCount/:memberNo', notiCtrl.notReadNotiCount);
+notification.get('/list/:memberNo', notiCtrl.listNotiLog);
 notification.post('/updateState', notiCtrl.updateNotiState);
 notification.post('/updateAllState', notiCtrl.updateAllNotiState);
 
