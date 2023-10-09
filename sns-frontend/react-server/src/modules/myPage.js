@@ -1,56 +1,38 @@
 import { createAction, handleActions } from 'redux-actions';
+import { takeLatest } from 'redux-saga/effects';
 import createRequestSaga, {
   createRequestActionTypes,
 } from '../lib/createRequestSaga';
 import * as myPageAPI from '../lib/api/myPage';
-import { takeLatest } from 'redux-saga/effects';
 
+const [LIST, LIST_SUCCESS, LIST_FAILURE] =
+    createRequestActionTypes('myPage/LIST');
 
-const CHANGE_FIELD = 'myPage/CHANGE_FIELD';
-const INITIALIZE_FORM = 'myPage/INITIALIZE_FORM';
+export const list = createAction(LIST, (userNo) => (userNo));
 
-// 백엔드 서버와 통신하는 경우
-const [INFO, INFO_SUCCESS, INFO_FAILURE] = createRequestActionTypes('myPage/{no}');
+const listSaga = createRequestSaga(LIST, myPageAPI.list);
 
-// INCREASE 액션 타입을 myPage 네임스페이스 아래에 추가
-
-export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
-  key,
-  value,
-}));
-export const initializeForm = createAction(INITIALIZE_FORM, () => {});
-
-export const info = createAction(
-    INFO,
-    ({ visitCount, no, stateMessage }) => ({
-      visitCount,
-      stateMessage,
-      no
-    })
-);
-
-const infoSaga = createRequestSaga(INFO, myPageAPI.info);
 export function* myPageSaga() {
-  yield takeLatest(INFO, infoSaga);
+  yield takeLatest(LIST, listSaga);
 }
 
 const initialState = {
-  visitCount: '',
-  stateMessage:'',
-  no: '',
+  myPage: [],
+  userNo: 0,
+  myPageError: null,
 };
 
 const myPage = handleActions(
     {
-      [INFO_SUCCESS]: (state, { payload: page }) => ({
+      [LIST_SUCCESS]: (state, { payload: myPage }) => ({
         ...state,
-        page,
+        myPage,
+        myPageError: null,
       }),
-      [INFO_FAILURE]: (state, { payload: error }) => ({
+      [LIST_FAILURE]: (state, { payload: error }) => ({
         ...state,
-        error,
+        myPageError: error,
       }),
-      // INCREASE 액션 핸들링 추가
     },
     initialState
 );
