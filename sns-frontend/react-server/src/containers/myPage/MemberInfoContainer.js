@@ -17,7 +17,7 @@ const MemberInfoContainer = () => {
 
       // 백엔드 서버로 데이터 요청
       client
-        .get(`/spring/myPage/${no}`) // API 엔드포인트 확인
+        .get(`myPage/${no}`) // API 엔드포인트 확인
         .then((response) => {
           // 성공적으로 데이터를 받아왔을 때 처리
           const data = response.data; // 받아온 데이터

@@ -1,0 +1,16 @@
+import express from "express";
+import * as roomCtrl from "./ChatRoom.ctrl";
+
+const chatRoom = express.Router();
+
+chatRoom.get("/room", roomCtrl.listRooms);
+
+chatRoom.post("/room", roomCtrl.createRoom);
+
+chatRoom.get("/room/:room", roomCtrl.enterRoom);
+
+chatRoom.get("/room/:room", roomCtrl.removeRoom);
+
+chatRoom.post("/room/:room/chat", roomCtrl.sendChat);
+
+export default chatRoom;
