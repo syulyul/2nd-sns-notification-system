@@ -33,7 +33,7 @@ function App() {
           <Route element={<BoardDetailPage />} path={'/board/detail'} />
           <Route element={<NotificationListPage />} path={'/notification/list'} />
           <Route element={<MemberInfoPage />} path={'/myPage/:userNo'} />
-          <Route element={<MemberInfoUpdatePage />} path={'/myPage/info'} />
+          <Route element={<MemberInfoUpdatePage />} path={'/myPage/:userNo/info'} />
           <Route element={<GuestBookPage />} path={'/guestBook/1'} />
           <Route element={<MyPagePage />} path={'/myPage/detail'} />
           <Route element={<FollowPage />} path={'/myPage/follow'} />

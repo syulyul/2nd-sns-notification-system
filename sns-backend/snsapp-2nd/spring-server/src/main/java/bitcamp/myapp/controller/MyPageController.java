@@ -131,7 +131,8 @@ public class MyPageController {
   }
 
   @GetMapping("{no}/info")
-  public String info(
+  @ResponseBody
+  public MyPage info(
       @PathVariable int no,
       Model model,
       HttpServletRequest request,
@@ -144,10 +145,10 @@ public class MyPageController {
     if (request != null) {
       model.addAttribute("request", request);
     } else {
-      return "redirect:/";
+      return myPageService.get(no);
     }
 
-    return "myPage/memberInfoUpdate";
+    return myPage;
   }
 
   @PostMapping("{no}/update")

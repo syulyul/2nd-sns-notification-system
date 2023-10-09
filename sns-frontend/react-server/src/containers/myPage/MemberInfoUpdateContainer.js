@@ -1,43 +1,58 @@
-import React, { useState } from 'react';
-import MemberInfoUpdateComponent from '../../components/myPage/MemberInfoUpdateComponent';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {changeField, info, initializeForm, update} from '../../modules/myPage';
+import MemberInfoUpdateComponent
+  from "../../components/myPage/MemberInfoUpdateComponent";
 
 const MemberInfoUpdateContainer = () => {
-  // 임시 데이터
-  const [myPageData, setMyPageData] = useState({
-    photo: process.env.PUBLIC_URL + '/images/default.jpg', // 임시 이미지 경로
-    name: 'Sample Name', // 임시 이름
-    nick: 'Sample Nickname', // 임시 닉네임
-    birthday: '2000-01-01', // 임시 생일
-    email: 'sample@email.com', // 임시 이메일
-    phoneNumber: '010-1234-5678', // 임시 전화번호
-    password: 'samplePassword', // 임시 암호
-    gender: '1', // 임시 성별 (1: 남자, 2: 여자)
-    no: 1, // 임시 번호
-  });
-  //
-  // // 이미지 변경 이벤트 핸들러
-  // const handleImageChange = (e) => {
-  //   if (e.target.files[0]) {
-  //     const reader = new FileReader();
-  //     reader.onload = (event) => {
-  //       setMyPageData(prev => ({ ...prev, photo: event.target.result }));
-  //     };
-  //     reader.readAsDataURL(e.target.files[0]);
-  //   }
-  // };
-  //
-  // // 폼 제출 이벤트 핸들러
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Updated data:", myPageData);
-  // };
+  const dispatch = useDispatch();
+  const {user} = useSelector(({auth}) => ({
+    user: auth.user,
+  }));
+
+  const {myPage, myPageError, userNo} = useSelector(({myPage}) => ({
+    myPage: myPage.myPage,
+    myPageError: myPage.myPageError,
+    userNo: user.no,
+  }));
+
+  //컴포넌트 초기 렌터링 때 form 초기화
+  useEffect(() => {
+    dispatch(info(userNo));
+  }, [dispatch, userNo]);
+
+  // 인풋 변경 이벤트 핸들러
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(changeField({ key: name, value }));
+  };
+
+  // 폼 등록 이벤트 핸들러
+  const onSubmit = (e) => {
+    e.preventDefault();
+    // TODO: 폼 데이터를 사용하여 API 호출
+    dispatch(
+        update({
+          photo: myPage.photo,
+          name: myPage.name,
+          nick: myPage.nick,
+          birthDay: myPage.birthDay,
+          email: myPage.email,
+          phoneNumber: myPage.phoneNumber,
+          password: myPage.password,
+          gender: myPage.gender,
+        })
+    );
+  };
 
   return (
-    <MemberInfoUpdateComponent
-      myPageData={myPageData}
-      // handleImageChange={handleImageChange}
-      // handleSubmit={handleSubmit}
-    />
+      <MemberInfoUpdateComponent
+          myPageData={myPage}
+          user={user}
+          myPageError={myPageError}
+          onChange={onChange}
+          onSubmit={onSubmit}
+      />
   );
 };
 
