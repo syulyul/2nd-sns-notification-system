@@ -30,10 +30,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/myPage")
 public class MyPageController {
 
@@ -57,7 +59,8 @@ public class MyPageController {
   }
 
   @GetMapping("{no}")
-  public String detail(
+  @ResponseBody
+  public MyPage detail(
       @PathVariable int no,
       @RequestParam(defaultValue = "") String show,
       @RequestParam(name = "keyword", required = false) String keyword,
@@ -68,7 +71,7 @@ public class MyPageController {
       @ModelAttribute("queryString") String queryString) throws Exception {
     LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
     if (loginUser == null) {
-      return "redirect:/auth/form";
+      return myPageService.get(no);
     }
 
     // 세션에 저장된 방문한 마이페이지 번호 목록을 가져오기
@@ -112,7 +115,7 @@ public class MyPageController {
         break;
     }
     session.setAttribute("loginUser", loginUser);
-    return "myPage/detail";
+    return myPageService.get(no);
   }
 
   @PostMapping("{no}")
@@ -128,7 +131,8 @@ public class MyPageController {
   }
 
   @GetMapping("{no}/info")
-  public String info(
+  @ResponseBody
+  public MyPage info(
       @PathVariable int no,
       Model model,
       HttpServletRequest request,
@@ -141,10 +145,10 @@ public class MyPageController {
     if (request != null) {
       model.addAttribute("request", request);
     } else {
-      return "redirect:/";
+      return myPageService.get(no);
     }
 
-    return "myPage/memberInfoUpdate";
+    return myPage;
   }
 
   @PostMapping("{no}/update")

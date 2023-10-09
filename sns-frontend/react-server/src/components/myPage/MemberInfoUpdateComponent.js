@@ -105,7 +105,8 @@ const StyledH1 = styled.h1`
   text-align: center;
 `;
 
-const MemberInfoUpdateComponent = ({ myPageData }) => {
+const MemberInfoUpdateComponent = ({ myPageData, user }) => {
+const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
     <FormContainer>
       <StyledH1>내 정보 수정</StyledH1>
@@ -120,8 +121,8 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
             /* 이미지 프리뷰 함수 */
           }}
         />
-        {myPageData.photo ? (
-          <UserPhoto src={myPageData.photo} alt="User Profile" />
+        {user.photo ? (
+          <UserPhoto src={profileUrl} alt="User Profile" />
         ) : (
           <UserPhoto
             src={process.env.PUBLIC_URL + '/images/default.jpg'}
@@ -132,12 +133,12 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
 
       <FormGroup>
         <FormLabel>🌱 이름</FormLabel>
-        <FormInput type="text" name="name" value={myPageData.name} readOnly />
+        <FormInput type="text" name="name" value={user.name} readOnly />
       </FormGroup>
 
       <FormGroup>
         <FormLabel>🌱 닉네임</FormLabel>
-        <FormInput type="text" name="nick" value={myPageData.nick} />
+        <FormInput type="text" name="nick" value={user.nick} />
       </FormGroup>
 
       <FormGroup>
@@ -147,7 +148,7 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
 
       <FormGroup>
         <FormLabel htmlFor="email">🌱 이메일</FormLabel>
-        <FormInput type="email" name="email" value={myPageData.email} />
+        <FormInput type="email" name="email" value={user.email} />
       </FormGroup>
 
       <FormGroup>
@@ -155,7 +156,7 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
         <FormInput
           type="tel"
           name="phoneNumber"
-          value={myPageData.phoneNumber}
+          value={user.phoneNumber}
         />
       </FormGroup>
 
@@ -176,7 +177,7 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
         <CustomButton type="submit">수정</CustomButton>
         <CustomButton type="reset">초기화</CustomButton>
       </ButtonContainer>
-      <CustomLink href={`/myPage/${myPageData.no}/update`}>탈퇴하기</CustomLink>
+      <CustomLink href={`/myPage/${user.no}/update`}>탈퇴하기</CustomLink>
     </FormContainer>
   );
 };
