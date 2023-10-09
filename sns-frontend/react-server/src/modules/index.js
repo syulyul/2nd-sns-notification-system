@@ -4,6 +4,7 @@ import loading from './loading';
 import object, { objectSaga } from './exampleAction';
 import auth, { authSaga } from './auth';
 import myPage, {myPageSaga} from "./myPage";
+import board, { boardSaga } from './board';
 
 const rootReducer = combineReducers({
   loading,
@@ -13,7 +14,7 @@ const rootReducer = combineReducers({
 });
 
 export function* rootSaga() {
-  yield all([objectSaga(), authSaga(), myPageSaga()]);
+  yield all([objectSaga(), authSaga(), myPageSaga(), boardSaga()]);
 }
 
 export default rootReducer;
