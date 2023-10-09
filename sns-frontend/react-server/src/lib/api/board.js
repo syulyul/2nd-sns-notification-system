@@ -13,6 +13,11 @@ export const writePost = ({ title, content, files, category }) =>
 export const list = (category) =>
   springClient.get(`board/list?category=${category}`);
 
+// boarddetail
+export const detail = ({category, boardNo}) =>
+    springClient.get(`board/detail?category=${category}&boardNo=${boardNo}`);
+
+
 // 게시글 수정
 export const updatePost = ({ id, title, content, files, category }) =>
   springClient.put(`board/${id}`, {

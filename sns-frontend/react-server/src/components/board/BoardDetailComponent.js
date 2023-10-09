@@ -123,13 +123,13 @@ const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToLi
             </MetaInfo>
             <textarea defaultValue={board.content} readOnly={!board.editable}></textarea>
             <div>
-              {board.attachedFiles.map((file, index) => (
+              {(board && board.attachedFiles) ? board.attachedFiles.map((file, index) => (
                   <div key={index}>
                     <img src={`https://yourImageServer.com/${file.filePath}`} alt="Attached file" />
                     <a href={`https://yourImageServer.com/${file.filePath}`}>Download</a>
                     {board.editable && <a href="#" onClick={() => onDelete(file.no)}>X</a>}
                   </div>
-              ))}
+              )) : null}
             </div>
             <ButtonContainer>
               {board.editable && <StyledButton onClick={onEdit}>변경</StyledButton>}
@@ -154,7 +154,7 @@ const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToLi
         </CommentInputContainer>
 
         <div>
-          {comments.map(comment => (
+          {comments ? comments.map(comment => (
               <CommentContainer key={comment.id}>
                 <CommentMeta>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -165,7 +165,7 @@ const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToLi
                 </CommentMeta>
                 <CommentContent>{comment.content}</CommentContent>
               </CommentContainer>
-          ))}
+          )) : null}
         </div>
 
       </Container>
