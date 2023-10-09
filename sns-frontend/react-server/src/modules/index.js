@@ -11,10 +11,12 @@ const rootReducer = combineReducers({
   object,
   auth,
   myPage,
+  board,
 });
 
 export function* rootSaga() {
   yield all([objectSaga(), authSaga(), myPageSaga(), boardSaga()]);
-}
+});
+
 
 export default rootReducer;

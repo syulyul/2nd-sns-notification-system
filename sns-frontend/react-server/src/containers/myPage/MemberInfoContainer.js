@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
 import {useDispatch, useSelector} from 'react-redux';
 import myPage, { list } from "../../modules/myPage";
+import client from '../../lib/api/springClient';
 
 const MemberInfoContainer = () => {
   const dispatch = useDispatch();

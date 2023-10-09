@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-
 const Sidebar = styled.div`
     float: left;
     width: 430px;
@@ -39,6 +38,26 @@ const SidebarButton = styled.a`
     white-space : nowrap;
     text-decoration-line: none;
     margin: 30px;
+
+    &:hover {
+        background-color: #5d962c;
+        color: white;
+    }
+`;
+
+const ChatRoomListButton = styled.a`
+    font-size: 20px;
+    background-color: #426B1F;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 117px;
+    cursor: pointer;
+    white-space : nowrap;
+    text-decoration-line: none;
+    // margin: 20px;
+    margin-top : 0px;
+    text-item : center;
 
     &:hover {
         background-color: #5d962c;
@@ -98,6 +117,9 @@ const MemberInfoComponent = ({ myPageData, user }) => {
         <ButtonContainer>
           <SidebarButton href={`/myPage/${myPageData.no}?show=followings`}>팔로잉</SidebarButton>
           <SidebarButton href={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
+        </ButtonContainer>
+        <ButtonContainer>
+          <ChatRoomListButton href={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>
         </ButtonContainer>
       </Sidebar>
   );

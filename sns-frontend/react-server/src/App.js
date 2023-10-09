@@ -15,6 +15,7 @@ import MyPagePage from "./pages/MyPagePage";
 import FollowPage from "./pages/FollowPage";
 import PwFindPage from "./pages/PwFindPage";
 import ChatPage from './pages/ChatPage';
+import ChatRoomListPage from './pages/ChatRoomListPage';
 
 function App() {
   return (
@@ -36,7 +37,8 @@ function App() {
           <Route element={<GuestBookPage />} path={'/guestBook/1'} />
           <Route element={<MyPagePage />} path={'/myPage/detail'} />
           <Route element={<FollowPage />} path={'/myPage/follow'} />
-          <Route element={<ChatPage />} path={'/chat'} />
+          <Route element={<ChatPage />} path={'/myPage/:userNo/chat/:room'} />
+          <Route element={<ChatRoomListPage />} path={'/myPage/:userNo/chat/'} />
       </Routes>
       </>
   );

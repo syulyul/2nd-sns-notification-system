@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const MemberListBox = styled.div`
   margin-left: 18px;
@@ -49,7 +50,8 @@ const FollowComponent = ({ followList, session }) => {
           {/*      ) : (*/}
           {/*          <MemberPhoto src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${member.photo}`} />*/}
           {/*      )}*/}
-          <MemberLink href={`#/myPage/${member.no}`}>{member.nick}</MemberLink>
+          <MemberLink href={`/myPage/${member.no}`}>{member.nick}</MemberLink>
+          <Link to={`/myPage/${member.no}/chat`}>채팅하기</Link>
           {session.loginUser.followMemberSet.includes(member.no) ? (
             <ToggleLabel>팔로잉 취소</ToggleLabel>
           ) : (

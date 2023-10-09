@@ -4,7 +4,9 @@ import bitcamp.myapp.interceptor.NotReadNotiCountIntercepter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -52,7 +54,16 @@ public class App implements WebMvcConfigurer {
         .addPathPatterns("/**")
         .excludePathPatterns("/auth/**")
         .excludePathPatterns("/");
-    
+
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**")
+        .allowedOrigins("http://localhost:3000", "http://localhost:3001")
+        .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PATCH.name(),
+            HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.TRACE.name(),
+            HttpMethod.PUT.name(), HttpMethod.OPTIONS.name());
   }
 
   @Bean
