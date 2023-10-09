@@ -29,7 +29,7 @@ function App() {
           <Route element={<PwFindPage />} path={'/auth/find'} />
           <Route element={<BoardFormPage />} path={'/board/form'} />
           <Route element={<BoardListPage />} path={'/board/list'} />
-          <Route element={<BoardDetailPage />} path={'/board/detail'} />
+          <Route element={<BoardDetailPage />} path={'/board/detail/:category/:boardNo'} />
           <Route element={<NotificationListPage />} path={'/notification/list'} />
           <Route element={<MemberInfoPage />} path={'/myPage/:userNo'} />
           <Route element={<MemberInfoUpdatePage />} path={'/myPage/info'} />

@@ -10,7 +10,9 @@ import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -89,28 +91,28 @@ public class BoardController {
     }
   }
 
-  @GetMapping("detail/{category}/{no}")
-  public String detail(
-      @PathVariable int category,
-      @PathVariable int no,
-      Model model) throws Exception {
+  @GetMapping("detail")
+  public ResponseEntity<Map<String, Object>> detail(
+       int category,
+       int boardNo) throws Exception {
 
-    Board board = boardService.get(no);
+    Map<String, Object> response = new HashMap<>();
+
+    Board board = boardService.get(boardNo);
     if (board != null) {
-      boardService.increaseViewCount(no);
-      model.addAttribute("board", board);
+      boardService.increaseViewCount(boardNo);
+      response.put("board", board);
     }
 
     // 좋아요 누른 사람들 닉네임 조회
-    List<String> likedUserNicknames = boardService.boardlikelist(no);
-    model.addAttribute("likedUserNicknames", likedUserNicknames);
+    List<String> likedUserNicknames = boardService.boardlikelist(boardNo);
+    response.put("likedUserNicknames", likedUserNicknames);
 
     // 댓글 조회
-    List<BoardComment> comments = null;
-    comments = boardCommentService.list(no);
-    model.addAttribute("comments", comments);
+    List<BoardComment> comments = boardCommentService.list(boardNo);
+    response.put("comments", comments);
 
-    return "board/detail";
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
 
