@@ -1,3 +1,3 @@
-import client from './client';
+import client from './springClient';
 
-export const list = (userNo) => client.get(`/spring/myPage/${userNo}`);
+export const list = (userNo) => client.get(`/myPage/${userNo}`);
