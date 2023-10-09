@@ -16,3 +16,9 @@ export const update = ({ photo, name, nick, birthDay, email, phoneNumber, passwo
           password,
           gender,
         });
+
+export const follow = (followingNo) =>
+    springClient.get(`/myPage/follow?followingNo=${followingNo}`);
+
+export const unfollow = (followingNo) =>
+    springClient.get(`/myPage/unfollow?followingNo=${followingNo}`);
