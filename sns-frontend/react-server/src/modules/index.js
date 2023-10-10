@@ -6,6 +6,7 @@ import auth, { authSaga } from './auth';
 import myPage, { myPageSaga } from './myPage';
 import board, { boardSaga } from './board';
 import notification, { notificationSaga } from './notification';
+import guestBook, {guestBookSaga} from "./guestBook";
 
 const rootReducer = combineReducers({
   loading,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   auth,
   myPage,
   board,
+  guestBook,
   notification,
 });
 
@@ -22,6 +24,7 @@ export function* rootSaga() {
     authSaga(),
     myPageSaga(),
     boardSaga(),
+    guestBookSaga(),
     notificationSaga(),
   ]);
 }

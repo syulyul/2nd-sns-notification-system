@@ -1,37 +1,27 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import GuestBookComponent from '../../components/guestBook/GuestBookComponent';
+import guestBook, {list} from "../../modules/guestBook";
+import {useDispatch, useSelector} from "react-redux";
 
 const GuestBookContainer = () => {
+  const dispatch = useDispatch();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
-  const [guestBookList] = useState([
-    {
-      no: 1,
-      title: '방명록제목1',
-      content: '방명록내용1',
-      createdAt: '2023-10-04 14:30:00',
-      writer: {
-        no: 1,
-        nick: 'User1',
-        photo: null,
-      },
-    },
-    {
-      no: 2,
-      title: '방명록제목2',
-      content: '방명록내용2',
-      createdAt: '2023-10-04 15:45:00',
-      writer: {
-        no: 2,
-        nick: 'User2',
-        photo: null,
-      },
-    },
-  ]);
+  const { guestBookList, error, userNo, guestBookOwnerNick} = useSelector(
+      ({auth, guestBook}) => ({
+        guestBookList: guestBook.guestBookList,
+        error: guestBook.guestBookError,
+        guestBookOwnerNick: guestBook.guestBookOwnerNick,
+        userNo: auth.user.no,
+      }));
+
+  useEffect(() => {
+    dispatch(list(userNo));
+  }, [dispatch, userNo]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
 
     if (name === 'title') {
       setTitle(value);
@@ -53,6 +43,7 @@ const GuestBookContainer = () => {
           onChange={handleChange}
           onSubmit={handleSubmit}
           guestBookList={guestBookList}
+          guestBookOwnerNick={guestBookOwnerNick}
       />
   );
 };
