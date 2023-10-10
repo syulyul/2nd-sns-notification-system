@@ -1,19 +1,22 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
 import {useDispatch, useSelector} from 'react-redux';
-import myPage, { list } from "../../modules/myPage";
-import client from '../../lib/api/springClient';
+import { list, follow, initializeForm } from "../../modules/myPage";
+import { useNavigate } from 'react-router-dom';
 
 const MemberInfoContainer = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
   const {user} = useSelector(({auth}) => ({
     user: auth.user,
   }));
 
-  const {myPage, myPageError, userNo} = useSelector(({myPage}) => ({
+  const {myPage, myPageError, userNo, followingNo} = useSelector(({myPage}) => ({
     myPage: myPage.myPage,
     myPageError: myPage.myPageError,
     userNo: user.no,
+    followingNo: myPage.followingNo
   }));
 
   //컴포넌트 초기 렌터링 때 form 초기화
@@ -25,9 +28,19 @@ const MemberInfoContainer = () => {
   if (myPageError) {
     return <div>오류가 발생했습니다: {myPageError.message}</div>;
   }
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(follow({ followingNo }));
+    dispatch(initializeForm());
+    navigate(`/myPage/${user.no}?show=followings`);
+
+  };
+
 
   return (
       <MemberInfoComponent
+          onSubmit={onSubmit}
+          follow={followingNo}
           myPageData={myPage}
           user={user}/>
   );

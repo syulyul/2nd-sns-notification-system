@@ -46,7 +46,9 @@ export const update = createAction(
 
 export const list = createAction(LIST, (userNo) => (userNo));
 export const info = createAction(INFO, (userNo) => (userNo));
-export const follow = createAction(FOLLOW, (followingNo) => ({ followingNo }));
+export const follow = createAction(FOLLOW, ({ followingNo })  => ({
+  followingNo
+}));
 export const unfollow = createAction(UNFOLLOW, (followingNo) => ({ followingNo }));
 
 const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
@@ -81,6 +83,8 @@ const myPage = handleActions(
 
         myPage: [],
         userNo: 0,
+        followList: [], // 팔로워 목록을 저장할 배열
+
       }),
 
       [UPDATE_SUCCESS]: (state, { payload: myPage }) => ({

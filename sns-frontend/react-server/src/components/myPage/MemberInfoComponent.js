@@ -96,16 +96,16 @@ const StateMessageTextarea = styled.textarea`
     resize: none;
 `;
 
-const MemberInfoComponent = ({ myPageData, user }) => {
-  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
+const MemberInfoComponent = ({ myPageData,follow, onSubmit }) => {
+  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
       <Sidebar>
         <p>🌱 총 방문자 수 {myPageData.visitCount}</p>
-        {user.photo
+        {myPageData.photo
             ? <ProfilePic src={profileUrl} alt="프로필 사진" />
             : <ProfilePic src='/images/default.jpg' alt="기본 이미지" />
         }
-        <h2>{user.nick}</h2>
+        <h2>{myPageData.nick}</h2>
         <StateMessageLabel>상태메시지</StateMessageLabel>
         <EditInfoLink to={`/myPage/${myPageData.no}/info`}>내 정보 수정</EditInfoLink>
         <StateMessageTextarea
@@ -115,8 +115,8 @@ const MemberInfoComponent = ({ myPageData, user }) => {
         />
 
         <ButtonContainer>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followings`}>팔로잉</SidebarButton>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
+          <SidebarButton type="submit" onClick={onSubmit}>팔로잉</SidebarButton>
+          {/*<SidebarButton href={`/myPage/${follow.no}?show=followers`}>팔로워</SidebarButton>*/}
         </ButtonContainer>
         <ButtonContainer>
           <ChatRoomListButton href={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>

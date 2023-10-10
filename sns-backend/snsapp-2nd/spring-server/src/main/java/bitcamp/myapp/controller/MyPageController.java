@@ -249,7 +249,8 @@ public class MyPageController {
   }
 
   @GetMapping("follow")
-  public void follow(
+  @ResponseBody
+  public Map<String, Object> follow(
       @RequestParam("followingNo") int followingNo,
       HttpSession session,
       HttpServletResponse response) throws Exception {
@@ -273,6 +274,7 @@ public class MyPageController {
       }
     }
 
+    return returnMap;
   }
 
   @GetMapping("unfollow")
