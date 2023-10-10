@@ -19,7 +19,7 @@ const NotificationListContainer = () => {
 
   useEffect(() => {
     dispatch(notiList({ memberNo: 1, limit: 10, page: 1 }));
-  }, [error, dispatch]);
+  }, [dispatch]);
 
   return <NotificationListComponent notificationData={notificationData} />;
 };

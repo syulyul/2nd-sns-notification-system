@@ -20,10 +20,11 @@ if (NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 
-var corsOptions = {
-  origin: 'http://localhost:3000',
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  credential: 'true',
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
