@@ -1,16 +1,16 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
-import {useDispatch, useSelector} from 'react-redux';
-import myPage, { list } from "../../modules/myPage";
+import { useDispatch, useSelector } from 'react-redux';
+import myPage, { list } from '../../modules/myPage';
 import client from '../../lib/api/springClient';
 
 const MemberInfoContainer = () => {
   const dispatch = useDispatch();
-  const {user} = useSelector(({auth}) => ({
+  const { user } = useSelector(({ auth }) => ({
     user: auth.user,
   }));
 
-  const {myPage, myPageError, userNo} = useSelector(({myPage}) => ({
+  const { myPage, myPageError, userNo } = useSelector(({ myPage }) => ({
     myPage: myPage.myPage,
     myPageError: myPage.myPageError,
     userNo: user.no,
@@ -26,11 +26,7 @@ const MemberInfoContainer = () => {
     return <div>오류가 발생했습니다: {myPageError.message}</div>;
   }
 
-  return (
-      <MemberInfoComponent
-          myPageData={myPage}
-          user={user}/>
-  );
+  return <MemberInfoComponent myPageData={myPage} user={user} />;
 };
 
 export default MemberInfoContainer;

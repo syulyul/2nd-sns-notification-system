@@ -61,6 +61,7 @@ public class App implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
         .allowedOrigins("http://localhost:3000", "http://localhost:3001")
+        .allowCredentials(true)
         .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PATCH.name(),
             HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.TRACE.name(),
             HttpMethod.PUT.name(), HttpMethod.OPTIONS.name());

@@ -129,28 +129,28 @@ public class AuthController {
 
   @GetMapping("/check")
   public LoginUser check(
-      HttpServletRequest request) {
+      HttpServletRequest request,
+      @CookieValue("sessionId") Cookie sessionCookie) {
 
     LoginUser loginUserObject = null;
     try {
-      for (Cookie cookie : request.getCookies()) {
-        if (cookie.getName().equals("sessionId")) {
-          String sessionId = cookie.getValue();
-          // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
+      String sessionId = sessionCookie.getValue();
+//      System.out.println(sessionId);
+      
+      // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
 //          String temp = (String) redisService.getValuleOps()
 //              .getAndExpire(sessionId, 1, TimeUnit.DAYS);
-          String temp = (String) redisService.getValuleOps().get(sessionId);
-          if (temp != null) {
-            int loginUserNo = Integer.parseInt(temp);
-            loginUserObject = new LoginUser(memberService.get(loginUserNo));
-            loginUserObject.setFollowMemberSet(
-                new HashSet<>(myPageService.followingList(loginUserNo)));
-            loginUserObject.setLikeBoardSet(
-                new HashSet<>(boardService.likelist(loginUserNo)));
-            loginUserObject.setLikedGuestBookSet(
-                new HashSet<>(guestBookService.likelist(loginUserNo)));
-          }
-        }
+      String temp = (String) redisService.getValuleOps().get(sessionId);
+      if (temp != null) {
+        int loginUserNo = Integer.parseInt(temp);
+        loginUserObject = new LoginUser(memberService.get(loginUserNo));
+        loginUserObject.setFollowMemberSet(
+            new HashSet<>(myPageService.followingList(loginUserNo)));
+        loginUserObject.setLikeBoardSet(
+            new HashSet<>(boardService.likelist(loginUserNo)));
+        loginUserObject.setLikedGuestBookSet(
+            new HashSet<>(guestBookService.likelist(loginUserNo)));
+
       }
     } catch (Exception e) {
       e.printStackTrace();
