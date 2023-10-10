@@ -4,35 +4,61 @@ import BoardFormComponent from '../../components/board/BoardFormComponent';
 import { useState, useEffect } from 'react';
 import { changeField, initializeForm, form } from '../../modules/board';
 
-
 const BoardFormContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
-  const { category, title, content, files, boardError, board } = useSelector(
-      ({ board }) => ({
-        category: board.category,
-        title: board.title,
-        content: board.content,
-        files: board.attachedFiles,
-        boardError: board.boardError,
-        board: board.board,
-      })
-  );
+  const { category, title, content, files, boardError, board, user } =
+    useSelector(({ board, auth }) => ({
+      category: board.category,
+      title: board.title,
+      content: board.content,
+      files: board.attachedFiles,
+      boardError: board.boardError,
+      board: board.board,
+      user: auth.user,
+    }));
 
   const onChange = (e) => {
     const { value, name } = e.target;
     dispatch(
-        changeField({
-          key: name,
-          value,
-        })
+      changeField({
+        key: name,
+        value,
+      })
     );
+  };
+
+  let formData = new FormData();
+  formData.append('files', null);
+  const onChangeFile = (e) => {
+    const { files } = e.target;
+    formData = new FormData();
+    for (let i = 0; files[i] != null; i++) {
+      formData.append('files', files[i]);
+    }
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(form({ title, content, files, category }));
+    formData.append(
+      'data',
+      new Blob(
+        [
+          JSON.stringify({
+            title,
+            content,
+            files,
+            category,
+            writer: user,
+          }),
+        ],
+        {
+          type: 'application/json',
+        }
+      )
+    );
+    dispatch(form({ formData }));
     dispatch(initializeForm());
   };
 
@@ -55,14 +81,15 @@ const BoardFormContainer = () => {
   }, [board, boardError, dispatch]);
 
   return (
-      <BoardFormComponent
-          title={title}
-          content={content}
-          files={files}
-          category={category}
-          onChange={onChange}
-          onSubmit={onSubmit}
-      />
+    <BoardFormComponent
+      title={title}
+      content={content}
+      files={files}
+      category={category}
+      onChange={onChange}
+      onChangeFile={onChangeFile}
+      onSubmit={onSubmit}
+    />
   );
 };
 
