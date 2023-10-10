@@ -2,20 +2,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import RegisterComponent from '../../components/auth/RegisterComponent';
 import { changeField, initializeForm, register } from '../../modules/auth';
+import { useEffect } from 'react';
 
 const RegisterContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { nick, name, phoneNumber, password, verificationCode, authError } =
-    useSelector(({ auth }) => ({
-      nick: auth.nick,
-      name: auth.name,
-      phoneNumber: auth.phoneNumber,
-      password: auth.password,
-      photo: auth.photo,
-      verificationCode: auth.verificationCode,
-      authError: auth.authError,
-    }));
+  const {
+    nick,
+    name,
+    phoneNumber,
+    password,
+    verificationCode,
+    authError,
+    user,
+  } = useSelector(({ auth }) => ({
+    nick: auth.nick,
+    name: auth.name,
+    phoneNumber: auth.phoneNumber,
+    password: auth.password,
+    photo: auth.photo,
+    verificationCode: auth.verificationCode,
+    authError: auth.authError,
+    user: auth.user,
+  }));
 
   let formData = new FormData();
   formData.append('files', null);
@@ -46,6 +55,20 @@ const RegisterContainer = () => {
     dispatch(register({ formData }));
     dispatch(initializeForm());
   };
+
+  useEffect(() => {
+    if (authError) {
+      console.log('오류 발생');
+      console.log(authError);
+      return;
+    }
+    if (user) {
+      console.log('로그인 성공');
+      console.log(user);
+      // navigate(`/`);
+      navigate(`/myPage/${user.no}`);
+    }
+  }, [user, authError, dispatch]);
 
   const onAuthPhoneNumber = (e) => {
     dispatch();
