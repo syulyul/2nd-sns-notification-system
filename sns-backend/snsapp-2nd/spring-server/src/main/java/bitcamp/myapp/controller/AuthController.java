@@ -81,7 +81,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public LoginUser login(
+  public ResponseEntity login(
       @RequestBody Member member,
       HttpServletResponse response) {
     String phoneNumber = member.getPhoneNumber();
@@ -92,6 +92,7 @@ public class AuthController {
     try {
       // 여기에서 phoneNumber와 password를 사용하여 회원 정보를 검증합니다.
       Member loginUser = memberService.get(phoneNumber, password);
+
       if (loginUser != null) {
         // 로그인 성공 시 처리
         // 쿠키 설정
@@ -114,12 +115,16 @@ public class AuthController {
 
         int notReadNotiCount = notificationService.notReadNotiLogCount(loginUser.getNo());
         context.setAttribute("notReadNotiCount" + loginUser.getNo(), notReadNotiCount);
+      } else { // 해당하는 유저가 없을 경우
+        System.out.println(loginUser + "@@@@");
+        return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       e.printStackTrace();
       // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
-    return loginUserObject;
+    return new ResponseEntity<>(loginUserObject, HttpStatus.OK);
   }
 
   @GetMapping("/check")
