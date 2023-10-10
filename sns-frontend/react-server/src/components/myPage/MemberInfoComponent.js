@@ -27,7 +27,7 @@ const ButtonContainer = styled.div`
     justify-content: center;
 `;
 
-const SidebarButton = styled.a`
+const SidebarButton = styled.button`
     font-size: 20px;
     background-color: #426B1F;
     color: white;

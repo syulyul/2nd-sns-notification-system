@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -256,8 +257,8 @@ public class MyPageController {
 
   @GetMapping("follow")
   @ResponseBody
-  public Map<String, Object> follow(
-      @RequestParam("followingNo") int followingNo,
+  public ResponseEntity follow(
+      @RequestParam("followingNo") int followingNo, // 직접 쿼리 파라미터로 받도록 수정
       HttpSession session,
       HttpServletResponse response) throws Exception {
     LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
@@ -280,7 +281,7 @@ public class MyPageController {
       }
     }
 
-    return returnMap;
+    return new ResponseEntity<>(followingNo, HttpStatus.OK);
   }
 
   @GetMapping("unfollow")
