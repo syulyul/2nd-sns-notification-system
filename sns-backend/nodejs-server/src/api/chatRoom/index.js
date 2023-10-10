@@ -7,7 +7,7 @@ chatRoom.get("/room", roomCtrl.roomList);
 
 // chatRoom.post("/room", roomCtrl.createRoom);
 
-chatRoom.get("/room/:room", roomCtrl.enterRoom);
+chatRoom.get("/enterRoom", roomCtrl.enterRoom);
 
 chatRoom.get("/room/:room", roomCtrl.removeRoom);
 

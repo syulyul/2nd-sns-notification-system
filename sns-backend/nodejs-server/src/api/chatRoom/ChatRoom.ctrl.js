@@ -1,5 +1,6 @@
 import Chat from "../../schemas/chat";
 import Room from "../../schemas/room";
+import User from "../../schemas/user";
 
 export const roomList = async (req, res, next) => {
   try {
@@ -18,16 +19,15 @@ export const roomList = async (req, res, next) => {
 
 export const enterRoom = async (req, res, next) => {
   try {
-    let room = await Room.findOne({ _id: req.params.id });
+    let room = await Room.find({users: {$all: [req.query.mno1, req.query.mno2]}})
     if (!room) {
       room = await Room.create({
-            title : req.body.nick,
+            users : [req.query.mno1, req.query.mno2],
           });
           const io = req.app.get("io");
           io.of("/room").emit("newRoom", room);
-          res.redirect(`/room/${room._id}`);
     };
-
+    res.json(room);
   } catch (error) {
     console.error(error);
     return next(error);
