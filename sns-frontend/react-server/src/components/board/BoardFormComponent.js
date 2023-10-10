@@ -69,7 +69,7 @@ const StyledButton = styled.button`
     margin: 10px auto;
 `;
 
-const BoardFormComponent = ({ boardFormData }) => {
+const BoardFormComponent = ({ title, content, files, category, onChange, onSubmit }) => {
   return (
       <BoardFormContainer>
         <TitleStyle>🌱글쓰기🌱</TitleStyle>
@@ -78,18 +78,24 @@ const BoardFormComponent = ({ boardFormData }) => {
               type="text"
               name="title"
               placeholder="제목을 입력하세요"
+              value={title || ""}  // 예외 처리 추가
+              onChange={onChange}
           />
           <StyledTextarea
               name="content"
               placeholder="내용을 입력하세요"
+              value={content || ""}  // 예외 처리 추가
+              onChange={onChange}
           />
           <StyledInput
               type="file"
               name="files"
               multiple
-              placeholder="제목을 입력하세요"
+              placeholder="파일을 선택하세요"
+              value={files || ""}  // 예외 처리 추가
+              onChange={onChange}
           />
-          <StyledButton type="submit">등록</StyledButton>
+          <StyledButton type="submit" onClick={onSubmit}>등록</StyledButton>
         </StyledForm>
       </BoardFormContainer>
   );

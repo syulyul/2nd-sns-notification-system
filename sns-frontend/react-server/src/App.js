@@ -28,7 +28,7 @@ function App() {
           <Route element={<LoginPage />} path={'/auth/login'} />
           <Route element={<RegisterPage />} path={'/auth/register'} />
           <Route element={<PwFindPage />} path={'/auth/find'} />
-          <Route element={<BoardFormPage />} path={'/board/form'} />
+          <Route element={<BoardFormPage />} path={'/board/form/:category'} />
           <Route element={<BoardListPage />} path={'/board/list'} />
           <Route element={<BoardDetailPage />} path={'/board/detail/:category/:boardNo'} />
           <Route element={<NotificationListPage />} path={'/notification/list'} />
