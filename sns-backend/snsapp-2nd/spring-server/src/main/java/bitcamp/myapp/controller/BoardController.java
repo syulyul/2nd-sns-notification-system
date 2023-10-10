@@ -52,7 +52,7 @@ public class BoardController {
 
   @PostMapping("add")
   public ResponseEntity add(@RequestPart("data") Board board,
-      @RequestPart(value = "files", required = true) MultipartFile[] files) throws Exception {
+      @RequestPart(value = "files", required = false) MultipartFile[] files) throws Exception {
     System.out.println(board);
     Member loginUser = board.getWriter();
     if (loginUser == null) {
@@ -61,13 +61,15 @@ public class BoardController {
 
     try {
       ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
-      for (MultipartFile part : files) {
-        if (part.getSize() > 0) {
-          String uploadFileUrl = ncpObjectStorageService.uploadFile(
-              "bitcamp-nc7-bucket-14", "sns_board/", part);
-          BoardPhoto attachedFile = new BoardPhoto();
-          attachedFile.setFilePath(uploadFileUrl);
-          attachedFiles.add(attachedFile);
+      if (files != null) {
+        for (MultipartFile part : files) {
+          if (part.getSize() > 0) {
+            String uploadFileUrl = ncpObjectStorageService.uploadFile(
+                "bitcamp-nc7-bucket-14", "sns_board/", part);
+            BoardPhoto attachedFile = new BoardPhoto();
+            attachedFile.setFilePath(uploadFileUrl);
+            attachedFiles.add(attachedFile);
+          }
         }
       }
       board.setAttachedFiles(attachedFiles);

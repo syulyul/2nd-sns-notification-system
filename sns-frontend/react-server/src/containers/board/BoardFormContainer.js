@@ -37,7 +37,6 @@ const BoardFormContainer = () => {
     for (let i = 0; files[i] != null; i++) {
       formData.append('files', files[i]);
     }
-    console.log(formData.get('files'));
   };
 
   const onSubmit = (e) => {
