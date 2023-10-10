@@ -34,7 +34,7 @@ function App() {
           <Route element={<NotificationListPage />} path={'/notification/list'} />
           <Route element={<MemberInfoPage />} path={'/myPage/:userNo'} />
           <Route element={<MemberInfoUpdatePage />} path={'/myPage/:userNo/info'} />
-          <Route element={<GuestBookPage />} path={'/guestBook/1'} />
+          <Route element={<GuestBookPage />} path={'/guestBook/:userNo'} />
           <Route element={<MyPagePage />} path={'/myPage/detail'} />
           <Route element={<FollowPage />} path={'/myPage/follow'} />
           <Route element={<ChatPage />} path={'/myPage/:userNo/chat/:room'} />

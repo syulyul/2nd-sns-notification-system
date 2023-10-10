@@ -153,16 +153,21 @@ const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToLi
         </CommentInputContainer>
 
         <div>
-          {comments && comments.length > 0 ? comments.map(comment => (
-              <CommentContainer key={comment.id}>
+          {comments && comments.length > 0 ? comments.map(boardComment => (
+              <CommentContainer key={boardComment.id}>
                 <CommentMeta>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <ProfileImage src={comment && comment.user ? `https://yourImageServer.com/${comment.user.profileImage}` : "/images/default.png"} alt={comment && comment.user ? comment.user.name : 'Unknown'} />
-                    <span>{comment && comment.user ? comment.user.name : 'Unknown'}</span>
+                    <ProfileImage
+                        src={boardComment && boardComment.writer.photo ?
+                            `https://yourImageServer.com/${boardComment.writer.photo}` :
+                            "/images/default.png"}
+                        alt={boardComment && boardComment.writer.nick ? boardComment.writer.nick : 'Unknown'}
+                    />
+                    <span>{boardComment && boardComment.writer ? boardComment.writer.nick : 'Unknown'}</span>
                   </div>
-                  <span>{comment && comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'Unknown date'}</span>
+                  <span>{boardComment && boardComment.createdAt ? new Date(boardComment.createdAt).toLocaleDateString() : 'Unknown date'}</span>
                 </CommentMeta>
-                <CommentContent>{comment ? comment.content : ''}</CommentContent>
+                <CommentContent>{boardComment ? boardComment.content : ''}</CommentContent>
               </CommentContainer>
           )) : null}
         </div>

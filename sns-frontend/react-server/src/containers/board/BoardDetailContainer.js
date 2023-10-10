@@ -8,15 +8,36 @@ const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   // const { board, boardError } = useSelector(state => state.board);
 
-  const { board = {}, boardError } = useSelector(state => ({
-    board: state.board.board || {
-      title: 'Loading...',
-      content: 'Loading...'
+  const boardDefault = {
+    title: 'Loading...',
+    content: 'Loading...',
+    writer: {
+      nick: 'Loading...'
     },
+    attachedFiles: [],
+    editable: false,
+    liked: false,
+    viewCount: 0,
+    createdAt: new Date().toISOString()
+  };
+
+  const commentDefault = {
+    content: 'Loading...',
+    writer: {
+      nick: 'Loading...'
+    },
+    createdAt: new Date().toISOString()
+  };
+
+  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError }  = useSelector(state => ({
+    board: state.board.board,
+    comments: state.board.comments,
     boardError: state.board.boardError
   }));
 
   const { boardNo, category } = useParams();
+
+
 
   useEffect(() => {
     dispatch(detail({ category, boardNo }));
@@ -26,7 +47,10 @@ const BoardDetailContainer = () => {
     return <div>Error occurred: {boardError.message}</div>;
   }
 
-  return <BoardDetailComponent board={board} />;
+  return <BoardDetailComponent
+      board={board}
+      comments={comments}
+  />;
 };
 
 export default BoardDetailContainer;
