@@ -17,21 +17,12 @@ export const detail = ({ category, boardNo }) =>
   springClient.get(`board/detail?category=${category}&boardNo=${boardNo}`);
 
 // 게시글 수정
-export const updatePost = ({ id, title, content, files, category }) =>
-  springClient.put(
-    `board/${id}`,
-    {
-      title,
-      content,
-      category,
+export const updatePost = ({ id, formData }) =>
+  springClient.put(`board/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
     },
-    files,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-  );
+  });
 
 // 게시글 삭제
 export const deletePost = (postId) => springClient.delete(`board/${postId}`);

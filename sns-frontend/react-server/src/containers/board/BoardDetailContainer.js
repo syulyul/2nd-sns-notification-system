@@ -8,12 +8,9 @@ const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   // const { board, boardError } = useSelector(state => state.board);
 
-  const { board = {}, boardError } = useSelector(state => ({
-    board: state.board.board || {
-      title: 'Loading...',
-      content: 'Loading...'
-    },
-    boardError: state.board.boardError
+  const { board = {}, boardError } = useSelector((state) => ({
+    board: state.board.board,
+    boardError: state.board.boardError,
   }));
 
   const { boardNo, category } = useParams();
