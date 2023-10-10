@@ -1,12 +1,11 @@
 import springClient from './springClient';
 
 // boardform
-export const form = ({ title, content, files, category }) =>
-  springClient.post('board/add', {
-    title,
-    content,
-    files,
-    category
+export const form = ({ formData }) =>
+  springClient.post('board/add', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
 // boardlist
@@ -14,17 +13,15 @@ export const list = (category) =>
   springClient.get(`board/list?category=${category}`);
 
 // boarddetail
-export const detail = ({category, boardNo}) =>
-    springClient.get(`board/detail?category=${category}&boardNo=${boardNo}`);
-
+export const detail = ({ category, boardNo }) =>
+  springClient.get(`board/detail?category=${category}&boardNo=${boardNo}`);
 
 // 게시글 수정
-export const updatePost = ({ id, title, content, files, category }) =>
-  springClient.put(`board/${id}`, {
-    title,
-    content,
-    files,
-    category,
+export const updatePost = ({ id, formData }) =>
+  springClient.put(`board/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
 // 게시글 삭제

@@ -37,8 +37,6 @@ const BoardDetailContainer = () => {
 
   const { boardNo, category } = useParams();
 
-
-
   useEffect(() => {
     dispatch(detail({ category, boardNo }));
   }, [dispatch, category, boardNo]);
