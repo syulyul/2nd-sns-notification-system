@@ -6,15 +6,14 @@ import MemberInfoUpdateComponent
 
 const MemberInfoUpdateContainer = () => {
   const dispatch = useDispatch();
-  const {user} = useSelector(({auth}) => ({
-    user: auth.user,
-  }));
-
-  const {myPage, myPageError, userNo} = useSelector(({myPage}) => ({
-    myPage: myPage.myPage,
-    myPageError: myPage.myPageError,
-    userNo: user.no,
-  }));
+  const { user, myPage, myPageError, userNo } = useSelector(
+      ({ auth, myPage }) => ({
+        user: auth.user,
+        myPage: myPage.myPage,
+        myPageError: myPage.myPageError,
+        userNo: auth.user.no,
+      })
+  );
 
   //컴포넌트 초기 렌터링 때 form 초기화
   useEffect(() => {
@@ -33,10 +32,11 @@ const MemberInfoUpdateContainer = () => {
     // TODO: 폼 데이터를 사용하여 API 호출
     dispatch(
         update({
+          userNo: myPage.no,
           photo: myPage.photo,
           name: myPage.name,
           nick: myPage.nick,
-          birthDay: myPage.birthDay,
+          birthday: myPage.birthday,
           email: myPage.email,
           phoneNumber: myPage.phoneNumber,
           password: myPage.password,
@@ -48,7 +48,6 @@ const MemberInfoUpdateContainer = () => {
   return (
       <MemberInfoUpdateComponent
           myPageData={myPage}
-          user={user}
           myPageError={myPageError}
           onChange={onChange}
           onSubmit={onSubmit}
