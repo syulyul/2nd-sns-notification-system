@@ -196,7 +196,7 @@ public class AuthController {
   public ResponseEntity add(
       @RequestPart("data") Member member,
       @RequestPart(value = "files", required = false) MultipartFile[] files,
-      Model model) throws Exception {
+      HttpServletResponse response) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
     try {
@@ -207,9 +207,17 @@ public class AuthController {
           member.setPhoto(uploadFileUrl);
         }
       }
+
       memberService.add(member);
       MyPage myPage = new MyPage(member);
       myPageService.add(myPage);
+
+      String sessionId = UUID.randomUUID().toString();
+      Cookie cookie = new Cookie("sessionId", sessionId);
+      cookie.setPath("/");
+      response.addCookie(cookie);
+      redisService.getValuleOps()
+          .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.HOURS);
 
       RestTemplate restTemplate = new RestTemplate();
 
@@ -222,14 +230,12 @@ public class AuthController {
 
       // Request
       String url = "http://localhost:3001/node/user/add";
-      ResponseEntity<String> response = restTemplate.postForEntity(url, requestMessage,
+      ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
           String.class);
 
       return new ResponseEntity<>(member, HttpStatus.OK);
 
     } catch (Exception e) {
-      model.addAttribute("message", "회원 등록 오류!");
-      model.addAttribute("refresh", "2;url=list");
       e.printStackTrace();
       return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
@@ -318,4 +324,5 @@ public class AuthController {
       return new ResponseEntity<>("비밀번호 변경 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  
 }
