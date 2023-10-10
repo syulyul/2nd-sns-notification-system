@@ -81,7 +81,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public LoginUser login(
+  public ResponseEntity login(
       @RequestBody Member member,
       HttpServletResponse response) {
     String phoneNumber = member.getPhoneNumber();
@@ -92,6 +92,7 @@ public class AuthController {
     try {
       // 여기에서 phoneNumber와 password를 사용하여 회원 정보를 검증합니다.
       Member loginUser = memberService.get(phoneNumber, password);
+
       if (loginUser != null) {
         // 로그인 성공 시 처리
         // 쿠키 설정
@@ -114,44 +115,51 @@ public class AuthController {
 
         int notReadNotiCount = notificationService.notReadNotiLogCount(loginUser.getNo());
         context.setAttribute("notReadNotiCount" + loginUser.getNo(), notReadNotiCount);
+      } else { // 해당하는 유저가 없을 경우
+        System.out.println(loginUser + "@@@@");
+        return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       e.printStackTrace();
       // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
-    return loginUserObject;
+    return new ResponseEntity<>(loginUserObject, HttpStatus.OK);
   }
 
   @GetMapping("/check")
-  public LoginUser check(
-      HttpServletRequest request) {
+  public ResponseEntity check(
+      HttpServletRequest request,
+      @CookieValue("sessionId") Cookie sessionCookie) {
 
     LoginUser loginUserObject = null;
     try {
-      for (Cookie cookie : request.getCookies()) {
-        if (cookie.getName().equals("sessionId")) {
-          String sessionId = cookie.getValue();
-          // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
+      String sessionId = sessionCookie.getValue();
+//      System.out.println(sessionId);
+
+      // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
 //          String temp = (String) redisService.getValuleOps()
 //              .getAndExpire(sessionId, 1, TimeUnit.DAYS);
-          String temp = (String) redisService.getValuleOps().get(sessionId);
-          if (temp != null) {
-            int loginUserNo = Integer.parseInt(temp);
-            loginUserObject = new LoginUser(memberService.get(loginUserNo));
-            loginUserObject.setFollowMemberSet(
-                new HashSet<>(myPageService.followingList(loginUserNo)));
-            loginUserObject.setLikeBoardSet(
-                new HashSet<>(boardService.likelist(loginUserNo)));
-            loginUserObject.setLikedGuestBookSet(
-                new HashSet<>(guestBookService.likelist(loginUserNo)));
-          }
-        }
+      String temp = (String) redisService.getValuleOps().get(sessionId);
+      if (temp != null) {
+        int loginUserNo = Integer.parseInt(temp);
+        loginUserObject = new LoginUser(memberService.get(loginUserNo));
+        loginUserObject.setFollowMemberSet(
+            new HashSet<>(myPageService.followingList(loginUserNo)));
+        loginUserObject.setLikeBoardSet(
+            new HashSet<>(boardService.likelist(loginUserNo)));
+        loginUserObject.setLikedGuestBookSet(
+            new HashSet<>(guestBookService.likelist(loginUserNo)));
+
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       e.printStackTrace();
       // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
-    return loginUserObject;
+    return new ResponseEntity<>(loginUserObject, HttpStatus.OK);
   }
 
   @GetMapping("logout")

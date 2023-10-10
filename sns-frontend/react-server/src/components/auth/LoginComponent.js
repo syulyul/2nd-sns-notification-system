@@ -78,7 +78,7 @@ const SubmitButton = styled(Button)`
 const LoginComponent = ({ phoneNumber, password, onChange, onSubmit }) => {
   return (
     <AuthTemplate>
-      <img src="/images/logo.png" alt="로고" class="logo" />
+      <img src="/images/logo.png" alt="로고" className="logo" />
       <div id="login-error-msg-holder">
         <p id="login-error-msg">
           Invalid username{' '}
@@ -103,16 +103,16 @@ const LoginComponent = ({ phoneNumber, password, onChange, onSubmit }) => {
         <SubmitButton type="submit" onClick={onSubmit}>
           로그인
         </SubmitButton>
-        <label class="left-align">
+        <label className="left-align">
           <input type="checkbox" name="savePhoneNumber" id="savePhoneNumber" />
           전화번호 저장
         </label>
 
         <div className="between">
-          <Link to="/auth/register" class="userField">
+          <Link to="/auth/register" className="userField">
             🌱 회원가입
           </Link>
-          <Link to="/auth/find" class="userField">
+          <Link to="/auth/find" className="userField">
             🌱 비밀번호 찾기
           </Link>
         </div>
