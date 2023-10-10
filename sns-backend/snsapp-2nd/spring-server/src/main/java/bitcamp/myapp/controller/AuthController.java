@@ -128,7 +128,7 @@ public class AuthController {
   }
 
   @GetMapping("/check")
-  public LoginUser check(
+  public ResponseEntity check(
       HttpServletRequest request,
       @CookieValue("sessionId") Cookie sessionCookie) {
 
@@ -136,7 +136,7 @@ public class AuthController {
     try {
       String sessionId = sessionCookie.getValue();
 //      System.out.println(sessionId);
-      
+
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
 //          String temp = (String) redisService.getValuleOps()
 //              .getAndExpire(sessionId, 1, TimeUnit.DAYS);
@@ -151,12 +151,15 @@ public class AuthController {
         loginUserObject.setLikedGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUserNo)));
 
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       e.printStackTrace();
       // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
-    return loginUserObject;
+    return new ResponseEntity<>(loginUserObject, HttpStatus.OK);
   }
 
   @GetMapping("logout")
