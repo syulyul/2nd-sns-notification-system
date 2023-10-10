@@ -268,20 +268,22 @@ public class BoardController {
 
   // 댓글 기능
   @PostMapping("addComment")
-  public String addComment(
+  public ResponseEntity addComment(
       BoardComment boardComment,
       HttpSession session,
       @RequestParam("boardNo") int boardNo) throws Exception {
+
     Member loginUser = (LoginUser) session.getAttribute("loginUser");
     if (loginUser == null) {
-      return "redirect:/auth/form";
+      return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
     }
 
     boardComment.setBoardNo(boardNo);
     boardComment.setWriter(loginUser);
 
     boardCommentService.add(boardComment);
-    return "redirect:/board/detail/1/" + boardComment.getBoardNo();
+
+    return new ResponseEntity<>(boardComment, HttpStatus.OK);
   }
 
   @GetMapping("detailComment/{boardNo}/{no}")
