@@ -95,7 +95,7 @@ const Header = ({ user, onLogout }) => {
     return <Link to="/auth/login">로그인이 필요합니다</Link>;
   }
 
-  const myPage = { no: 10 }; // 테스트용 임시 데이터
+  const myPage = { no: user.no }; // 테스트용 임시 데이터
   // const myPage = null;
   const notReadNotiCount = 10;
   const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;

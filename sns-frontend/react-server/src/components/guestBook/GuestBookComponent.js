@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
+import guestBook from "../../modules/guestBook";
 
 const GuestbookTitle = styled.div`
     text-align: center;
@@ -243,9 +244,12 @@ const DeleteButtonContainer = styled.div`
     margin-top: 10px;
 `;
 
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
 
-
-const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList, guestBookOwnerNick }) => {
+const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList, guestBookOwnerNick, guestBook }) => {
 
   const [likes, setLikes] = useState(guestBookList.map(() => false));
 
@@ -311,7 +315,7 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                         <span>{guestBook.title}</span>
                         <MetaInfo>
                           <ClockIcon src="/images/clock.png" />
-                          <span>{guestBook.createdAt}</span>
+                          <span>{formatDate(guestBook.createdAt)}</span>
                         </MetaInfo>
                       </HorizontalLayout>
                     </TitleMetaCell>
@@ -319,9 +323,9 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                   <SecondRow>
                     <WriterCell>
                       <ProfilePicture>
-                        <img src={guestBook.writer?.photo || "/images/avatar.png"} alt="프로필 사진" />
+                        <img src={guestBook.writer.photo || "/images/avatar.png"} alt="profile" />
                       </ProfilePicture>
-                      <NickNameDiv>{guestBook.writer?.nick || "임시 닉네임"}</NickNameDiv>
+                      <NickNameDiv>{guestBook.writer.nick || "임시 닉네임"}</NickNameDiv>
                     </WriterCell>
                     <ContentLikeCell colSpan="3">
                       <GuestBookTextarea readOnly>
