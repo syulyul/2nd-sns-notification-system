@@ -15,6 +15,18 @@ public class MyPage extends Member {
   private int visitCount;
   private Timestamp createdDate;
 
+  public MyPage() {
+  }
+
+  public MyPage(Member member) {
+    this.setNo(member.getNo());
+    this.setName(member.getName());
+    this.setNick(member.getNick());
+    this.setPhoneNumber(member.getPhoneNumber());
+    this.setEmail(member.getEmail());
+    this.setPhoto(member.getPhoto());
+  }
+
   @Override
   public String toString() {
     return "Mypage{" +

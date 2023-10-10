@@ -57,7 +57,7 @@ const SubmitButton = styled(Button)`
   margin: 0 auto;
   margin-top: 30px;
   padding: 5px 10px;
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: white;
   border: none;
   border-radius: 4px;
@@ -67,7 +67,7 @@ const SubmitButton = styled(Button)`
 
 const CodeButton = styled(Button)`
   padding: 5px 10px;
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: white;
   border: none;
   border-radius: 4px;
@@ -85,13 +85,13 @@ const PhoneNumberWrapper = styled.div`
 
 const VerifyWrapper = styled.div`
   display: flex;
-  flexDirection: 'column';
-  marginRight: '-170px';
+  flexdirection: 'column';
+  marginright: '-170px';
 `;
 
 const ButtonFlexWrapper = styled.div`
   display: flex;
-  alignItems: 'baseline';
+  alignitems: 'baseline';
 `;
 
 const Wrapper = styled.div`
@@ -121,56 +121,104 @@ const StyledInput2 = styled.input`
     color: #3a3a3a;
   }
 `;
-const RegisterComponent = ({ name, nick, phoneNumber, password, photofile, onSubmit }) => {
+const RegisterComponent = ({
+  name,
+  nick,
+  phoneNumber,
+  password,
+  photo,
+  verificationCode,
+  onSubmit,
+  onChange,
+  onChangeFile,
+  onAuthPhoneNumber,
+  onCheckPhoneNumber,
+}) => {
   return (
-      <AuthTemplate>
-        <h1>회원가입</h1>
-        <RegisterForm>
-          <InputBlock>
-            <Label>🌱 이름</Label>
-            <InputWrapper>
-              <StyledInput type='text' name='name' placeholder="이름을 입력하세요"/>
-            </InputWrapper>
-          </InputBlock>
-          <InputBlock>
-            <Label>🌱 닉네임</Label>
-            <InputWrapper>
-              <StyledInput type='text' name='nick' placeholder="닉네임을 입력하세요"/>
-            </InputWrapper>
-          </InputBlock>
-          <InputBlock>
-            <Label>🌱 전화번호</Label>
-            <PhoneNumberWrapper>
-              <Wrapper>
-                <HorizontalWrapper>
-                  <StyledInput width='200px' type='text' name='phoneNumber' placeholder="전화번호를 입력하세요"/>
-                  <CodeButton type="sendCode" onClick={onSubmit}>인증번호전송</CodeButton>
-                </HorizontalWrapper>
+    <AuthTemplate>
+      <h1>회원가입</h1>
+      <RegisterForm>
+        <InputBlock>
+          <Label>🌱 이름</Label>
+          <InputWrapper>
+            <StyledInput
+              type="text"
+              name="name"
+              placeholder="이름을 입력하세요"
+              value={name}
+              onChange={onChange}
+            />
+          </InputWrapper>
+        </InputBlock>
+        <InputBlock>
+          <Label>🌱 닉네임</Label>
+          <InputWrapper>
+            <StyledInput
+              type="text"
+              name="nick"
+              placeholder="닉네임을 입력하세요"
+              value={nick}
+              onChange={onChange}
+            />
+          </InputWrapper>
+        </InputBlock>
+        <InputBlock>
+          <Label>🌱 전화번호</Label>
+          <PhoneNumberWrapper>
+            <Wrapper>
+              <HorizontalWrapper>
+                <StyledInput
+                  width="200px"
+                  type="text"
+                  name="phoneNumber"
+                  placeholder="전화번호를 입력하세요"
+                  value={phoneNumber}
+                  onChange={onChange}
+                />
+                <CodeButton type="sendCode" onClick={onAuthPhoneNumber}>
+                  인증번호전송
+                </CodeButton>
+              </HorizontalWrapper>
 
-                <HorizontalWrapper>
-                  <StyledInput width='200px' type='text' name='verificationCode' placeholder="인증번호를 입력하세요"/>
-                  <CodeButton type="verifyCode" onClick={onSubmit}>인증번호확인</CodeButton>
-                </HorizontalWrapper>
-              </Wrapper>
-            </PhoneNumberWrapper>
-          </InputBlock>
-          <InputBlock>
-            <Label>🌱 비밀번호</Label>
-            <InputWrapper>
-              <StyledInput type='password' name='password' placeholder="비밀번호를 입력하세요"/>
-            </InputWrapper>
-          </InputBlock>
-          <InputBlock>
-            <Label>🌱 프로필사진</Label>
-            <InputWrapper>
-              <StyledInput type='file' name='photofile'/>
-            </InputWrapper>
-          </InputBlock>
-          <SubmitButton type="submit" onClick={onSubmit}>
-            가입하기
-          </SubmitButton>
-        </RegisterForm>
-      </AuthTemplate>
+              <HorizontalWrapper>
+                <StyledInput
+                  width="200px"
+                  type="text"
+                  name="verificationCode"
+                  placeholder="인증번호를 입력하세요"
+                  value={verificationCode}
+                  onChange={onChange}
+                />
+                <CodeButton type="verifyCode" onClick={onCheckPhoneNumber}>
+                  인증번호확인
+                </CodeButton>
+              </HorizontalWrapper>
+            </Wrapper>
+          </PhoneNumberWrapper>
+        </InputBlock>
+        <InputBlock>
+          <Label>🌱 비밀번호</Label>
+          <InputWrapper>
+            <StyledInput
+              type="password"
+              name="password"
+              placeholder="비밀번호를 입력하세요"
+              value={password}
+              onChange={onChange}
+            />
+          </InputWrapper>
+        </InputBlock>
+        <InputBlock>
+          <Label>🌱 프로필사진</Label>
+          <InputWrapper>
+            <StyledInput type="file" name="photo" onChange={onChangeFile} />
+          </InputWrapper>
+        </InputBlock>
+        <SubmitButton type="submit" onClick={onSubmit}>
+          가입하기
+        </SubmitButton>
+      </RegisterForm>
+    </AuthTemplate>
   );
 };
 

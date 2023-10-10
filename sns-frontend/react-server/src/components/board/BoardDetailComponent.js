@@ -192,32 +192,32 @@ const BoardDetailComponent = ({
 
       <div>
         {comments && comments.length > 0
-          ? comments.map((comment) => (
-              <CommentContainer key={comment.id}>
+          ? comments.map((boardComment) => (
+              <CommentContainer key={boardComment.id}>
                 <CommentMeta>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <ProfileImage
                       src={
-                        comment && comment.user
-                          ? `https://yourImageServer.com/${comment.user.profileImage}`
+                        boardComment  && boardComment.writer.photo
+                          ? `https://yourImageServer.com/${boardComment.writer.photo}`
                           : '/images/default.png'
                       }
                       alt={
-                        comment && comment.user ? comment.user.name : 'Unknown'
+                        boardComment && boardComment.writer.nick ? boardComment.writer.nick : 'Unknown'
                       }
                     />
                     <span>
-                      {comment && comment.user ? comment.user.name : 'Unknown'}
+                      {boardComment && boardComment.writer ? boardComment.writer.nick : 'Unknown'}
                     </span>
                   </div>
                   <span>
-                    {comment && comment.createdAt
-                      ? new Date(comment.createdAt).toLocaleDateString()
+                    {boardComment && boardComment.createdAt
+                      ? new Date(boardComment.createdAt).toLocaleDateString()
                       : 'Unknown date'}
                   </span>
                 </CommentMeta>
                 <CommentContent>
-                  {comment ? comment.content : ''}
+                  {boardComment ? boardComment.content : ''}
                 </CommentContent>
               </CommentContainer>
             ))

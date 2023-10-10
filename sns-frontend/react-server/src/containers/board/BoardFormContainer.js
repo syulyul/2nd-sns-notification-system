@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import BoardFormComponent from '../../components/board/BoardFormComponent';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { changeField, initializeForm, form } from '../../modules/board';
 
 const BoardFormContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
   const { category, title, content, files, boardError, board, user } =
     useSelector(({ board, auth }) => ({
       category: board.category,
