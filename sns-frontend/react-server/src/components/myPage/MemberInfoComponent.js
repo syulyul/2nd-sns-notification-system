@@ -27,7 +27,7 @@ const ButtonContainer = styled.div`
     justify-content: center;
 `;
 
-const SidebarButton = styled.a`
+const SidebarButton = styled(Link)`
     font-size: 20px;
     background-color: #426B1F;
     color: white;
@@ -45,7 +45,7 @@ const SidebarButton = styled.a`
     }
 `;
 
-const ChatRoomListButton = styled.a`
+const ChatRoomListButton = styled(Link)`
     font-size: 20px;
     background-color: #426B1F;
     color: white;
@@ -115,11 +115,11 @@ const MemberInfoComponent = ({ myPageData, user }) => {
         />
 
         <ButtonContainer>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followings`}>팔로잉</SidebarButton>
-          <SidebarButton href={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
+          <SidebarButton to={`/myPage/${myPageData.no}?show=followings`}>팔로잉</SidebarButton>
+          <SidebarButton to={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
         </ButtonContainer>
         <ButtonContainer>
-          <ChatRoomListButton href={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>
+          <ChatRoomListButton to={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>
         </ButtonContainer>
       </Sidebar>
   );

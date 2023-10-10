@@ -3,10 +3,13 @@ import Room from "../../schemas/room";
 
 export const roomList = async (req, res, next) => {
   try {
-    const findRooms = await Room.find({});
+    const findRooms = await Room.find({
+    //   "user":{
+    //     $elemMatch: {"nick": "지나가율" } // auther배열객체 들 중에서 {"name":"park"} 검색.
+    //  }
+    });
 
-    res.render('room')
-    
+    res.json(findRooms);
   } catch (error) {
     console.error(error);
     next(error);
@@ -45,7 +48,6 @@ export const removeRoom = async (req, res, next) => {
 export const sendChat = async (req, res, next) => {
   try {
     const roomId = req.params.roomId;
-    //console.log("수신테스트", ctx.request.body);
     const chat = await Chat.create({
       Room: roomId,
       User: req.state.user,

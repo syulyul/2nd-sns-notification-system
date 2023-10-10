@@ -3,9 +3,9 @@ import * as roomCtrl from "./chatRoom.ctrl";
 
 const chatRoom = express.Router();
 
-chatRoom.get("/room", roomCtrl.listRooms);
+chatRoom.get("/room", roomCtrl.roomList);
 
-chatRoom.post("/room", roomCtrl.createRoom);
+// chatRoom.post("/room", roomCtrl.createRoom);
 
 chatRoom.get("/room/:room", roomCtrl.enterRoom);
 

@@ -7,7 +7,7 @@ import * as chatsAPI from '../lib/api/chats';
 import { useCookies } from 'react-cookie';
 
 const [LIST_ROOMS, LIST_ROOMS_SUCCESS, LIST_ROOMS_FAILURE] =
-  createRequestActionTypes('chats/CONCAT_ROOMS');
+  createRequestActionTypes('chats/LIST_ROOMS');
 
 const CONCAT_ROOMS = "chats/CONCAT_ROOMS";
 

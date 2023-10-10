@@ -67,10 +67,10 @@ const initialState = {
   photo: '',
 
   user: { 
-    no : 1,
-    nick : "팡파레",
-    name : "방현석",
-    phoneNumber : "01011111111",
+    no : null,
+    nick : null,
+    name : null,
+    phoneNumber : null,
     email : null,
     password : null,
     photo : null,
