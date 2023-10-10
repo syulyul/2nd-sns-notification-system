@@ -1,5 +1,5 @@
 import express from "express";
-import * as roomCtrl from "./ChatRoom.ctrl";
+import * as roomCtrl from "./chatRoom.ctrl";
 
 const chatRoom = express.Router();
 

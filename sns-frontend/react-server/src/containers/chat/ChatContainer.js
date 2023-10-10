@@ -5,8 +5,7 @@ import qs from "qs";
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from 'react-router-dom';
-// import io from "socket.io-client";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 
 const ChatContainer = () => {
 

@@ -1,21 +1,20 @@
 import qs from "qs";
 import client from './nodeClient';
 
-export const roomList = ({ page }) => {
-  const queryString = qs.stringify({
-    page,
-  });
-  return client.get(`room?${queryString}`);
+export const roomList = () => {
+  return client.get("room");
 }
 
-export const createRoom = ({ title }) => {
-  return client.post("room", {
-    title,
+export const createRoom = ({ mno1, mno2 }) => {
+  const queryString = qs.stringify({
+    mno1,
+    mno2,
   });
+  return client.post(`room?${queryString}`);
 };
 
 export const enterRoom = ({ roomId }) => {
-  return client.get(`room/${roomId}`);
+  return client.get(`room?${roomId}`);
 };
 
 export const removeRoom = ({ roomId }) => {

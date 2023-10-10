@@ -66,8 +66,16 @@ const initialState = {
   email: '',
   photo: '',
 
-  user: null,
-  authError: null,
+  user: { 
+    no : 1,
+    nick : "팡파레",
+    name : "방현석",
+    phoneNumber : "01011111111",
+    email : null,
+    password : null,
+    photo : null,
+    authError: null,
+  }
 };
 
 const auth = handleActions(
@@ -110,7 +118,7 @@ const auth = handleActions(
 
     [CHECK_SUCCESS]: (state, { payload: user }) => ({
       ...state,
-      user: user === '' ? null : user,
+      // user: user === '' ? null : user,
       authError: null,
     }),
     [CHECK_FAILURE]: (state, { payload: error }) => ({

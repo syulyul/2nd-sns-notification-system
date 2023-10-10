@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector} from "react-redux";
 import { roomList, concatRooms, removeRoom } from "../../modules/rooms";
 import styled from 'styled-components';
+import auth from '../../modules/auth';
 
 const ChatRoomList = styled.div`
   display: flex;
@@ -34,10 +35,10 @@ const ChatRoomListContainer = () => {
   // ];
 
   const { rooms, error, user } = useSelector(
-    ({ rooms , user }) => ({
+    ({ rooms , auth }) => ({
       rooms: rooms.rooms,
       error: rooms.error,
-      user: user.user,
+      user: auth.user,
     })
   );
 

@@ -34,7 +34,7 @@ export function* chatsSaga() {
 
 
 const initialState = {
-  rooms: null,
+  rooms: [],
   error: null,
 };
 
