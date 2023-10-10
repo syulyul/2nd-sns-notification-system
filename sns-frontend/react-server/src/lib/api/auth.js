@@ -16,6 +16,7 @@ export const register = ({ phoneNumber, password, nick, name, email, photo }) =>
     photo,
   });
 
-export const check = () => springClient.get('auth/check');
+export const check = () =>
+  springClient.get('auth/check', { withCredentials: true });
 
 export const logout = () => springClient.get('auth/logout');

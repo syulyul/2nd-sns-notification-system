@@ -1,7 +1,13 @@
+import HeaderContainer from '../containers/common/HeaderContainer';
 import NotificationListContainer from '../containers/notification/NotificationListContainer';
 
 const NotificationListPage = () => {
-  return <NotificationListContainer />;
+  return (
+    <>
+      <HeaderContainer />
+      <NotificationListContainer />
+    </>
+  );
 };
 
 export default NotificationListPage;

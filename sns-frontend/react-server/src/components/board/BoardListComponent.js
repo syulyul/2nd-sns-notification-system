@@ -149,7 +149,7 @@ const BoardListComponent = ({ boardListData, totalPages, currentPage, onPageChan
         </SearchBox>
 
         <ActionButtonsContainer>
-          <Link to="/board/form">
+          <Link to={`/board/form/1`}>
             <Button>글쓰기</Button>
           </Link>
           <MainButton>메인</MainButton>

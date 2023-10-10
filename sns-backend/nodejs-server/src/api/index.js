@@ -1,8 +1,8 @@
-import express from "express";
-import notification from "./notification";
+import express from 'express';
+import notification from './notification';
 
-const api = express.Router();
+const api = express();
 
-api.use("/notificatoin", notification);
+api.use('/notification', notification);
 
 export default api;
