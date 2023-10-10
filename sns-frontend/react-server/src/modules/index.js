@@ -5,6 +5,7 @@ import object, { objectSaga } from './exampleAction';
 import auth, { authSaga } from './auth';
 import myPage, { myPageSaga } from './myPage';
 import board, { boardSaga } from './board';
+import rooms, { chatsSaga } from './rooms';
 import notification, { notificationSaga } from './notification';
 import guestBook, {guestBookSaga} from "./guestBook";
 
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   auth,
   myPage,
   board,
+  rooms,
   guestBook,
   notification,
 });
@@ -23,7 +25,8 @@ export function* rootSaga() {
     objectSaga(),
     authSaga(),
     myPageSaga(),
-    boardSaga(),
+    boardSaga(), 
+    chatsSaga(),
     guestBookSaga(),
     notificationSaga(),
   ]);
