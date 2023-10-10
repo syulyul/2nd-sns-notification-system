@@ -8,6 +8,7 @@ const BoardFormContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+
   const { category, title, content, files, boardError, board, user } =
     useSelector(({ board, auth }) => ({
       category: board.category,
