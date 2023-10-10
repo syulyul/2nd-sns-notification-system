@@ -18,9 +18,7 @@ export const addLog = async (req, res, next) => {
 };
 
 export const listNotiLog = async (req, res, next) => {
-  console.log(req.query);
   try {
-    console.log('요청이 왔다해');
     const [notiLogs, notiLogCount] = await Promise.all([
       Noti.find({ mno: req.params.memberNo })
         .sort({ createdAt: -1 })
