@@ -17,12 +17,6 @@ const [LIST, LIST_SUCCESS, LIST_FAILURE] =
 const [INFO, INFO_SUCCESS, INFO_FAILURE] =
     createRequestActionTypes('myPage/INFO');
 
-const [FOLLOW, FOLLOW_SUCCESS, FOLLOW_FAILURE] =
-    createRequestActionTypes('myPage/FOLLOW');
-
-const [UNFOLLOW, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE] =
-    createRequestActionTypes('myPage/UNFOLLOW');
-
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
   value,
@@ -32,11 +26,12 @@ export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const update = createAction(
     UPDATE,
-    ({ photo, name, nick, birthDay, email, phoneNumber, password, gender }) => ({
+    ({ userNo, photo, name, nick, birthday, email, phoneNumber, password, gender }) => ({
+      userNo,
       photo,
       name,
       nick,
-      birthDay,
+      birthday,
       email,
       phoneNumber,
       password,
@@ -46,50 +41,42 @@ export const update = createAction(
 
 export const list = createAction(LIST, (userNo) => (userNo));
 export const info = createAction(INFO, (userNo) => (userNo));
-export const follow = createAction(FOLLOW, ({ followingNo })  => ({
-  followingNo
-}));
-export const unfollow = createAction(UNFOLLOW, (followingNo) => ({ followingNo }));
 
 const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
 const listSaga = createRequestSaga(LIST, myPageAPI.list);
 const infoSaga = createRequestSaga(INFO, myPageAPI.info);
-const followSaga = createRequestSaga(FOLLOW, myPageAPI.follow);
-const unfollowSaga = createRequestSaga(UNFOLLOW, myPageAPI.unfollow);
 
 export function* myPageSaga() {
   yield takeLatest(UPDATE, updateSaga);
   yield takeLatest(LIST, listSaga);
   yield takeLatest(INFO, infoSaga);
-  yield takeLatest(FOLLOW, followSaga);
-  yield takeLatest(UNFOLLOW, unfollowSaga);
 }
 
 const initialState = {
-  myPage: [],
+  myPage: {nick:""},
   userNo: 0,
   myPageError: null,
-  followList: [], // 팔로워 목록을 저장할 배열
+  user: null,
 };
 
 const myPage = handleActions(
     {
       [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
         ...state,
-        [key]: value,
+        myPage:{...state.myPage, [key]: value},
+
       }),
       [INITIALIZE_FORM]: (state) => ({
         ...state,
 
-        myPage: [],
+        myPage: null,
         userNo: 0,
-        followList: [], // 팔로워 목록을 저장할 배열
-
       }),
 
-      [UPDATE_SUCCESS]: (state, { payload: myPage }) => ({
+      [UPDATE_SUCCESS]: (state, { payload: myPage, user }) => ({
         ...state,
         myPageError: null,
+        user,
         myPage,
       }),
       [UPDATE_FAILURE]: (state, { payload: error }) => ({
@@ -116,27 +103,8 @@ const myPage = handleActions(
         ...state,
         myPageError: error,
       }),
-      // 'followList' 업데이트 액션
-      [FOLLOW_SUCCESS]: (state, { payload: followList }) => ({
-        ...state,
-        followList, // 팔로워 목록 업데이트
-      }),
-      [FOLLOW_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        myPageError: error,
-      }),
-
-      [UNFOLLOW_SUCCESS]: (state, { payload: followList }) => ({
-        ...state,
-        followList, // 팔로워 목록 업데이트
-      }),
-      [UNFOLLOW_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        myPageError: error,
-      }),
     },
     initialState
 );
-
 
 export default myPage;
