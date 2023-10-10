@@ -6,14 +6,11 @@ export const login = ({ phoneNumber, password }) =>
     password,
   });
 
-export const register = ({ phoneNumber, password, nick, name, email, photo }) =>
-  springClient.post('auth/add', {
-    phoneNumber,
-    password,
-    nick,
-    name,
-    email,
-    photo,
+export const register = ({ formData }) =>
+  springClient.post('auth/add', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
 export const check = () =>

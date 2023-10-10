@@ -21,7 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -30,8 +33,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -135,11 +140,11 @@ public class AuthController {
     LoginUser loginUserObject = null;
     try {
       String sessionId = sessionCookie.getValue();
-//      System.out.println(sessionId);
+      // System.out.println(sessionId);
 
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
-//          String temp = (String) redisService.getValuleOps()
-//              .getAndExpire(sessionId, 1, TimeUnit.DAYS);
+      // String temp = (String) redisService.getValuleOps()
+      // .getAndExpire(sessionId, 1, TimeUnit.DAYS);
       String temp = (String) redisService.getValuleOps().get(sessionId);
       if (temp != null) {
         int loginUserNo = Integer.parseInt(temp);
@@ -177,7 +182,7 @@ public class AuthController {
     }
     if (sessionId != null) {
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
-//      redisService.getValuleOps().getAndDelete(sessionId);
+      // redisService.getValuleOps().getAndDelete(sessionId);
     }
 
     Cookie cookie = new Cookie("sessionId", "invalidate");
@@ -188,30 +193,45 @@ public class AuthController {
   }
 
   @PostMapping("add")
-  public String add(
-      Member member,
-      MultipartFile photofile,
+  public ResponseEntity add(
+      @RequestPart("data") Member member,
+      @RequestPart(value = "files", required = false) MultipartFile[] files,
       Model model) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
     try {
-      System.out.println(member);
-      if (photofile.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_member/", photofile);
-        member.setPhoto(uploadFileUrl);
+      if (files != null) {
+        if (files[0].getSize() > 0) {
+          String uploadFileUrl = ncpObjectStorageService.uploadFile(
+              "bitcamp-nc7-bucket-14", "sns_member/", files[0]);
+          member.setPhoto(uploadFileUrl);
+        }
       }
       memberService.add(member);
-      MyPage myPage = new MyPage();
-      myPage.setNo(member.getNo());
+      MyPage myPage = new MyPage(member);
       myPageService.add(myPage);
 
-      return "auth/form";
+      RestTemplate restTemplate = new RestTemplate();
+
+      // Header set
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+      // Message
+      HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
+
+      // Request
+      String url = "http://localhost:3001/node/user/add";
+      ResponseEntity<String> response = restTemplate.postForEntity(url, requestMessage,
+          String.class);
+
+      return new ResponseEntity<>(member, HttpStatus.OK);
 
     } catch (Exception e) {
       model.addAttribute("message", "회원 등록 오류!");
       model.addAttribute("refresh", "2;url=list");
-      throw e;
+      e.printStackTrace();
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
   }
 

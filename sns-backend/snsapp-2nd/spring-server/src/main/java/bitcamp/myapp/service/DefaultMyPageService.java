@@ -28,6 +28,11 @@ public class DefaultMyPageService implements MyPageService {
   @Transactional
   @Override
   public int add(MyPage myPage) throws Exception {
+    notificationService.add(new NotiLog(
+        myPage.getNo(),
+        0,
+        myPage.getNick() + "님의 가입을 축하합니다.",
+        "/myPage/" + myPage.getNo()));
     return myPageDao.insert(myPage);
   }
 

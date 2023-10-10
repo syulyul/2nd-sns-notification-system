@@ -2,10 +2,6 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 const notiSchema = new Schema({
-  nlno: {
-    type: Number,
-    required: true,
-  },
   mno: {
     type: Number,
     required: true,
