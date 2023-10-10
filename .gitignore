@@ -780,9 +780,5 @@ gradle-app.setting
 *.exe
 node_modules/
 temp/
-jdbc.properties
-application.properties
-ncp.properties
-ncs.properties
-redis.properties
+*.properties
 snsapp-key.pem

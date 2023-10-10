@@ -1,33 +1,110 @@
-// modules/myPage.js
+import { createAction, handleActions } from 'redux-actions';
+import { takeLatest } from 'redux-saga/effects';
+import createRequestSaga, {
+  createRequestActionTypes,
+} from '../lib/createRequestSaga';
+import * as myPageAPI from '../lib/api/myPage';
 
-// 액션 타입 정의
-const SET_MY_PAGE_DATA = 'myPage/SET_MY_PAGE_DATA';
+const CHANGE_FIELD = 'myPage/CHANGE_FIELD';
+const INITIALIZE_FORM = 'myPage/INITIALIZE_FORM';
 
-// 액션 생성자 함수 정의
-export const setMyPageData = (myPageData) => ({
-  type: SET_MY_PAGE_DATA,
-  payload: myPageData,
-});
+const [UPDATE, UPDATE_SUCCESS, UPDATE_FAILURE] =
+    createRequestActionTypes('myPage/UPDATE');
 
-// 초기 상태 정의
+const [LIST, LIST_SUCCESS, LIST_FAILURE] =
+    createRequestActionTypes('myPage/LIST');
+
+const [INFO, INFO_SUCCESS, INFO_FAILURE] =
+    createRequestActionTypes('myPage/INFO');
+
+export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
+  key,
+  value,
+}));
+
+export const initializeForm = createAction(INITIALIZE_FORM, () => {});
+
+export const update = createAction(
+    UPDATE,
+    ({ userNo, photo, name, nick, birthday, email, phoneNumber, password, gender }) => ({
+      userNo,
+      photo,
+      name,
+      nick,
+      birthday,
+      email,
+      phoneNumber,
+      password,
+      gender,
+    })
+);
+
+export const list = createAction(LIST, (userNo) => (userNo));
+export const info = createAction(INFO, (userNo) => (userNo));
+
+const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
+const listSaga = createRequestSaga(LIST, myPageAPI.list);
+const infoSaga = createRequestSaga(INFO, myPageAPI.info);
+
+export function* myPageSaga() {
+  yield takeLatest(UPDATE, updateSaga);
+  yield takeLatest(LIST, listSaga);
+  yield takeLatest(INFO, infoSaga);
+}
+
 const initialState = {
-  myPageData: {
-    visitCount: 0, // 예시: 초기 값으로 0 설정
-    stateMessage: '', // 예시: 초기 값으로 빈 문자열 설정
-    no: null,       // 예시: 초기 값으로 null 설정
-  },
+  myPage: {nick:""},
+  userNo: 0,
+  myPageError: null,
+  user: null,
 };
 
-// 리듀서 함수 정의
-export default function myPageReducer(state = initialState, action) {
-  switch (action.type) {
-    case SET_MY_PAGE_DATA:
-      return {
+const myPage = handleActions(
+    {
+      [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
         ...state,
-        myPageData: action.payload,
-      };
-      // 다른 액션 타입에 대한 처리도 추가할 수 있습니다.
-    default:
-      return state;
-  }
-}
+        myPage:{...state.myPage, [key]: value},
+
+      }),
+      [INITIALIZE_FORM]: (state) => ({
+        ...state,
+
+        myPage: null,
+        userNo: 0,
+      }),
+
+      [UPDATE_SUCCESS]: (state, { payload: myPage, user }) => ({
+        ...state,
+        myPageError: null,
+        user,
+        myPage,
+      }),
+      [UPDATE_FAILURE]: (state, { payload: error }) => ({
+        ...state,
+        myPageError: error,
+      }),
+
+      [LIST_SUCCESS]: (state, { payload: myPage }) => ({
+        ...state,
+        myPage,
+        myPageError: null,
+      }),
+      [LIST_FAILURE]: (state, { payload: error }) => ({
+        ...state,
+        myPageError: error,
+      }),
+
+      [INFO_SUCCESS]: (state, { payload: myPage }) => ({
+        ...state,
+        myPage,
+        myPageError: null,
+      }),
+      [INFO_FAILURE]: (state, { payload: error }) => ({
+        ...state,
+        myPageError: error,
+      }),
+    },
+    initialState
+);
+
+export default myPage;

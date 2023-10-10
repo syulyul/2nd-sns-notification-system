@@ -1,41 +1,96 @@
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import BoardFormComponent from '../../components/board/BoardFormComponent';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { changeField, initializeForm, form } from '../../modules/board';
 
 const BoardFormContainer = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const { category, title, content, files, boardError, board, user } =
+    useSelector(({ board, auth }) => ({
+      category: board.category,
+      title: board.title,
+      content: board.content,
+      files: board.attachedFiles,
+      boardError: board.boardError,
+      board: board.board,
+      user: auth.user,
+    }));
 
-  const [boardFormData, setBoardFormData] = useState({
-    title: '임시 제목',
-    content: '임시 내용',
-    files: null,
-    category: '임시 카테고리'
-  });
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    dispatch(
+      changeField({
+        key: name,
+        value,
+      })
+    );
+  };
 
-  // const navigate = useNavigate();
-  // const [error, setError] = useState(null);
-  //
-  // const title = '임시 제목';
-  // const content = '임시 내용';
-  // const files = null;
-  // const category = '임시 카테고리';
+  let formData = new FormData();
+  formData.append('files', null);
+  const onChangeFile = (e) => {
+    const { files } = e.target;
+    formData = new FormData();
+    for (let i = 0; files[i] != null; i++) {
+      formData.append('files', files[i]);
+    }
+  };
 
-  // const onChange = (e) => {
-  //   console.log(e.target.value);
-  // };
-  //
-  // const onSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log('Submitted with:', { title, content, files, category });
-  //   navigate(`/`);
-  // };
-  //
-  // if (error) {
-  //   console.log('오류 발생:', error);
-  // } else {
-  //   console.log('글 작성 성공');
-  // }
+  const onSubmit = (e) => {
+    e.preventDefault();
+    formData.append(
+      'data',
+      new Blob(
+        [
+          JSON.stringify({
+            title,
+            content,
+            files,
+            category,
+            writer: user,
+          }),
+        ],
+        {
+          type: 'application/json',
+        }
+      )
+    );
+    dispatch(form({ formData }));
+    dispatch(initializeForm());
+  };
 
-  return <BoardFormComponent boardFormData = {boardFormData} />;
+  //컴포넌트 초기 렌터링 때 form 초기화
+  useEffect(() => {
+    dispatch(initializeForm());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (boardError) {
+      console.log('게시글 등록 중 오류 발생');
+      console.log(boardError);
+      // 필요한 경우 사용자에게 오류 메시지를 표시할 수 있습니다.
+    }
+    if (board) {
+      console.log('게시글 등록 성공');
+      console.log(board);
+      navigate(`/board/list`);
+    }
+  }, [board, boardError, dispatch]);
+
+  return (
+    <BoardFormComponent
+      title={title}
+      content={content}
+      files={files}
+      category={category}
+      onChange={onChange}
+      onChangeFile={onChangeFile}
+      onSubmit={onSubmit}
+    />
+  );
 };
 
 export default BoardFormContainer;

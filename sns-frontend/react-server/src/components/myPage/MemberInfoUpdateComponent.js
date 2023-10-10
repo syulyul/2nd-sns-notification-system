@@ -105,7 +105,8 @@ const StyledH1 = styled.h1`
   text-align: center;
 `;
 
-const MemberInfoUpdateComponent = ({ myPageData }) => {
+const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
+const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
     <FormContainer>
       <StyledH1>내 정보 수정</StyledH1>
@@ -121,7 +122,7 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
           }}
         />
         {myPageData.photo ? (
-          <UserPhoto src={myPageData.photo} alt="User Profile" />
+          <UserPhoto src={profileUrl} alt="User Profile" />
         ) : (
           <UserPhoto
             src={process.env.PUBLIC_URL + '/images/default.jpg'}
@@ -137,17 +138,20 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
 
       <FormGroup>
         <FormLabel>🌱 닉네임</FormLabel>
-        <FormInput type="text" name="nick" value={myPageData.nick} />
+        <FormInput type="text" name="nick" value={myPageData.nick} onChange={onChange} />
       </FormGroup>
 
       <FormGroup>
         <FormLabel htmlFor="birthday">🌱 생일</FormLabel>
-        <FormInput type="date" name="birthday" value={myPageData.birthday} />
+        <FormInput type="date"
+                   name="birthday"
+                   value={myPageData.birthday}
+                   onChange={onChange} />
       </FormGroup>
 
       <FormGroup>
         <FormLabel htmlFor="email">🌱 이메일</FormLabel>
-        <FormInput type="email" name="email" value={myPageData.email} />
+        <FormInput type="email" name="email" value={myPageData.email} onChange={onChange} />
       </FormGroup>
 
       <FormGroup>
@@ -156,25 +160,26 @@ const MemberInfoUpdateComponent = ({ myPageData }) => {
           type="tel"
           name="phoneNumber"
           value={myPageData.phoneNumber}
+          onChange={onChange}
         />
       </FormGroup>
 
       <FormGroup>
         <FormLabel htmlFor="password">🌱 암호</FormLabel>
-        <FormInput type="password" name="password" />
+        <FormInput type="password" name="password" onChange={onChange} />
       </FormGroup>
 
       <FormGroup>
         <FormLabel htmlFor="gender">🌱 성별</FormLabel>
-        <FormSelect id="gender" name="gender" value={myPageData.gender}>
+        <FormSelect id="gender" name="gender" value={myPageData.gender} onChange={onChange}>
           <option value="1">남자</option>
           <option value="2">여자</option>
         </FormSelect>
       </FormGroup>
 
       <ButtonContainer>
-        <CustomButton type="submit">수정</CustomButton>
-        <CustomButton type="reset">초기화</CustomButton>
+        <CustomButton type="submit" onClick={onSubmit}>수정</CustomButton>
+        <CustomButton type="reset" onClick={onSubmit}>초기화</CustomButton>
       </ButtonContainer>
       <CustomLink href={`/myPage/${myPageData.no}/update`}>탈퇴하기</CustomLink>
     </FormContainer>

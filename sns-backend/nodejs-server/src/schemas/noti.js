@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
-const notiSchema = new Schema ({
+const notiSchema = new Schema({
   nlno: {
     type: Number,
     required: true,
@@ -27,7 +27,11 @@ const notiSchema = new Schema ({
     required: true,
     default: 0,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const Noti = mongoose.model("Noti", notiSchema);
+const Noti = mongoose.model('Noti', notiSchema);
 export default Noti;

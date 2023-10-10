@@ -3,19 +3,30 @@ import { all } from 'redux-saga/effects';
 import loading from './loading';
 import object, { objectSaga } from './exampleAction';
 import auth, { authSaga } from './auth';
+import myPage, { myPageSaga } from './myPage';
 import board, { boardSaga } from './board';
 import rooms, { chatsSaga } from './rooms';
+import notification, { notificationSaga } from './notification';
 
 const rootReducer = combineReducers({
   loading,
   object,
   auth,
+  myPage,
   board,
-  rooms
+  rooms,
+  notification,
 });
 
 export function* rootSaga() {
-  yield all([objectSaga(), authSaga(), boardSaga(), chatsSaga()]);
+  yield all([
+    objectSaga(),
+    authSaga(),
+    myPageSaga(),
+    boardSaga(), 
+    chatsSaga(),
+    notificationSaga(),
+  ]);
 }
 
 export default rootReducer;

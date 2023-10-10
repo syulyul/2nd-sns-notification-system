@@ -101,9 +101,9 @@ const MemberInfoComponent = ({ myPageData, user }) => {
   return (
       <Sidebar>
         <p>🌱 총 방문자 수 {myPageData.visitCount}</p>
-        {myPageData.photo
-            ? <ProfilePic src='/images/default.jpg' alt="기본 이미지" />
-            : <ProfilePic src={profileUrl} alt="프로필 사진" />
+        {user.photo
+            ? <ProfilePic src={profileUrl} alt="프로필 사진" />
+            : <ProfilePic src='/images/default.jpg' alt="기본 이미지" />
         }
         <h2>{user.nick}</h2>
         <StateMessageLabel>상태메시지</StateMessageLabel>

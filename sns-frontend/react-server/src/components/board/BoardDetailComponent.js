@@ -42,7 +42,7 @@ const ButtonContainer = styled.div`
 `;
 
 const StyledButton = styled.button`
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: white;
   padding: 5px 10px;
   border: none;
@@ -61,14 +61,14 @@ const LikeButton = styled(StyledButton)`
 `;
 
 const ClockIcon = styled.img`
-    width: 16px;
-    height: 16px;
+  width: 16px;
+  height: 16px;
 `;
 
 const LikeList = styled.div`
-    position: absolute;
-    top: 730px;
-    right: 170px;
+  position: absolute;
+  top: 730px;
+  right: 170px;
 `;
 
 const CommentInputContainer = styled.div`
@@ -106,69 +106,124 @@ const ProfileImage = styled.img`
   margin-right: 10px;
 `;
 
-const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToList, onLike, onUnlike, comments }) => {
+const BoardDetailComponent = ({
+  board,
+  onEdit,
+  onReset,
+  onDelete,
+  onNavigateToList,
+  onLike,
+  onUnlike,
+  comments,
+}) => {
   return (
-      <Container>
-        <ContentBox>
-          <form>
-            <Title>
-              <input type="text" defaultValue={board.title} readOnly={!board.editable} />
-            </Title>
-            <MetaInfo>
-              <span className="nickname">{board.writer.nick}</span>
-              <ClockIcon src="/images/clock.png" alt="clock-icon" />
-              <span>{new Date(board.createdAt).toLocaleDateString()}</span>
-              <ClockIcon src="/images/eye.png" alt="views-icon" />
-              <span>{board.viewCount}</span>
-            </MetaInfo>
-            <textarea defaultValue={board.content} readOnly={!board.editable}></textarea>
-            <div>
-              {board.attachedFiles.map((file, index) => (
+    <Container>
+      <ContentBox>
+        <form>
+          <Title>
+            <input
+              type="text"
+              defaultValue={board ? board.title : ''}
+              readOnly={board ? !board.editable : true}
+            />
+          </Title>
+          <MetaInfo>
+            <span className="nickname">
+              {board && board.writer ? board.writer.nick : 'Unknown'}
+            </span>
+            <ClockIcon src="/images/clock.png" alt="clock-icon" />
+            <span>
+              {board && board.createdAt
+                ? new Date(board.createdAt).toLocaleDateString()
+                : 'Unknown date'}
+            </span>
+            <ClockIcon src="/images/eye.png" alt="views-icon" />
+            <span>{board ? board.viewCount : 0}</span>
+          </MetaInfo>
+          <textarea
+            defaultValue={board ? board.content : ''}
+            readOnly={board ? !board.editable : true}
+          ></textarea>
+          <div>
+            {board && board.attachedFiles
+              ? board.attachedFiles.map((file, index) => (
                   <div key={index}>
-                    <img src={`https://yourImageServer.com/${file.filePath}`} alt="Attached file" />
-                    <a href={`https://yourImageServer.com/${file.filePath}`}>Download</a>
-                    {board.editable && <a href="#" onClick={() => onDelete(file.no)}>X</a>}
+                    <img
+                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                      alt="Attached file"
+                    />
+                    <a href={`https://yourImageServer.com/${file.filePath}`}>
+                      Download
+                    </a>
+                    {board && board.editable ? (
+                      <a href="#" onClick={() => onDelete(file.no)}>
+                        X
+                      </a>
+                    ) : null}
                   </div>
-              ))}
-            </div>
-            <ButtonContainer>
-              {board.editable && <StyledButton onClick={onEdit}>변경</StyledButton>}
-              {board.editable && <StyledButton onClick={onReset}>초기화</StyledButton>}
-              {board.editable && <StyledButton onClick={onDelete}>삭제</StyledButton>}
-            </ButtonContainer>
-          </form>
-          <LikeButton onClick={board.liked ? onUnlike : onLike}>
-            {board.liked ? "좋아요 취소❤️" : "좋아요 누르기 🤍"}
-          </LikeButton>
-          {/*<LikeList>*/}
-          {/*  {board.likes.map((user, index) => (*/}
-          {/*      <span key={user.id}>{user.name}{index !== board.likes.length - 1 && ', '}</span>*/}
-          {/*  ))}*/}
-          {/*</LikeList>*/}
-          <StyledButton onClick={onNavigateToList} style={{marginTop: '80px', marginLeft: '450px'}}>목록</StyledButton>
-        </ContentBox>
+                ))
+              : null}
+          </div>
+          <ButtonContainer>
+            {board && board.editable ? (
+              <>
+                <StyledButton onClick={onEdit}>변경</StyledButton>
+                <StyledButton onClick={onReset}>초기화</StyledButton>
+                <StyledButton onClick={onDelete}>삭제</StyledButton>
+              </>
+            ) : null}
+          </ButtonContainer>
+        </form>
+        <LikeButton onClick={board && board.liked ? onUnlike : onLike}>
+          {board && board.liked ? '좋아요 취소❤️' : '좋아요 누르기 🤍'}
+        </LikeButton>
+        <StyledButton
+          onClick={onNavigateToList}
+          style={{ marginTop: '80px', marginLeft: '450px' }}
+        >
+          목록
+        </StyledButton>
+      </ContentBox>
 
-        <CommentInputContainer>
-          <CommentTextArea placeholder="댓글을 입력하세요."></CommentTextArea>
-          <StyledButton>댓글 작성</StyledButton>
-        </CommentInputContainer>
+      <CommentInputContainer>
+        <CommentTextArea placeholder="댓글을 입력하세요."></CommentTextArea>
+        <StyledButton>댓글 작성</StyledButton>
+      </CommentInputContainer>
 
-        <div>
-          {comments.map(comment => (
+      <div>
+        {comments && comments.length > 0
+          ? comments.map((comment) => (
               <CommentContainer key={comment.id}>
                 <CommentMeta>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <ProfileImage src={`https://yourImageServer.com/${comment.user.profileImage}`} alt={comment.user.name} />
-                    <span>{comment.user.name}</span>
+                    <ProfileImage
+                      src={
+                        comment && comment.user
+                          ? `https://yourImageServer.com/${comment.user.profileImage}`
+                          : '/images/default.png'
+                      }
+                      alt={
+                        comment && comment.user ? comment.user.name : 'Unknown'
+                      }
+                    />
+                    <span>
+                      {comment && comment.user ? comment.user.name : 'Unknown'}
+                    </span>
                   </div>
-                  <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                  <span>
+                    {comment && comment.createdAt
+                      ? new Date(comment.createdAt).toLocaleDateString()
+                      : 'Unknown date'}
+                  </span>
                 </CommentMeta>
-                <CommentContent>{comment.content}</CommentContent>
+                <CommentContent>
+                  {comment ? comment.content : ''}
+                </CommentContent>
               </CommentContainer>
-          ))}
-        </div>
-
-      </Container>
+            ))
+          : null}
+      </div>
+    </Container>
   );
 };
 

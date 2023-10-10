@@ -1,83 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
+import { detail } from '../../modules/board';
 
 const BoardDetailContainer = () => {
-  const [board, setBoard] = useState({
-    no: null,
-    title: 'Loading...',
-    content: 'Loading...',
-    writer: { nick: 'Loading...' },
-    createdAt: 'Loading...',
-    viewCount: 0,
-    likes: [],
-    attachedFiles: [],
-  });
+  const dispatch = useDispatch();
+  // const { board, boardError } = useSelector(state => state.board);
 
-  const [comments, setComments] = useState([]);
+  const { board = {}, boardError } = useSelector((state) => ({
+    board: state.board.board,
+    boardError: state.board.boardError,
+  }));
+
+  const { boardNo, category } = useParams();
 
   useEffect(() => {
-    // API 호출 등을 통해 게시글 데이터를 가져옵니다.
-    const fetchedBoard = {
-      no: 1,
-      title: '임시 게시글 제목',
-      content: '임시 게시글 내용입니다...',
-      writer: { nick: '임시 작성자' },
-      createdAt: new Date().toLocaleDateString(),
-      viewCount: 100,
-      likes: ['유저1', '유저2', '유저3', '유저4'],
-      attachedFiles: ['사진1', '사진2'],
-    };
+    dispatch(detail({ category, boardNo }));
+  }, [dispatch, category, boardNo]);
 
-    const fetchedComments = [
-      // 여기에 댓글 데이터를 추가할 수 있습니다.
-    ];
+  if (boardError) {
+    return <div>Error occurred: {boardError.message}</div>;
+  }
 
-    setBoard(fetchedBoard);
-    setComments(fetchedComments);
-  }, []);
-
-  const handleCommentSubmit = (comment) => {
-    // 댓글 작성 로직
-    // 예: setComments(prevComments => [...prevComments, comment]);
-  };
-
-  const handleEdit = () => {
-    // 게시글 수정 로직
-  };
-
-  const handleReset = () => {
-    // 게시글 내용 초기화 로직
-  };
-
-  const handleDelete = () => {
-    // 게시글 삭제 로직
-  };
-
-  const likeButtonClicked = () => {
-    // 좋아요 로직
-  };
-
-  const unlikeButtonClicked = () => {
-    // 좋아요 취소 로직
-  };
-
-  const navigateToList = () => {
-    // 게시글 목록으로 이동하는 로직
-  };
-
-  return (
-    <BoardDetailComponent
-      board={board}
-      comments={comments}
-      onLike={likeButtonClicked}
-      onUnlike={unlikeButtonClicked}
-      onNavigateToList={navigateToList}
-      onEdit={handleEdit}
-      onReset={handleReset}
-      onDelete={handleDelete}
-      onCommentSubmit={handleCommentSubmit}
-    />
-  );
+  return <BoardDetailComponent board={board} />;
 };
 
 export default BoardDetailContainer;

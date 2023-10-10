@@ -3,11 +3,18 @@ package bitcamp.myapp.service;
 import bitcamp.myapp.dao.NotificationDao;
 import bitcamp.myapp.vo.NotiLog;
 import bitcamp.myapp.vo.NotiType;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class DefaultNotificationService implements NotificationService {
@@ -24,6 +31,26 @@ public class DefaultNotificationService implements NotificationService {
   @Transactional
   @Override
   public int add(NotiLog notiLog) throws Exception {
+    RestTemplate restTemplate = new RestTemplate();
+
+    // Header set
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+    // Body set
+    MultiValueMap<String, String> body = new ObjectMapper().convertValue(notiLog,
+        new TypeReference<MultiValueMap<String, String>>() {
+        });
+
+    // Message
+    HttpEntity<?> requestMessage = new HttpEntity<>(body, httpHeaders);
+
+    // Request
+    String url = "http://localhost:3001/node/notification/add";
+    HttpEntity<String> response = restTemplate.postForEntity(url, requestMessage, String.class);
+    System.out.println(response);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
     int result = notificationDao.insert(notiLog);
     String key = "notReadNotiCount" + notiLog.getMemberNo();
     Integer value = (Integer) context.getAttribute(key);

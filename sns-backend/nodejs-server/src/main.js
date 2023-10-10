@@ -8,7 +8,8 @@ import session from 'express-session';
 import api from './api';
 import mongodbConnect from './schemas';
 
-const { PORT, NODE_ENV, COOKIE_SECRET } = process.env;
+const { PORT, NODE_ENV, COOKIE_SECRET, REACT_SERVER_URL, SPRING_SERVER_URL } =
+  process.env;
 
 const app = express();
 app.set('port', PORT);
@@ -20,9 +21,11 @@ if (NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 
-var corsOptions = {
-  origin: 'http://localhost:3000',
+const corsOptions = {
+  origin: [REACT_SERVER_URL, SPRING_SERVER_URL],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
