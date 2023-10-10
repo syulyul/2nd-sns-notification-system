@@ -2,10 +2,13 @@ package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MyPageService;
+import bitcamp.myapp.vo.Board;
 import bitcamp.myapp.vo.GuestBook;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/guestBook")
 public class GuestBookController {
 
@@ -67,8 +71,8 @@ public class GuestBookController {
     }
   }
 
-  @GetMapping("/{no}")
-  public String list(@PathVariable int no, @RequestParam(defaultValue = "1") int page,
+  @GetMapping("{no}")
+  public Map<String, Object> list(@PathVariable int no, @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       Model model, HttpSession session) throws Exception {
     Member loginUser = (Member) session.getAttribute("loginUser");
@@ -89,7 +93,13 @@ public class GuestBookController {
     model.addAttribute("mpno", no);
 
     session.setAttribute("loginUser", loginUser);
-    return "guestBook/read";
+
+    // guestBookList와 guestBook 객체를 Map에 담아 반환
+    Map<String, Object> resultMap = new HashMap<>();
+    resultMap.put("guestBookList", guestBookList);
+    resultMap.put("guestBookOwnerNick", guestBookOwnerNick);
+
+    return resultMap;
   }
 
   // 좋아요 기능
