@@ -6,15 +6,14 @@ import client from '../../lib/api/springClient';
 
 const MemberInfoContainer = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector(({ auth }) => ({
-    user: auth.user,
-  }));
-
-  const { myPage, myPageError, userNo } = useSelector(({ myPage }) => ({
-    myPage: myPage.myPage,
-    myPageError: myPage.myPageError,
-    userNo: user.no,
-  }));
+  const { user, myPage, myPageError, userNo } = useSelector(
+    ({ auth, myPage }) => ({
+      user: auth.user,
+      myPage: myPage.myPage,
+      myPageError: myPage.myPageError,
+      userNo: auth.user.no,
+    })
+  );
 
   //컴포넌트 초기 렌터링 때 form 초기화
   useEffect(() => {
