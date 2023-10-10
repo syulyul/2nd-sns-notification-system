@@ -26,11 +26,12 @@ export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const update = createAction(
     UPDATE,
-    ({ photo, name, nick, birthDay, email, phoneNumber, password, gender }) => ({
+    ({ userNo, photo, name, nick, birthday, email, phoneNumber, password, gender }) => ({
+      userNo,
       photo,
       name,
       nick,
-      birthDay,
+      birthday,
       email,
       phoneNumber,
       password,
@@ -52,27 +53,30 @@ export function* myPageSaga() {
 }
 
 const initialState = {
-  myPage: [],
+  myPage: {nick:""},
   userNo: 0,
   myPageError: null,
+  user: null,
 };
 
 const myPage = handleActions(
     {
       [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
         ...state,
-        [key]: value,
+        myPage:{...state.myPage, [key]: value},
+
       }),
       [INITIALIZE_FORM]: (state) => ({
         ...state,
 
-        myPage: [],
+        myPage: null,
         userNo: 0,
       }),
 
-      [UPDATE_SUCCESS]: (state, { payload: myPage }) => ({
+      [UPDATE_SUCCESS]: (state, { payload: myPage, user }) => ({
         ...state,
         myPageError: null,
+        user,
         myPage,
       }),
       [UPDATE_FAILURE]: (state, { payload: error }) => ({
