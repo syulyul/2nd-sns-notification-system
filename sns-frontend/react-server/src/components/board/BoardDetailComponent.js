@@ -112,39 +112,38 @@ const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToLi
         <ContentBox>
           <form>
             <Title>
-              <input type="text" defaultValue={board.title} readOnly={!board.editable} />
+              <input type="text" defaultValue={board ? board.title : ""} readOnly={board ? !board.editable : true} />
             </Title>
             <MetaInfo>
-              <span className="nickname">{board.writer.nick}</span>
+              <span className="nickname">{board && board.writer ? board.writer.nick : 'Unknown'}</span>
               <ClockIcon src="/images/clock.png" alt="clock-icon" />
-              <span>{new Date(board.createdAt).toLocaleDateString()}</span>
+              <span>{board && board.createdAt ? new Date(board.createdAt).toLocaleDateString() : 'Unknown date'}</span>
               <ClockIcon src="/images/eye.png" alt="views-icon" />
-              <span>{board.viewCount}</span>
+              <span>{board ? board.viewCount : 0}</span>
             </MetaInfo>
-            <textarea defaultValue={board.content} readOnly={!board.editable}></textarea>
+            <textarea defaultValue={board ? board.content : ""} readOnly={board ? !board.editable : true}></textarea>
             <div>
               {(board && board.attachedFiles) ? board.attachedFiles.map((file, index) => (
                   <div key={index}>
                     <img src={`https://yourImageServer.com/${file.filePath}`} alt="Attached file" />
                     <a href={`https://yourImageServer.com/${file.filePath}`}>Download</a>
-                    {board.editable && <a href="#" onClick={() => onDelete(file.no)}>X</a>}
+                    {board && board.editable ? <a href="#" onClick={() => onDelete(file.no)}>X</a> : null}
                   </div>
               )) : null}
             </div>
             <ButtonContainer>
-              {board.editable && <StyledButton onClick={onEdit}>변경</StyledButton>}
-              {board.editable && <StyledButton onClick={onReset}>초기화</StyledButton>}
-              {board.editable && <StyledButton onClick={onDelete}>삭제</StyledButton>}
+              {board && board.editable ? (
+                  <>
+                    <StyledButton onClick={onEdit}>변경</StyledButton>
+                    <StyledButton onClick={onReset}>초기화</StyledButton>
+                    <StyledButton onClick={onDelete}>삭제</StyledButton>
+                  </>
+              ) : null}
             </ButtonContainer>
           </form>
-          <LikeButton onClick={board.liked ? onUnlike : onLike}>
-            {board.liked ? "좋아요 취소❤️" : "좋아요 누르기 🤍"}
+          <LikeButton onClick={board && board.liked ? onUnlike : onLike}>
+            {board && board.liked ? "좋아요 취소❤️" : "좋아요 누르기 🤍"}
           </LikeButton>
-          {/*<LikeList>*/}
-          {/*  {board.likes.map((user, index) => (*/}
-          {/*      <span key={user.id}>{user.name}{index !== board.likes.length - 1 && ', '}</span>*/}
-          {/*  ))}*/}
-          {/*</LikeList>*/}
           <StyledButton onClick={onNavigateToList} style={{marginTop: '80px', marginLeft: '450px'}}>목록</StyledButton>
         </ContentBox>
 
@@ -154,20 +153,19 @@ const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToLi
         </CommentInputContainer>
 
         <div>
-          {comments ? comments.map(comment => (
+          {comments && comments.length > 0 ? comments.map(comment => (
               <CommentContainer key={comment.id}>
                 <CommentMeta>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <ProfileImage src={`https://yourImageServer.com/${comment.user.profileImage}`} alt={comment.user.name} />
-                    <span>{comment.user.name}</span>
+                    <ProfileImage src={comment && comment.user ? `https://yourImageServer.com/${comment.user.profileImage}` : "/images/default.png"} alt={comment && comment.user ? comment.user.name : 'Unknown'} />
+                    <span>{comment && comment.user ? comment.user.name : 'Unknown'}</span>
                   </div>
-                  <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                  <span>{comment && comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'Unknown date'}</span>
                 </CommentMeta>
-                <CommentContent>{comment.content}</CommentContent>
+                <CommentContent>{comment ? comment.content : ''}</CommentContent>
               </CommentContainer>
           )) : null}
         </div>
-
       </Container>
   );
 };
