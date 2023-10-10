@@ -9,72 +9,73 @@ export const addLog = async (req, res, next) => {
       url: req.body.url,
       noti_state: req.body.notiState,
     });
-    res.json(notiLog);
+    return res.json(notiLog);
   } catch (err) {
     console.error(err);
     res.status(403).send(err);
-    next(err);
+    return next(err);
   }
 };
 
 export const listNotiLog = async (req, res, next) => {
   try {
     const [notiLogs, notiLogCount] = await Promise.all([
-      Noti.find({ mno: req.body.memberNo })
+      Noti.find({ mno: req.params.memberNo })
         .sort({ createdAt: -1 })
-        .limit(req.body.limit)
-        .skip((req.body.page - 1) * req.body.limit),
+        .limit(req.query.limit)
+        .skip((req.query.page - 1) * req.query.limit),
       Noti.countDocuments({
-        mno: req.body.memberNo,
+        mno: req.params.memberNo,
       }),
     ]);
-    res.json(notiLogs);
-    res.set('Last-Page', Math.ceil(notiLogCount / req.body.limit));
+
+    res.set('Last-Page', Math.ceil(notiLogCount / req.query.limit));
+    return res.json(notiLogs);
   } catch (err) {
     console.error(err);
     res.status(403).send(err);
-    next(err);
+    return next(err);
   }
 };
 
 export const notReadNotiCount = async (req, res, next) => {
   try {
-    const count = Noti.countDocuments({
-      mno: req.body.memberNo,
+    const count = await Noti.countDocuments({
+      mno: req.params.memberNo,
       noti_state: 0,
     });
-    res.json(count);
+    return res.json(count);
   } catch (error) {
     console.error(error);
     res.status(403).send(error);
-    next(error);
+    return next(error);
   }
 };
 
 export const updateNotiState = async (req, res, next) => {
   try {
-    const result = Noti.updateOne(
+    const result = await Noti.updateOne(
       { _id: req.body._id },
       { noti_state: req.body.notiState }
     );
-    res.json(result);
+    return res.json(result);
   } catch (error) {
     console.error(error);
     res.status(403).send(error);
-    next(error);
+    return next(error);
   }
 };
 
 export const updateAllNotiState = async (req, res, next) => {
   try {
-    const result = Noti.updateMany(
+    const result = await Noti.updateMany(
       { mno: req.body.memberNo },
       { noti_state: req.body.notiState }
     );
-    res.json(result);
+    return res.json(result);
   } catch (error) {
     console.error(error);
     res.status(403).send(error);
-    next(error);
+    return next(error);
   }
 };

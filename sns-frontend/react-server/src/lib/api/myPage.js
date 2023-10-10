@@ -1,6 +1,8 @@
 import springClient from './springClient';
 
-export const list = (userNo) => springClient.get(`/myPage/${userNo}`);
+export const list = (userNo) => {
+  return springClient.get(`/myPage/${userNo}`);
+};
 
 export const info = (userNo) => springClient.get(`/myPage/${userNo}/info`);
 

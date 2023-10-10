@@ -1,12 +1,12 @@
 import springClient from './springClient';
 
-// 게시글 작성
-export const writePost = ({ title, content, files, category }) =>
+// boardform
+export const form = ({ title, content, files, category }) =>
   springClient.post('board/add', {
     title,
     content,
     files,
-    category,
+    category
   });
 
 // boardlist
