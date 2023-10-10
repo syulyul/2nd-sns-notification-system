@@ -8,7 +8,7 @@ public class NotiType implements Serializable {
   private static final long serialVersionUID = 1L;
   public static int FOLLOW_TYPE = 1;
   public static int LIKE_TYPE = 2;
-  public static int COMMENT_TYPE = 1;
+  public static int COMMENT_TYPE = 3;
   private int no;
   private String name;
 
@@ -22,12 +22,12 @@ public class NotiType implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-      if (this == o) {
-          return true;
-      }
-      if (!(o instanceof NotiType notiType)) {
-          return false;
-      }
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof NotiType notiType)) {
+      return false;
+    }
     return no == notiType.no && Objects.equals(name, notiType.name);
   }
 
