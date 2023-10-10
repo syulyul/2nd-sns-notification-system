@@ -10,13 +10,13 @@ const CHANGE_FIELD = 'auth/CHANGE_FIELD';
 const INITIALIZE_FORM = 'auth/INITIALIZE_FORM';
 
 const [LIST, LIST_SUCCESS, LIST_FAILURE] =
-    createRequestActionTypes('board/LIST');
+  createRequestActionTypes('board/LIST');
 
 const [DETAIL, DETAIL_SUCCESS, DETAIL_FAILURE] =
-    createRequestActionTypes('board/DETAIL');
+  createRequestActionTypes('board/DETAIL');
 
 const [FORM, FORM_SUCCESS, FORM_FAILURE] =
-    createRequestActionTypes('board/FORM');
+  createRequestActionTypes('board/FORM');
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -25,21 +25,14 @@ export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
 
 export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
+export const list = createAction(LIST, (category) => category);
 
-export const list = createAction(
-    LIST,
-    (category) => (category)
-);
+export const detail = createAction(DETAIL, ({ category, boardNo }) => ({
+  category,
+  boardNo,
+}));
 
-export const detail = createAction(
-    DETAIL,
-    ({category, boardNo}) => ({category, boardNo})
-);
-
-export const form = createAction(
-    FORM,
-    ({ title, content, files, category }) => ({ title, content, files, category })
-);
+export const form = createAction(FORM, ({ formData }) => ({ formData }));
 
 const listSaga = createRequestSaga(LIST, boardAPI.list);
 const detailSaga = createRequestSaga(DETAIL, boardAPI.detail);
@@ -63,50 +56,52 @@ const initialState = {
   category: 1,
   board: null,
   comments: null,
-  boardError: null    // 에러 상태
+  boardError: null, // 에러 상태
 };
 
 const board = handleActions(
-    {
-      [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
-        ...state,
-        [key]: value,
-      }),
-      [INITIALIZE_FORM]: (state) => ({
-        ...state,
-        title: '',
-        content: '',
-        files: '',
-      }),
-      [LIST_SUCCESS]: (state, { payload: boardList }) => ({
-        ...state,
-        boardError: null,
-        boardList,
-      }),
-      [LIST_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        boardError: error,
-      }),
-      [DETAIL_SUCCESS]: (state, { payload: response }) => ({///
-        ...state,
-        boardError: null,
-        ...response
-      }),
-      [DETAIL_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        boardError: error,
-      }),
-      [FORM_SUCCESS]: (state, { payload: board }) => ({
-        ...state,
-        boardError: null,
-        board,
-      }),
-      [FORM_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        boardError: error,
-      }),
-    },
-    initialState
+  {
+    [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
+      ...state,
+      [key]: value,
+    }),
+    [INITIALIZE_FORM]: (state) => ({
+      ...state,
+      title: '',
+      content: '',
+      files: '',
+      board: null,
+    }),
+    [LIST_SUCCESS]: (state, { payload: boardList }) => ({
+      ...state,
+      boardError: null,
+      boardList,
+    }),
+    [LIST_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
+    }),
+    [DETAIL_SUCCESS]: (state, { payload: response }) => ({
+      ///
+      ...state,
+      boardError: null,
+      ...response,
+    }),
+    [DETAIL_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
+    }),
+    [FORM_SUCCESS]: (state, { payload: board }) => ({
+      ...state,
+      boardError: null,
+      board,
+    }),
+    [FORM_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
+    }),
+  },
+  initialState
 );
 
 export default board;
