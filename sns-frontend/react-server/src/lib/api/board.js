@@ -16,6 +16,10 @@ export const list = (category) =>
 export const detail = ({ category, boardNo }) =>
   springClient.get(`board/detail?category=${category}&boardNo=${boardNo}`);
 
+//댓글
+export const addComment = (boardComment) =>
+    springClient.post('/board/addComment', boardComment);
+
 // 게시글 수정
 export const updatePost = ({ id, formData }) =>
   springClient.put(`board/${id}`, formData, {
