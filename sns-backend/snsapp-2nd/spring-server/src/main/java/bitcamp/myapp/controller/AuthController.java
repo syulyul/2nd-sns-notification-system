@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -189,17 +190,18 @@ public class AuthController {
 
   @PostMapping("add")
   public String add(
-      Member member,
-      MultipartFile photofile,
+      @RequestPart("data") Member member,
+      @RequestPart(value = "files", required = false) MultipartFile[] files,
       Model model) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
     try {
-      System.out.println(member);
-      if (photofile.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_member/", photofile);
-        member.setPhoto(uploadFileUrl);
+      if (files != null) {
+        if (files[0].getSize() > 0) {
+          String uploadFileUrl = ncpObjectStorageService.uploadFile(
+              "bitcamp-nc7-bucket-14", "sns_member/", files[0]);
+          member.setPhoto(uploadFileUrl);
+        }
       }
       memberService.add(member);
       MyPage myPage = new MyPage();
