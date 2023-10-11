@@ -119,7 +119,7 @@ const MemberInfoComponent = ({ myPageData, user }) => {
           <SidebarButton to={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
         </ButtonContainer>
         <ButtonContainer>
-          <ChatRoomListButton to={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>
+          <ChatRoomListButton to={`/room/list`}>채팅 리스트</ChatRoomListButton>
         </ButtonContainer>
       </Sidebar>
   );

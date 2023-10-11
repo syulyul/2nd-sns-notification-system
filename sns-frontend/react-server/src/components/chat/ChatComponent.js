@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
+// import { roomList } from '../../modules/rooms';
 
 const ChatContainer = styled.div`
     padding: 20px;
     background-color: #f2f2f2;
-    width: 650px;
+    width: 600px;
     margin: auto;
     margin-left: 20px;
     height: 700px;
@@ -104,8 +105,8 @@ const UserImage = styled.img`
     margin-bottom: 20px;
 `;
 
-
-const StyledChatMine = styled.div`
+const StyledChatItem = styled.div`
+  .StyledChatMine {
     position: relative;
     background: #426B1F;
     color: #FFFFFF;
@@ -118,9 +119,9 @@ const StyledChatMine = styled.div`
     margin-bottom:20px;
     align-self: flex-end;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
-`;
+  }
 
-const StyledChatOther = styled.div`
+  .StyledChatOther {
     position: relative;
     background: #FFFFFF;
     border: 1px solid #ddd;
@@ -132,7 +133,37 @@ const StyledChatOther = styled.div`
     margin: 10px auto;
     align-self: flex-start;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
+  }
 `;
+
+// const StyledChatMine = styled.div`
+//     position: relative;
+//     background: #426B1F;
+//     color: #FFFFFF;
+//     font-size: 16px;
+//     padding: 10px;
+//     border-radius: 10px;
+//     max-width: 60%;
+//     float: right;
+//     margin: 10px auto;
+//     margin-bottom:20px;
+//     align-self: flex-end;
+//     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
+// `;
+
+// const StyledChatOther = styled.div`
+//     position: relative;
+//     background: #FFFFFF;
+//     border: 1px solid #ddd;
+//     font-size: 16px;
+//     padding: 10px;
+//     border-radius: 10px;
+//     max-width: 80%;
+//     float: left;
+//     margin: 10px auto;
+//     align-self: flex-start;
+//     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
+// `;
 
 const StyledChatBtn = styled.button`
     width: 100px;
@@ -153,55 +184,61 @@ const StyledChatBtn = styled.button`
     }
 `;
 
-const ChatComponent = () => {
+const ChatItem = ({ chatlog, loginUser }) => {
+  const { _id, room, user, chat, files, createdAt } = chatlog;
+  const roomId = _id;
+
+  return (
+    <StyledChatItem
+      className={
+        loginUser.nick === user.nick
+        ? "styledChatMine"
+        : "StyledChatOther"
+      }
+    >
+
+    </StyledChatItem>
+  )
+}
+
+const ChatComponent = ({ room, chats, user, onChange, onSubmit }) => {
+  // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
     <ChatContainer>
-      <TitleStyle>🌱 쫀떠기 🌱</TitleStyle>
+      <TitleStyle>{`🌱  🌱`}</TitleStyle>
       <StyledChatList>
           <ChatMessage>
-          <div>
-            <StyledChatMine
-                type="text"
-                name="chat"
-            >내가 쓴 채팅 어떻게 받아오지 잘 모르겠네아아아아아ㅏ아아아아아아아아아ㅏㅇ</StyledChatMine>
-          </div>
-          </ChatMessage>
-          <ChatMessage>
-          <UserImage src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp" alt="User" />
-            <div>
-              <Username>쫀떠기</Username>
-              <StyledChatOther
+            {chats && (
+              <div>
+              {/* <StyledChatMine
                   type="text"
                   name="chat"
-              >남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아</StyledChatOther>
+              >`${chats}`</StyledChatMine>
             </div>
-          </ChatMessage>
-          <ChatMessage>
-          <UserImage src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp" alt="User" />
             <div>
-              <Username>쫀떠기</Username>
-              <StyledChatOther
+              <StyledChatMine
                   type="text"
                   name="chat"
-              >남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아</StyledChatOther>
+              >`${chats}`</StyledChatMine>
             </div>
+            </ChatMessage>
+            <ChatMessage>
+            <UserImage src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp" alt="User" />
+              <div>
+                <Username>쫀떠기</Username>
+                <StyledChatOther
+                    type="text"
+                    name="chat"
+                >남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아</StyledChatOther> */}
+                
+                {chats.map((chatlog) => (
+                  <StyledChatItem chatlog={chatlog} key={chats._id} user={user} />
+                ))}
+              </div>
+            )}
+          
           </ChatMessage>
-          <ChatMessage>
-          <div>
-            <StyledChatMine
-                type="text"
-                name="chat"
-            >내가 쓴 채팅 어떻게 받아오지 잘 모르겠네아아아아아ㅏ아아아아아아아아아ㅏㅇ</StyledChatMine>
-          </div>
-          </ChatMessage>
-          <ChatMessage>
-          <div>
-            <StyledChatMine
-                type="text"
-                name="chat"
-            >내가 쓴 채팅 어떻게 받아오지 잘 모르겠네아아아아아ㅏ아아아아아아아아아ㅏㅇ</StyledChatMine>
-          </div>
-          </ChatMessage>
+          
       </StyledChatList>
       <StyledForm>
         <StyledInputContainer>
@@ -216,7 +253,9 @@ const ChatComponent = () => {
             name="files"
             multiple
           />
-          <StyledChatBtn type="submit">보내기</StyledChatBtn>
+          <StyledChatBtn type="submit" onClick={onSubmit}>
+            보내기
+          </StyledChatBtn>
         </StyledInputContainer>
       </StyledForm>
     </ChatContainer>

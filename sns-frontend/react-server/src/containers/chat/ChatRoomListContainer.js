@@ -1,10 +1,10 @@
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ChatRoomListComponent from '../../components/chat/ChatRoomListComponent';
 import ChatComponent from '../../components/chat/ChatComponent';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { useDispatch, useSelector} from "react-redux";
-import { roomList, concatRooms, removeRoom } from "../../modules/rooms";
+import { useDispatch, useSelector } from 'react-redux';
+import { roomList, concatRooms, removeRoom } from '../../modules/rooms';
 import styled from 'styled-components';
 import auth from '../../modules/auth';
 
@@ -21,7 +21,7 @@ const CenteredContainer = styled.div`
 
 const ChatRoomListContainer = () => {
   const dispatch = useDispatch();
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const navigate = useNavigate();
 
   // const rooms = [
   //   { _id: '1', title: '쫀떠기1' },
@@ -34,39 +34,37 @@ const ChatRoomListContainer = () => {
   //   // { chat },
   // ];
 
-  const { rooms, error, user } = useSelector(
-    ({ rooms , auth }) => ({
-      rooms: rooms.rooms,
-      error: rooms.error,
-      user: auth.user,
-    })
-  );
+  const { rooms, error, user } = useSelector(({ rooms, auth }) => ({
+    rooms: rooms.rooms,
+    error: rooms.error,
+    user: auth.user,
+  }));
 
   useEffect(() => {
     dispatch(roomList(user.no));
   }, [dispatch, user.no]);
 
-  const handleSelectRoom = (room) => {
-    setSelectedRoom(room);
+  const handleSelectRoom = (users) => {
+    navigate(`/room?mno1=${users[0]}&mno2=${users[1]}`);
   };
 
   return (
     <CenteredContainer>
-    <ChatRoomList>
-      <div>
-      <ChatRoomListComponent rooms = {rooms} onSelectRoom={handleSelectRoom} />
-      </div>
-      {selectedRoom && (
+      <ChatRoomList>
         <div>
-          {/* <h2>{selectedRoom.title}</h2> */}
-          {/* 선택한 채팅방 내용을 여기에 표시할 수 있음 */}
-          <ChatComponent
-            error = {error}
-            rooms = {rooms}
+          <ChatRoomListComponent
+            rooms={rooms}
+            onSelectRoom={handleSelectRoom}
           />
         </div>
-      )}
-    </ChatRoomList>
+        {
+          <div>
+            {/* <h2>{selectedRoom.title}</h2> */}
+            {/* 선택한 채팅방 내용을 여기에 표시할 수 있음 */}
+            <ChatComponent error={error} rooms={rooms} />
+          </div>
+        }
+      </ChatRoomList>
     </CenteredContainer>
   );
 };

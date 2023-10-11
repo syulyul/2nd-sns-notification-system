@@ -14,8 +14,8 @@ const CONCAT_CHATS = "chats/CONCAT_CHATS";
 
 export const enterRoom = createAction(
   ENTER_ROOM,
-  ({ roomId }) => ({
-    roomId
+  ({ mno1,mno2 }) => ({
+    mno1,mno2
   })
 );
 
@@ -24,9 +24,11 @@ export const concatChats = createAction(CONCAT_CHATS, ({ newChat }) => ({
 }));
 
 const enterRoomSaga = createRequestSaga(ENTER_ROOM, chatsAPI.enterRoom);
+const sendChatSaga = createRequestSaga(CONCAT_CHATS, chatsAPI.sendChat);
 
 export function* chatsSaga() {
   yield takeLatest(ENTER_ROOM, enterRoomSaga);
+  yield takeLatest(CONCAT_CHATS, sendChatSaga);
 }
 
 

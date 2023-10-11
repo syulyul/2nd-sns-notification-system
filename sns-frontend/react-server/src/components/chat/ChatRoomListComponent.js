@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const ChatRoomItemContainer = styled.div`
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   margin-bottom: 10px;
   cursor: pointer;
   &:hover {
@@ -33,18 +33,19 @@ const ChatRoomItem = styled.div`
 `;
 
 const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
-
   return (
     <ChatRoomList>
       <h2>채팅방 목록</h2>
       <ChatRoomListBox>
-        {rooms.map(room => (
+        {rooms.map((room) => (
           <ChatRoomItemContainer>
-            <ChatRoomItem key={room._id} onClick={() => onSelectRoom(room)}>
+            <ChatRoomItem
+              key={room._id}
+              onClick={(e) => onSelectRoom(room.users)}
+            >
               {`${room.users[0]}, ${room.users[1]}`}
             </ChatRoomItem>
           </ChatRoomItemContainer>
-          
         ))}
       </ChatRoomListBox>
     </ChatRoomList>
