@@ -4,7 +4,6 @@ import createRequestSaga, {
   createRequestActionTypes,
 } from '../lib/createRequestSaga';
 import * as guestBookAPI from '../lib/api/guestBook';
-import auth from './auth';
 
 const CHANGE_FIELD = 'guestBook/CHANGE_FIELD';
 const INITIALIZE_FORM = 'guestBook/INITIALIZE_FORM';
@@ -22,7 +21,7 @@ export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
 export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const post = createAction(POST,
-    ({ mno, mpno, title, content }) => ({ mno, mpno, title, content}));
+    ({ mpno, title, content, writer, }) => ({ mpno, title, content, writer, }));
 export const list = createAction(LIST, (no) => (no));
 
 const postSaga = createRequestSaga(POST, guestBookAPI.post);

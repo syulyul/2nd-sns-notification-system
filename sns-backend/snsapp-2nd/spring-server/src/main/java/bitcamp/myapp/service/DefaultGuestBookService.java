@@ -32,14 +32,14 @@ public class DefaultGuestBookService implements GuestBookService {
   @Override
   public int add(GuestBook guestBook) throws Exception {
     int count = guestBookDao.insert(guestBook);
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-    if (!loginUser.equals(guestBook.getMpno())) {
-      notificationService.add(new NotiLog(
-          guestBook.getMpno(),
-          NotiType.LIKE_TYPE,
-          loginUser.getNick() + "님이 회원님의 방명록에 글을 작성했습니다.",
-          "/guestBook/" + guestBook.getMpno()));
-    }
+//    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+//    if (!loginUser.equals(guestBook.getMpno())) {
+//      notificationService.add(new NotiLog(
+//          guestBook.getMpno(),
+//          NotiType.LIKE_TYPE,
+//          loginUser.getNick() + "님이 회원님의 방명록에 글을 작성했습니다.",
+//          "/guestBook/" + guestBook.getMpno()));
+//    }
     return count;
   }
 
