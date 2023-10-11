@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
-import { changeField, initializeForm, detail, addComment } from '../../modules/board';
+import { changeField, initializeForm, detail, addComment, deleteBoard } from '../../modules/board';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   const [content, setContent] = useState('');
+  const navigate = useNavigate();
 
   const boardDefault = {
     title: 'Loading...',
@@ -51,6 +52,20 @@ const BoardDetailContainer = () => {
     setContent('');  // 입력 필드 초기화
   };
 
+  const onEdit = () => {
+    const updatedBoard = { ...board, editable: true };
+
+  };
+
+  const onReset = () => {
+    dispatch(detail({ category, boardNo }));
+  };
+
+  const onDelete = (e) => {
+    e.preventDefault();
+    dispatch(deleteBoard({boardNo, category}));
+  };
+
   useEffect(() => {
     dispatch(detail({ category, boardNo }));
   }, [dispatch, category, boardNo]);
@@ -63,9 +78,12 @@ const BoardDetailContainer = () => {
         <BoardDetailComponent
             board={board}
             comments={comments}
-            onSubmit={onSubmit}   // onSubmit prop 추가
             content={content}
-            onChange={(e) => setContent(e.target.value)}
+            onSubmit={onSubmit}
+            onChange={onChange}
+            onEdit={onEdit}
+            onReset={onReset}
+            onDelete={onDelete}
         />
   );
 };
