@@ -1,19 +1,20 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
-import { useDispatch, useSelector } from 'react-redux';
-import myPage, { list } from '../../modules/myPage';
-import client from '../../lib/api/springClient';
+import {useDispatch, useSelector} from 'react-redux';
+import { list, following, follower, initializeForm } from "../../modules/myPage";
+import { useNavigate } from 'react-router-dom';
 
 const MemberInfoContainer = () => {
   const dispatch = useDispatch();
-  const { user, myPage, myPageError, userNo } = useSelector(
-    ({ auth, myPage }) => ({
-      user: auth.user,
-      myPage: myPage.myPage,
-      myPageError: myPage.myPageError,
-      userNo: auth.user.no,
-    })
-  );
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
+  const {myPage, myPageError, userNo, user} = useSelector(({auth, myPage}) => ({
+    myPage: myPage.myPage,
+    myPageError: myPage.myPageError,
+    userNo: auth.user.no,
+    user: auth.user,
+  }));
 
   //컴포넌트 초기 렌터링 때 form 초기화
   useEffect(() => {
@@ -24,8 +25,31 @@ const MemberInfoContainer = () => {
   if (myPageError) {
     return <div>오류가 발생했습니다: {myPageError.message}</div>;
   }
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(following( userNo ));
+    dispatch(list(userNo));
+    dispatch(initializeForm());
+    navigate(`/myPage/${user.no}?show=followings`);
 
-  return <MemberInfoComponent myPageData={myPage} user={user} />;
+  };
+  const onSubmit2 = (e) => {
+    e.preventDefault();
+    dispatch(follower( userNo ));
+    dispatch(list(userNo));
+    dispatch(initializeForm());
+    navigate(`/myPage/${user.no}?show=follower`);
+
+  };
+
+  return (
+      <MemberInfoComponent
+          onSubmit2={onSubmit2}
+          onSubmit={onSubmit}
+          follow={userNo}
+          myPageData={myPage}
+          user={user}/>
+  );
 };
 
 export default MemberInfoContainer;

@@ -1,23 +1,32 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import FollowComponent from '../../components/myPage/FollowComponent';
+import { following, follower } from "../../modules/myPage";
 
 const FollowContainer = () => {
-  const defaultImage = process.env.PUBLIC_URL + '/images/default.jpg';
-  // 임시 회원 목록
-  const followList = [
-    { no: 1, nick: '지나가율', photo: defaultImage },
-    { no: 2, nick: '연궁이', photo: defaultImage },
-    { no: 3, nick: '산준으로', photo: defaultImage },
-  ];
 
-  // 임시 세션 데이터
-  const session = {
-    loginUser: {
-      followMemberSet: [2],
-    },
-  };
+  const dispatch = useDispatch();
 
-  return <FollowComponent followList={followList} session={session} />;
+  const {followList, error, userNo} = useSelector(({myPage}) => ({
+    followList: myPage.followList,
+    error: myPage.error,
+    userNo: myPage.userNo,
+  }));
+
+  useEffect(() => {
+    dispatch(following(userNo));
+  }, [dispatch, userNo]);  // 팔로우 버튼 클릭 시 실행되는 함수
+
+  // 에러가 발생하면 에러 메시지를 출력합니다.
+  if (error) {
+    return <div>오류가 발생했습니다: {error.message}</div>;
+  }
+
+  return (
+      <FollowComponent
+          followListData={followList}
+      />
+  );
 };
 
 export default FollowContainer;
