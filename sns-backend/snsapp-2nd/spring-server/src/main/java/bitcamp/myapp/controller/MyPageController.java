@@ -305,13 +305,11 @@ public class MyPageController {
 
   @GetMapping("/{no}/followers")
   @ResponseBody
-  public ResponseEntity getFollowerList(@PathVariable int no,
-      Model model) {
+  public ResponseEntity getFollowerList(@PathVariable int no) {
     List<Member> followerList;
     try {
-      model.addAttribute("followList", myPageService.followerList(no));
       followerList = myPageService.followerList(no); // followerList를 가져오는 서비스 메서드 호출
-    } catch(Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
       // 예외 발생 시 처리
       return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
@@ -322,11 +320,9 @@ public class MyPageController {
 
   @GetMapping("/{no}/following")
   @ResponseBody
-  public ResponseEntity getFollowingList(@PathVariable int no,
-      Model model) {
+  public ResponseEntity getFollowingList(@PathVariable int no) {
     List<Member> followingList;
     try {
-      model.addAttribute("followList", myPageService.followingList(no));
       followingList = myPageService.followingList(no);
     } catch (Exception e) {
       e.printStackTrace();
