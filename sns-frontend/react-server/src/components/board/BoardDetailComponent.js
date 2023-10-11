@@ -106,6 +106,11 @@ const ProfileImage = styled.img`
   margin-right: 10px;
 `;
 
+const StyledImage = styled.img`
+  width: 200px;
+  height: 200px;
+`;
+
 const BoardDetailComponent = ({
   board,
   onEdit,
@@ -115,6 +120,9 @@ const BoardDetailComponent = ({
   onLike,
   onUnlike,
   comments,
+  content,
+  onSubmit,
+  onChange
 }) => {
   return (
     <Container>
@@ -148,7 +156,7 @@ const BoardDetailComponent = ({
             {board && board.attachedFiles
               ? board.attachedFiles.map((file, index) => (
                   <div key={index}>
-                    <img
+                    <StyledImage
                       src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
                       alt="Attached file"
                     />
@@ -186,8 +194,13 @@ const BoardDetailComponent = ({
       </ContentBox>
 
       <CommentInputContainer>
-        <CommentTextArea placeholder="댓글을 입력하세요."></CommentTextArea>
-        <StyledButton>댓글 작성</StyledButton>
+          <CommentTextArea
+              name="content"
+              placeholder="댓글을 입력하세요."
+              value={content}
+              onChange={onChange}  // props로 전달받은 onChange 사용
+          />
+          <StyledButton type="submit" onClick={onSubmit}>작성</StyledButton>
       </CommentInputContainer>
 
       <div>

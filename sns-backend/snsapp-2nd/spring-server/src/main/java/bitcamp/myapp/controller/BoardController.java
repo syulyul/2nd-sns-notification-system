@@ -19,12 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/board")
 public class BoardController {
 
@@ -268,20 +265,22 @@ public class BoardController {
 
   // 댓글 기능
   @PostMapping("addComment")
-  public String addComment(
+  public ResponseEntity addComment(
       BoardComment boardComment,
       HttpSession session,
       @RequestParam("boardNo") int boardNo) throws Exception {
+
     Member loginUser = (LoginUser) session.getAttribute("loginUser");
     if (loginUser == null) {
-      return "redirect:/auth/form";
+      return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
     }
 
     boardComment.setBoardNo(boardNo);
     boardComment.setWriter(loginUser);
 
     boardCommentService.add(boardComment);
-    return "redirect:/board/detail/1/" + boardComment.getBoardNo();
+
+    return new ResponseEntity<>(boardComment, HttpStatus.OK);
   }
 
   @GetMapping("detailComment/{boardNo}/{no}")

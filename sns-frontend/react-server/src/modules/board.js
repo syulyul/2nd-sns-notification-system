@@ -18,6 +18,9 @@ const [DETAIL, DETAIL_SUCCESS, DETAIL_FAILURE] =
 const [FORM, FORM_SUCCESS, FORM_FAILURE] =
   createRequestActionTypes('board/FORM');
 
+const [ADD_COMMENT, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE] =
+    createRequestActionTypes('comment/ADD_COMMENT');
+
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
   value,
@@ -34,14 +37,18 @@ export const detail = createAction(DETAIL, ({ category, boardNo }) => ({
 
 export const form = createAction(FORM, ({ formData }) => ({ formData }));
 
+export const addComment = createAction(ADD_COMMENT, ({ content, boardNo }) => ({ content, boardNo }));
+
 const listSaga = createRequestSaga(LIST, boardAPI.list);
 const detailSaga = createRequestSaga(DETAIL, boardAPI.detail);
 const formSaga = createRequestSaga(FORM, boardAPI.form);
+const addCommentSaga = createRequestSaga(ADD_COMMENT, boardAPI.addComment);
 
 export function* boardSaga() {
   yield takeLatest(LIST, listSaga);
   yield takeLatest(DETAIL, detailSaga);
   yield takeLatest(FORM, formSaga);
+  yield takeLatest(ADD_COMMENT, addCommentSaga);
 }
 
 // const initialState = {
@@ -57,6 +64,8 @@ const initialState = {
   board: null,
   comments: null,
   boardError: null, // 에러 상태
+  boardComment: null,
+  commentError: null,
 };
 
 const board = handleActions(
@@ -99,6 +108,15 @@ const board = handleActions(
     [FORM_FAILURE]: (state, { payload: error }) => ({
       ...state,
       boardError: error,
+    }),
+    [ADD_COMMENT_SUCCESS]: (state, { payload: boardComment }) => ({
+      ...state,
+      commentError: null,
+      boardComment,
+    }),
+    [ADD_COMMENT_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      commentError: error,
     }),
   },
   initialState
