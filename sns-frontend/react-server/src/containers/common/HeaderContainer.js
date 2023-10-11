@@ -29,7 +29,7 @@ const HeaderContainer = () => {
     if (user && notReadNotiCount == null) {
       dispatch(getNotReadNotiCount({ memberNo: user.no }));
     }
-  }, [user, notReadNotiCount]);
+  }, [user]);
 
   return (
     <Header
