@@ -4,7 +4,7 @@ import qs from 'qs';
 import { useLocation, useParams } from 'react-router-dom';
 import NotificationListComponent from '../../components/notification/NotificationListComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import { notiList } from '../../modules/notification';
+import { notiList, readNoti } from '../../modules/notification';
 
 const NotificationListContainer = () => {
   const { search } = useLocation();
@@ -26,8 +26,15 @@ const NotificationListContainer = () => {
   });
 
   useEffect(() => {
-    dispatch(notiList({ memberNo: user.no, limit, page }));
-  }, [dispatch]);
+    if (user) {
+      dispatch(notiList({ memberNo: user.no, limit, page }));
+    }
+  }, [user, dispatch]);
+
+  const onReadNotiLog = (e) => {
+    const { name } = e.target;
+    dispatch(readNoti({ _id: name }));
+  };
 
   return (
     <NotificationListComponent
@@ -35,6 +42,7 @@ const NotificationListContainer = () => {
       page={page}
       query={query}
       lastPage={lastPage}
+      onReadNotiLog={onReadNotiLog}
     />
   );
 };

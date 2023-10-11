@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Pagination from '../common/Pagination';
+import { Link } from 'react-router-dom';
 
 const NotificationListStyledContainer = styled.div`
   display: flex;
@@ -57,13 +58,19 @@ const NotificationTitle = styled.h2`
   margin-left: 5%;
 `;
 
-const NotificationLink = styled.a`
+const NotificationLink = styled(Link)`
   margin-left: 4%;
   color: black;
   text-decoration: none;
 `;
 
-const NotificationListComponent = ({ notis, lastPage, page, query }) => {
+const NotificationListComponent = ({
+  notis,
+  lastPage,
+  page,
+  query,
+  onReadNotiLog,
+}) => {
   return (
     <>
       <NotificationListStyledContainer>
@@ -78,7 +85,11 @@ const NotificationListComponent = ({ notis, lastPage, page, query }) => {
 
           {notis.map((noti) => (
             <NotificationItem key={noti.id}>
-              <NotificationLink href={noti.url}>
+              <NotificationLink
+                to={noti.url}
+                name={noti._id}
+                onClick={noti.noti_state == 0 ? null : onReadNotiLog}
+              >
                 {noti.content}
               </NotificationLink>
               <span>{noti.noti_state === 0 ? '안읽음' : '읽음'}</span>
