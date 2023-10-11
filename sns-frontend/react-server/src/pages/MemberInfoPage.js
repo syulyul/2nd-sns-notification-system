@@ -9,6 +9,7 @@ const MemberInfoPage = () => {
         <HeaderContainer />
         <MemberInfoContainer />
         <PageDetailContainer />
+        <FollowContainer />
       </>
   )};
 

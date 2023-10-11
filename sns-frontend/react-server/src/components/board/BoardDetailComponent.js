@@ -113,14 +113,14 @@ const StyledImage = styled.img`
 
 const BoardDetailComponent = ({
   board,
-  onEdit,
-  onReset,
-  onDelete,
   onNavigateToList,
   onLike,
   onUnlike,
   comments,
   content,
+  onEdit,
+  onReset,
+  onDelete,
   onSubmit,
   onChange
 }) => {
@@ -132,7 +132,7 @@ const BoardDetailComponent = ({
             <input
               type="text"
               defaultValue={board ? board.title : ''}
-              readOnly={board ? !board.editable : true}
+              onChange={e => onChange({ key: 'title', value: e.target.value })}
             />
           </Title>
           <MetaInfo>
@@ -150,7 +150,7 @@ const BoardDetailComponent = ({
           </MetaInfo>
           <textarea
             defaultValue={board ? board.content : ''}
-            readOnly={board ? !board.editable : true}
+            onChange={e => onChange({ key: 'content', value: e.target.value })}
           ></textarea>
           <div>
             {board && board.attachedFiles
@@ -173,13 +173,13 @@ const BoardDetailComponent = ({
               : null}
           </div>
           <ButtonContainer>
-            {board && board.editable ? (
-              <>
-                <StyledButton onClick={onEdit}>변경</StyledButton>
+            {/*{board && board.editable ? (*/}
+            {/*  <>*/}
+                <StyledButton onClick={onEdit}>수정</StyledButton>
                 <StyledButton onClick={onReset}>초기화</StyledButton>
                 <StyledButton onClick={onDelete}>삭제</StyledButton>
-              </>
-            ) : null}
+              {/*</>*/}
+            {/*) : null}*/}
           </ButtonContainer>
         </form>
         <LikeButton onClick={board && board.liked ? onUnlike : onLike}>

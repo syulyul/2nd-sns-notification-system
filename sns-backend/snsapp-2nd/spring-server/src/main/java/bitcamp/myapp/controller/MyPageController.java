@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -299,6 +301,39 @@ public class MyPageController {
         ioException.printStackTrace();
       }
     }
+  }
+
+  @GetMapping("/{no}/followers")
+  @ResponseBody
+  public ResponseEntity getFollowerList(@PathVariable int no,
+      Model model) {
+    List<Member> followerList;
+    try {
+      model.addAttribute("followList", myPageService.followerList(no));
+      followerList = myPageService.followerList(no); // followerList를 가져오는 서비스 메서드 호출
+    } catch(Exception e){
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(followerList, HttpStatus.OK);
+
+  }
+
+  @GetMapping("/{no}/following")
+  @ResponseBody
+  public ResponseEntity getFollowingList(@PathVariable int no,
+      Model model) {
+    List<Member> followingList;
+    try {
+      model.addAttribute("followList", myPageService.followingList(no));
+      followingList = myPageService.followingList(no);
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(followingList, HttpStatus.OK);
   }
 
 }

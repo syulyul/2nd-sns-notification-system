@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
-import { changeField, initializeForm, detail, addComment } from '../../modules/board';
+import { changeField, initializeForm, detail, addComment, deleteBoard } from '../../modules/board';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   const [content, setContent] = useState('');
+  const navigate = useNavigate();
 
   const boardDefault = {
     title: 'Loading...',
@@ -37,8 +38,8 @@ const BoardDetailContainer = () => {
 
   const { boardNo, category } = useParams();
 
-  const onChange = (e) => {
-    setContent(e.target.value);
+  const onChange = ({ key, value }) => {
+    dispatch(changeField({ key, value }));
   };
 
   const onSubmit = (e) => {
@@ -49,6 +50,23 @@ const BoardDetailContainer = () => {
     };
     dispatch(addComment(commentData));
     setContent('');  // 입력 필드 초기화
+  };
+
+  const onEdit = () => {
+    const updatedBoard = { ...board, editable: true };
+
+  };
+
+  //게시글초기화
+  const onReset = () => {
+    dispatch(initializeForm());  // 상태를 초기화
+    dispatch(detail({ category, boardNo }));  // 다시 상세 정보를 불러옴
+  };
+
+  //게시글삭제
+  const onDelete = (e) => {
+    e.preventDefault();
+    dispatch(deleteBoard({boardNo, category}));
   };
 
   useEffect(() => {
@@ -63,9 +81,12 @@ const BoardDetailContainer = () => {
         <BoardDetailComponent
             board={board}
             comments={comments}
-            onSubmit={onSubmit}   // onSubmit prop 추가
             content={content}
-            onChange={(e) => setContent(e.target.value)}
+            onSubmit={onSubmit}
+            onChange={onChange}
+            onEdit={onEdit}
+            onReset={onReset}
+            onDelete={onDelete}
         />
   );
 };

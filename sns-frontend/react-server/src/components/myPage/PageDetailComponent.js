@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { useLocation, useParams  } from 'react-router-dom';
 import Button from '../common/Button';
 import MyPageTemplate from './MyPageTemplate';
 
@@ -77,6 +77,13 @@ const SubmitButton = styled(Button)`
 `;
 
 const PageDetailComponent = ({ onSubmit }) => {
+  const location = useLocation();
+  const { userNo } = useParams(); // URL 파라미터에서 userNo를 추출
+  const queryParams = new URLSearchParams(location.search);
+  const showParam = queryParams.get('show'); // show 쿼리 매개변수의 값을 가져옴
+
+  // URL이 /myPage/ 일때만 게시글과 댓글 섹션을 렌더링
+  const shouldRenderSections = showParam !== 'followings' && showParam !== 'follower';
   return (
       <MyPageTemplate>
         <div data-th-replace="header :: header"></div>
@@ -104,7 +111,9 @@ const PageDetailComponent = ({ onSubmit }) => {
                 value=""
             />
           </label>
-          <div className="boardListBox" data-th-unless="">
+          {shouldRenderSections && (
+
+              <div className="boardListBox" data-th-unless="">
 
             <div><h2>🌱 내가 쓴 게시글 </h2></div>
             <div data-th-replace="board/mylist :: myboardList" style={{ marginTop: '20px' }}>
@@ -117,9 +126,11 @@ const PageDetailComponent = ({ onSubmit }) => {
               내 댓글
             </div>
           </div>
+          )}
           <div className="form-list">
             <div data-th-replace="myPage/followList :: followList"></div>
           </div>
+
         </DetailForm>
       </MyPageTemplate>
   );
