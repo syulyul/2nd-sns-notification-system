@@ -44,10 +44,14 @@ public class GuestBookController {
   }
 
   @PostMapping("add")
-  public ResponseEntity add(@RequestBody GuestBook guestBook, HttpSession session) throws Exception {
-//    guestBook.setMpno(guestBook.getMpno());
-
-    guestBookService.add(guestBook);
+  public ResponseEntity add(@RequestBody GuestBook guestBook, HttpSession session)
+      throws Exception {
+    System.out.println(guestBook);
+    try {
+      guestBookService.add(guestBook);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return new ResponseEntity<>(guestBook, HttpStatus.OK);
   }
 
@@ -74,24 +78,21 @@ public class GuestBookController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       Model model, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
     int totalRecords;
 
     List<GuestBook> guestBookList = guestBookService.list(no, pageSize, page);
     totalRecords = guestBookService.getTotalCount(no);
 
-    model.addAttribute("guestBookList", guestBookList);
-    model.addAttribute("maxPage", (totalRecords + (pageSize - 1)) / pageSize);
-    model.addAttribute("page", page);
-    model.addAttribute("pageSize", pageSize);
+//    model.addAttribute("guestBookList", guestBookList);
+//    model.addAttribute("maxPage", (totalRecords + (pageSize - 1)) / pageSize);
+//    model.addAttribute("page", page);
+//    model.addAttribute("pageSize", pageSize);
 
     // 이 부분에서 회원의 닉네임을 가져와서 모델에 추가
     String guestBookOwnerNick = guestBookService.getMemberNickByNo(no);
-    model.addAttribute("guestBookOwnerNick", guestBookOwnerNick);
-
-    model.addAttribute("mpno", no);
-
-    session.setAttribute("loginUser", loginUser);
+//    model.addAttribute("guestBookOwnerNick", guestBookOwnerNick);
+//
+//    model.addAttribute("mpno", no);
 
     Map<String, Object> resultMap = new HashMap<>();
     resultMap.put("guestBookList", guestBookList);
