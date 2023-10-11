@@ -39,16 +39,11 @@ const ToggleLabel = styled.label`
 const FollowComponent = ({
   user,
   followListData,
-  session,
   handleFollow,
   handleUnfollow,
 }) => {
   const location = useLocation();
   const isFollowing = location.search.includes('show=followings');
-  const followMemberSet = [];
-  user.followMemberSet.map((user) => {
-    followMemberSet.push(user.no);
-  });
 
   return (
     <MemberListBox>
@@ -65,7 +60,7 @@ const FollowComponent = ({
             />
             <MemberLink href={`/myPage/${myPage.no}`}>{myPage.nick}</MemberLink>
             <Link to={`/myPage/${myPage.no}/chat`}>채팅하기</Link>
-            {followMemberSet.includes(myPage.no) ? (
+            {user.followMemberSet.includes(myPage.no) ? (
               <button onClick={() => handleUnfollow(myPage.no)}>
                 팔로잉 취소
               </button>

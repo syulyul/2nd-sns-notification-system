@@ -260,8 +260,6 @@ public class MyPageController {
     Map<String, Object> returnMap = new HashMap<>();
     try {
       int result = myPageService.follow(loginUser, followingNo);
-      loginUser.getFollowMemberSet().add(memberService.get(followingNo));
-      session.setAttribute("loginUser", loginUser);
       returnMap.put("result", "success");
 
     } catch (Exception e) {
