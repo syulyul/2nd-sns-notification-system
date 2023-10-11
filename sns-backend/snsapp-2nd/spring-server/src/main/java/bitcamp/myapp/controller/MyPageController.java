@@ -5,17 +5,15 @@ import bitcamp.myapp.service.BoardService;
 import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.service.NcpObjectStorageService;
+import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import bitcamp.myapp.vo.MyPage;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +51,9 @@ public class MyPageController {
 
   @Autowired
   NcpObjectStorageService ncpObjectStorageService;
+
+  @Autowired
+  RedisService redisService;
 
   {
     System.out.println("MyPageController 생성됨!");
@@ -251,54 +253,43 @@ public class MyPageController {
   }
 
   @GetMapping("follow")
-  public void follow(
+  public ResponseEntity follow(
       @RequestParam("followingNo") int followingNo,
-      HttpSession session,
+      @CookieValue("sessionId") Cookie sessionCookie,
       HttpServletResponse response) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
 
-    Map<String, Object> returnMap = new HashMap<>();
     try {
+      String sessionId = sessionCookie.getValue();
+      int loginUserNo = Integer.parseInt((String) redisService.getValuleOps().get(sessionId));
+      Member loginUser = memberService.get(loginUserNo);
+
       int result = myPageService.follow(loginUser, followingNo);
-      returnMap.put("result", "success");
-
     } catch (Exception e) {
-      returnMap.put("result", "fail");
-
-    } finally {
-      try {
-        response.getWriter().print(new ObjectMapper().writeValueAsString(returnMap));
-      } catch (IOException ioException) {
-        ioException.printStackTrace();
-      }
+      e.printStackTrace();
+      return new ResponseEntity<>(followingNo, HttpStatus.BAD_REQUEST);
     }
-
+    return new ResponseEntity<>(followingNo, HttpStatus.OK);
   }
 
   @GetMapping("unfollow")
-  public void unfollow(
+  public ResponseEntity unfollow(
       @RequestParam("followingNo") int followingNo,
-      HttpSession session,
+      @CookieValue("sessionId") Cookie sessionCookie,
       HttpServletResponse response) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
 
-    Map<String, Object> returnMap = new HashMap<>();
     try {
+      String sessionId = sessionCookie.getValue();
+      int loginUserNo = Integer.parseInt((String) redisService.getValuleOps().get(sessionId));
+      Member loginUser = memberService.get(loginUserNo);
+
       int result = myPageService.unfollow(loginUser, followingNo);
-      loginUser.getFollowMemberSet().remove(memberService.get(followingNo));
-      session.setAttribute("loginUser", loginUser);
-      returnMap.put("result", "success");
 
     } catch (Exception e) {
-      returnMap.put("result", "fail");
+      e.printStackTrace();
+      return new ResponseEntity<>(followingNo, HttpStatus.BAD_REQUEST);
 
-    } finally {
-      try {
-        response.getWriter().print(new ObjectMapper().writeValueAsString(returnMap));
-      } catch (IOException ioException) {
-        ioException.printStackTrace();
-      }
     }
+    return new ResponseEntity<>(followingNo, HttpStatus.OK);
   }
 
   @GetMapping("/{no}/followers")

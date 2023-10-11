@@ -41,6 +41,7 @@ const FollowComponent = ({
   followListData,
   handleFollow,
   handleUnfollow,
+  followMemberSet,
 }) => {
   const location = useLocation();
   const isFollowing = location.search.includes('show=followings');
@@ -60,7 +61,7 @@ const FollowComponent = ({
             />
             <MemberLink href={`/myPage/${myPage.no}`}>{myPage.nick}</MemberLink>
             <Link to={`/myPage/${myPage.no}/chat`}>채팅하기</Link>
-            {user.followMemberSet.includes(myPage.no) ? (
+            {followMemberSet.includes(myPage.no) ? (
               <button onClick={() => handleUnfollow(myPage.no)}>
                 팔로잉 취소
               </button>
