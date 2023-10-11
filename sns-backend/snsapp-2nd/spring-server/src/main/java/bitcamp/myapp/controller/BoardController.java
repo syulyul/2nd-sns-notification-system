@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,22 +81,20 @@ public class BoardController {
     return new ResponseEntity<>(board, HttpStatus.OK);
   }
 
-  @GetMapping("delete")
-  public String delete(int no, int category, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
+  @DeleteMapping("delete/{boardNo}")
+  public ResponseEntity delete(@PathVariable int boardNo, @RequestParam int category, HttpSession session) throws Exception {
 
-    System.out.println(no);
-    Board b = boardService.get(no);
+    System.out.println("BoardNo: " + boardNo);
+    System.out.println("Category: " + category);
 
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-    } else {
+    Board b = boardService.get(boardNo);
+
+    //if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
+     // return new ResponseEntity<>("게시글이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+    //} else {
       boardService.delete(b.getNo());
-      return "redirect:/board/list?category=" + category;
-    }
+      return new ResponseEntity<>(HttpStatus.OK);
+    //}
   }
 
   @GetMapping("detail")

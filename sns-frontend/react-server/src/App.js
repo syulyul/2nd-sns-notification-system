@@ -42,7 +42,6 @@ function App() {
         />
         <Route element={<GuestBookPage />} path={'/guestBook/:userNo'} />
         <Route element={<MyPagePage />} path={'/myPage/detail'} />
-        <Route element={<FollowPage />} path={'/myPage/follow'} />
         <Route element={<ChatPage />} path={'/room'} />
         <Route element={<ChatRoomListPage />} path={'/room/list'} />
       </Routes>

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = styled.div`
     float: left;
@@ -26,6 +26,7 @@ const ButtonContainer = styled.div`
     margin-top: 10px;
     justify-content: center;
 `;
+
 
 const SidebarButton = styled(Link)`
     font-size: 20px;
@@ -96,16 +97,17 @@ const StateMessageTextarea = styled.textarea`
     resize: none;
 `;
 
-const MemberInfoComponent = ({ myPageData, user }) => {
-  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
+const MemberInfoComponent = ({ myPageData, onSubmit, onSubmit2 }) => {
+
+  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
       <Sidebar>
         <p>🌱 총 방문자 수 {myPageData.visitCount}</p>
-        {user.photo
+        {myPageData.photo
             ? <ProfilePic src={profileUrl} alt="프로필 사진" />
             : <ProfilePic src='/images/default.jpg' alt="기본 이미지" />
         }
-        <h2>{user.nick}</h2>
+        <h2>{myPageData.nick}</h2>
         <StateMessageLabel>상태메시지</StateMessageLabel>
         <EditInfoLink to={`/myPage/${myPageData.no}/info`}>내 정보 수정</EditInfoLink>
         <StateMessageTextarea
@@ -115,8 +117,8 @@ const MemberInfoComponent = ({ myPageData, user }) => {
         />
 
         <ButtonContainer>
-          <SidebarButton to={`/myPage/${myPageData.no}?show=followings`}>팔로잉</SidebarButton>
-          <SidebarButton to={`/myPage/${myPageData.no}?show=followers`}>팔로워</SidebarButton>
+          <SidebarButton type="button" onClick={onSubmit}>팔로잉</SidebarButton>
+          <SidebarButton type="button" onClick={onSubmit2}>팔로워</SidebarButton>
         </ButtonContainer>
         <ButtonContainer>
           <ChatRoomListButton to={`/room/list`}>채팅 리스트</ChatRoomListButton>

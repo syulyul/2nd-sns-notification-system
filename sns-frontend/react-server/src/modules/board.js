@@ -4,7 +4,6 @@ import createRequestSaga, {
   createRequestActionTypes,
 } from '../lib/createRequestSaga';
 import * as boardAPI from '../lib/api/board';
-import { useCookies } from 'react-cookie';
 
 const CHANGE_FIELD = 'auth/CHANGE_FIELD';
 const INITIALIZE_FORM = 'auth/INITIALIZE_FORM';
@@ -18,8 +17,12 @@ const [DETAIL, DETAIL_SUCCESS, DETAIL_FAILURE] =
 const [FORM, FORM_SUCCESS, FORM_FAILURE] =
   createRequestActionTypes('board/FORM');
 
+const [DELETE, DELETE_SUCCESS, DELETE_FAILURE] = createRequestActionTypes('board/DELETE');
+
 const [ADD_COMMENT, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE] =
     createRequestActionTypes('comment/ADD_COMMENT');
+
+
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -36,6 +39,9 @@ export const detail = createAction(DETAIL, ({ category, boardNo }) => ({
 }));
 
 export const form = createAction(FORM, ({ formData }) => ({ formData }));
+export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
+  boardNo, category
+}));
 
 export const addComment = createAction(ADD_COMMENT, ({ content, boardNo }) => ({ content, boardNo }));
 
@@ -43,13 +49,16 @@ const listSaga = createRequestSaga(LIST, boardAPI.list);
 const detailSaga = createRequestSaga(DETAIL, boardAPI.detail);
 const formSaga = createRequestSaga(FORM, boardAPI.form);
 const addCommentSaga = createRequestSaga(ADD_COMMENT, boardAPI.addComment);
+const deleteBoardSaga  = createRequestSaga(DELETE, boardAPI.deleteBoard);
 
 export function* boardSaga() {
   yield takeLatest(LIST, listSaga);
   yield takeLatest(DETAIL, detailSaga);
   yield takeLatest(FORM, formSaga);
   yield takeLatest(ADD_COMMENT, addCommentSaga);
+  yield takeLatest(DELETE, deleteBoardSaga);
 }
+
 
 // const initialState = {
 //   boardList: [],  // 게시글 목록
@@ -61,7 +70,7 @@ export function* boardSaga() {
 const initialState = {
   boardList: [],
   category: 1,
-  board: null,
+  board: {},
   comments: null,
   boardError: null, // 에러 상태
   boardComment: null,
@@ -106,6 +115,15 @@ const board = handleActions(
       board,
     }),
     [FORM_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
+    }),
+    [DELETE_SUCCESS]: (state) => ({
+      ...state,
+      boardError: null,
+      board: initialState.board,
+    }),
+    [DELETE_FAILURE]: (state, { payload: error }) => ({
       ...state,
       boardError: error,
     }),
