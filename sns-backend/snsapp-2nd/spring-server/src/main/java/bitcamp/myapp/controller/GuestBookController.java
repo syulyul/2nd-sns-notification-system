@@ -2,7 +2,6 @@ package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MyPageService;
-import bitcamp.myapp.vo.Board;
 import bitcamp.myapp.vo.GuestBook;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
@@ -13,10 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/guestBook")
 public class GuestBookController {
 
