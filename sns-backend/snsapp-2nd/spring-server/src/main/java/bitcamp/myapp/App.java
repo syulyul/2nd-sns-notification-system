@@ -1,7 +1,5 @@
 package bitcamp.myapp;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,14 +15,36 @@ import org.springframework.web.util.UrlPathHelper;
 @SpringBootApplication
 @PropertySource("server.url.properties")
 @ConfigurationProperties("url")
-@Getter
-@Setter
 public class App implements WebMvcConfigurer {
 
+  public static String REACT_SERVER_URL;
+  public static String NODE_SERVER_URL;
   private String reactServerUrl;
   private String nodeServerUrl;
 
-//  @Bean
+  public static void main(String[] args) throws Exception {
+    SpringApplication.run(App.class, args);
+  }
+
+  public String getReactServerUrl() {
+    return reactServerUrl;
+  }
+
+  public void setReactServerUrl(String reactServerUrl) {
+    REACT_SERVER_URL = reactServerUrl;
+    this.reactServerUrl = reactServerUrl;
+  }
+
+  public String getNodeServerUrl() {
+    return nodeServerUrl;
+  }
+
+  public void setNodeServerUrl(String nodeServerUrl) {
+    NODE_SERVER_URL = nodeServerUrl;
+    this.nodeServerUrl = nodeServerUrl;
+  }
+
+  //  @Bean
 //  public MultipartResolver multipartResolver() {
 //    return new StandardServletMultipartResolver();
 //  }
@@ -38,9 +58,6 @@ public class App implements WebMvcConfigurer {
 //    return vr;
 //  }
 
-  public static void main(String[] args) throws Exception {
-    SpringApplication.run(App.class, args);
-  }
 
   @Override
   public void configurePathMatch(PathMatchConfigurer configurer) {

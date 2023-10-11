@@ -1,5 +1,6 @@
 package bitcamp.myapp.service;
 
+import bitcamp.myapp.App;
 import bitcamp.myapp.dao.NotificationDao;
 import bitcamp.myapp.vo.NotiLog;
 import bitcamp.myapp.vo.NotiType;
@@ -37,7 +38,7 @@ public class DefaultNotificationService implements NotificationService {
       HttpEntity<?> requestMessage = new HttpEntity<>(notiLog, httpHeaders);
 
       // Request
-      String url = "http://localhost:3001/node/notification/add";
+      String url = App.NODE_SERVER_URL + "/node/notification/add";
       HttpEntity<String> response = restTemplate.postForEntity(url, requestMessage, String.class);
 
     } catch (Exception e) {

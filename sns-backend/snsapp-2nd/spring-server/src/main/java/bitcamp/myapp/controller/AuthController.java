@@ -1,11 +1,11 @@
 package bitcamp.myapp.controller;
 
+import bitcamp.myapp.App;
 import bitcamp.myapp.service.BoardService;
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.service.NcpObjectStorageService;
-import bitcamp.myapp.service.NotificationService;
 import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.service.SmsService;
 import bitcamp.myapp.vo.LoginUser;
@@ -52,8 +52,6 @@ public class AuthController {
   GuestBookService guestBookService;
   @Autowired
   MyPageService myPageService;
-  @Autowired
-  NotificationService notificationService;
   @Autowired
   NcpObjectStorageService ncpObjectStorageService;
   @Autowired
@@ -223,7 +221,7 @@ public class AuthController {
       HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
 
       // Request
-      String url = "http://localhost:3001/node/user/add";
+      String url = App.NODE_SERVER_URL + "/node/user/add";
       ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
           String.class);
 
