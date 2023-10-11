@@ -1,21 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import MemberInfoComponent from '../../components/myPage/MemberInfoComponent';
 import {useDispatch, useSelector} from 'react-redux';
-import { list, follow, initializeForm } from "../../modules/myPage";
+import { list, following, follower, initializeForm } from "../../modules/myPage";
 import { useNavigate } from 'react-router-dom';
 
 const MemberInfoContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
-  const {user} = useSelector(({auth}) => ({
-    user: auth.user,
-  }));
 
-  const {myPage, myPageError, userNo} = useSelector(({myPage}) => ({
+  const {myPage, myPageError, userNo, user} = useSelector(({auth, myPage}) => ({
     myPage: myPage.myPage,
     myPageError: myPage.myPageError,
-    userNo: myPage.no,
+    userNo: auth.user.no,
+    user: auth.user,
   }));
 
   //컴포넌트 초기 렌터링 때 form 초기화
@@ -29,15 +27,24 @@ const MemberInfoContainer = () => {
   }
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(follow( userNo ));
+    dispatch(following( userNo ));
+    dispatch(list(userNo));
     dispatch(initializeForm());
     navigate(`/myPage/${user.no}?show=followings`);
 
   };
+  const onSubmit2 = (e) => {
+    e.preventDefault();
+    dispatch(follower( userNo ));
+    dispatch(list(userNo));
+    dispatch(initializeForm());
+    navigate(`/myPage/${user.no}?show=follower`);
 
+  };
 
   return (
       <MemberInfoComponent
+          onSubmit2={onSubmit2}
           onSubmit={onSubmit}
           follow={userNo}
           myPageData={myPage}

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = styled.div`
     float: left;
@@ -96,7 +96,8 @@ const StateMessageTextarea = styled.textarea`
     resize: none;
 `;
 
-const MemberInfoComponent = ({ myPageData,follow, onSubmit }) => {
+const MemberInfoComponent = ({ myPageData, onSubmit, onSubmit2 }) => {
+
   const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
       <Sidebar>
@@ -115,8 +116,8 @@ const MemberInfoComponent = ({ myPageData,follow, onSubmit }) => {
         />
 
         <ButtonContainer>
-          <SidebarButton type="submit" onClick={onSubmit}>팔로잉</SidebarButton>
-          {/*<SidebarButton href={`/myPage/${follow.no}?show=followers`}>팔로워</SidebarButton>*/}
+          <SidebarButton type="button" onClick={onSubmit}>팔로잉</SidebarButton>
+          <SidebarButton type="button" onClick={onSubmit2}>팔로워</SidebarButton>
         </ButtonContainer>
         <ButtonContainer>
           <ChatRoomListButton href={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>

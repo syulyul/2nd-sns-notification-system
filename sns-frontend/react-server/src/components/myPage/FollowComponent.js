@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useLocation  } from 'react-router-dom';
 
 const MemberListBox = styled.div`
   margin-left: 18px;
@@ -37,27 +37,28 @@ const ToggleLabel = styled.label`
 `;
 
 const FollowComponent = ({ followListData, session, handleFollow, handleUnfollow }) => {
+  const location = useLocation();
+  const isFollowing = location.search.includes('show=followings');
+
   return (
       <MemberListBox>
-        <h3>🌱 팔로워 리스트</h3>
-        {followListData && followListData.map(myPage => (
+        <h3>{isFollowing ? '🌱 팔로잉 리스트' : '🌱 팔로워 리스트'}</h3>
+        {Array.isArray(followListData) && followListData.map((myPage, index) => (
             <MemberItem key={myPage.no}>
-              {/* 프로필 사진 로딩 부분 */}
-              {/*<MemberPhoto*/}
-              {/*    src={*/}
-              {/*      myPage.photo*/}
-              {/*          ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${myPage.photo}`*/}
-              {/*          : 'images/default.jpg'*/}
-              {/*    }*/}
-              {/*/>*/}
-              {/* 프로필 사진 로딩 부분 */}
+              <MemberPhoto
+                  src={
+                    myPage.photo
+                        ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${myPage.photo}`
+                        : 'images/default.jpg'
+                  }
+              />
               <MemberLink href={`/myPage/${myPage.no}`}>{myPage.nick}</MemberLink>
               <Link to={`/myPage/${myPage.no}/chat`}>채팅하기</Link>
-              {session.loginUser.followMemberSet.includes(myPage.no) ? (
-                  <button onClick={() => handleUnfollow(myPage.no)}>팔로잉 취소</button>
-              ) : (
-                  <button onClick={() => handleFollow(myPage.no)}>팔로우 하기</button>
-              )}
+              {/*{session.includes(myPage.no) ? (*/}
+              {/*    <button onClick={() => handleUnfollow(myPage.no)}>팔로잉 취소</button>*/}
+              {/*) : (*/}
+              {/*    <button onClick={() => handleFollow(myPage.no)}>팔로우 하기</button>*/}
+              {/*)}*/}
             </MemberItem>
         ))}
       </MemberListBox>

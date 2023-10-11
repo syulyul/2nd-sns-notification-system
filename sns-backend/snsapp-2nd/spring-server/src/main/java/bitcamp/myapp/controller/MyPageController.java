@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -168,30 +170,30 @@ public class MyPageController {
     MyPage myPage = myPageService.get(member.getNo());
 
     if (loginUser.getNo() == myPage.getNo()) {
-        if (photofile.getSize() > 0) {
-          String uploadFileUrl = ncpObjectStorageService.uploadFile(
-                  "bitcamp-nc7-bucket-14", "sns_member/", photofile);
-          member.setPhoto(uploadFileUrl);
-        }
+      if (photofile.getSize() > 0) {
+        String uploadFileUrl = ncpObjectStorageService.uploadFile(
+            "bitcamp-nc7-bucket-14", "sns_member/", photofile);
+        member.setPhoto(uploadFileUrl);
+      }
 
-        myPage.setGender(gender);
-        myPage.setStateMessage(stateMessage);
-        // myPage.setEmail(email);
-        if (birthday.isEmpty()) {
-          birthday = null;
-        } else {
-          // 생일 값을 문자열에서 Timestamp로 변환
-          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-          Date parsedDate = dateFormat.parse(birthday);
-          Timestamp timestamp = new Timestamp(parsedDate.getTime());
+      myPage.setGender(gender);
+      myPage.setStateMessage(stateMessage);
+      // myPage.setEmail(email);
+      if (birthday.isEmpty()) {
+        birthday = null;
+      } else {
+        // 생일 값을 문자열에서 Timestamp로 변환
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date parsedDate = dateFormat.parse(birthday);
+        Timestamp timestamp = new Timestamp(parsedDate.getTime());
 
-          myPage.setBirthday(timestamp);
+        myPage.setBirthday(timestamp);
 
-        }
+      }
 
-        if (member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
-          member.setEmail(null);
-        }
+      if (member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
+        member.setEmail(null);
+      }
 
       if (memberService.update(member) == 0 || myPageService.update(myPage) == 0) {
         throw new Exception("회원이 없습니다.");
@@ -304,22 +306,34 @@ public class MyPageController {
 
   @GetMapping("/{no}/followers")
   @ResponseBody
-  public List<Member> getFollowerList(@PathVariable int no,
-      Model model,
-      HttpServletRequest request,
-      HttpSession session) throws Exception {
-    List<Member> followerList = myPageService.followerList(no); // followerList를 가져오는 서비스 메서드 호출
-    return followerList;
+  public ResponseEntity getFollowerList(@PathVariable int no,
+      Model model) {
+    List<Member> followerList;
+    try {
+      model.addAttribute("followList", myPageService.followerList(no));
+      followerList = myPageService.followerList(no); // followerList를 가져오는 서비스 메서드 호출
+    } catch(Exception e){
+        e.printStackTrace();
+        // 예외 발생 시 처리
+        return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+      }
+      return new ResponseEntity<>(followerList, HttpStatus.OK);
+
   }
 
   @GetMapping("/{no}/following")
   @ResponseBody
-  public List<Member> getFollowingList(@PathVariable int no,
-      Model model,
-      HttpServletRequest request,
-      HttpSession session) throws Exception {
-    model.addAttribute("followList", myPageService.followingList(no));
-    List<Member> followingList = myPageService.followingList(no); // followerList를 가져오는 서비스 메서드 호출
-    return followingList;
+  public ResponseEntity getFollowingList(@PathVariable int no,
+      Model model) {
+    List<Member> followingList;
+    try {
+      model.addAttribute("followList", myPageService.followingList(no));
+      followingList = myPageService.followingList(no);
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(followingList, HttpStatus.OK);
   }
 }

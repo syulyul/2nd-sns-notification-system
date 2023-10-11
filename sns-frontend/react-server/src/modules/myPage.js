@@ -17,11 +17,11 @@ const [LIST, LIST_SUCCESS, LIST_FAILURE] =
 const [INFO, INFO_SUCCESS, INFO_FAILURE] =
     createRequestActionTypes('myPage/INFO');
 
-const [FOLLOW, FOLLOW_SUCCESS, FOLLOW_FAILURE] =
-    createRequestActionTypes('myPage/FOLLOW');
+const [FOLLOWING, FOLLOWING_SUCCESS, FOLLOWING_FAILURE] =
+    createRequestActionTypes('myPage/FOLLOWING');
 
-const [UNFOLLOW, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE] =
-    createRequestActionTypes('myPage/UNFOLLOW');
+const [FOLLOWER, FOLLOWER_SUCCESS, FOLLOWER_FAILURE] =
+    createRequestActionTypes('myPage/FOLLOWER');
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -46,25 +46,26 @@ export const update = createAction(
 
 export const list = createAction(LIST, (userNo) => (userNo));
 export const info = createAction(INFO, (userNo) => (userNo));
-export const follow = createAction(FOLLOW, ( userNo )  => (userNo));
-export const unfollow = createAction(UNFOLLOW, (userNo) => ( userNo ));
+export const following = createAction(FOLLOWING, ( userNo )  => (userNo));
+export const follower = createAction(FOLLOWER, (userNo) => ( userNo ));
 
 const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
 const listSaga = createRequestSaga(LIST, myPageAPI.list);
 const infoSaga = createRequestSaga(INFO, myPageAPI.info);
-const followSaga = createRequestSaga(FOLLOW, myPageAPI.follow);
-const unfollowSaga = createRequestSaga(UNFOLLOW, myPageAPI.unfollow);
+const followingSaga = createRequestSaga(FOLLOWING, myPageAPI.following);
+const followerSaga = createRequestSaga(FOLLOWER, myPageAPI.follower);
+
 
 export function* myPageSaga() {
   yield takeLatest(UPDATE, updateSaga);
   yield takeLatest(LIST, listSaga);
   yield takeLatest(INFO, infoSaga);
-  yield takeLatest(FOLLOW, followSaga);
-  yield takeLatest(UNFOLLOW, unfollowSaga);
+  yield takeLatest(FOLLOWING, followingSaga);
+  yield takeLatest(FOLLOWER, followerSaga);
 }
 
 const initialState = {
-  myPage: [],
+  myPage: {},
   userNo: 0,
   myPageError: null,
   followList: [], // 팔로워 목록을 저장할 배열
@@ -79,7 +80,7 @@ const myPage = handleActions(
       [INITIALIZE_FORM]: (state) => ({
         ...state,
 
-        myPage: [],
+        myPage: {},
         userNo: 0,
         followList: [], // 팔로워 목록을 저장할 배열
 
@@ -115,20 +116,20 @@ const myPage = handleActions(
         myPageError: error,
       }),
       // 'followList' 업데이트 액션
-      [FOLLOW_SUCCESS]: (state, { payload: followList }) => ({
+      [FOLLOWING_SUCCESS]: (state, { payload: followList }) => ({
         ...state,
         followList, // 팔로워 목록 업데이트
       }),
-      [FOLLOW_FAILURE]: (state, { payload: error }) => ({
+      [FOLLOWING_FAILURE]: (state, { payload: error }) => ({
         ...state,
         myPageError: error,
       }),
 
-      [UNFOLLOW_SUCCESS]: (state, { payload: followList }) => ({
+      [FOLLOWER_SUCCESS]: (state, { payload: followList }) => ({
         ...state,
         followList, // 팔로워 목록 업데이트
       }),
-      [UNFOLLOW_FAILURE]: (state, { payload: error }) => ({
+      [FOLLOWER_FAILURE]: (state, { payload: error }) => ({
         ...state,
         myPageError: error,
       }),
