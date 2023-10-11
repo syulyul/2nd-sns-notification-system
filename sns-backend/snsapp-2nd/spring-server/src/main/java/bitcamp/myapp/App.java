@@ -1,17 +1,14 @@
 package bitcamp.myapp;
 
-import bitcamp.myapp.interceptor.NotReadNotiCountIntercepter;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UrlPathHelper;
@@ -57,16 +54,21 @@ public class App implements WebMvcConfigurer {
     configurer.setUrlPathHelper(pathHelper);
   }
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    System.out.println("AppConfig.addInterceptors() 호출됨");
-    registry
-        .addInterceptor(notReadNotiCountIntercepter())
-        .addPathPatterns("/**")
-        .excludePathPatterns("/auth/**")
-        .excludePathPatterns("/");
-
-  }
+//  @Override
+//  public void addInterceptors(InterceptorRegistry registry) {
+//    System.out.println("AppConfig.addInterceptors() 호출됨");
+//    registry
+//        .addInterceptor(notReadNotiCountIntercepter())
+//        .addPathPatterns("/**")
+//        .excludePathPatterns("/auth/**")
+//        .excludePathPatterns("/");
+//
+//  }
+//
+//  @Bean
+//  NotReadNotiCountIntercepter notReadNotiCountIntercepter() {
+//    return new NotReadNotiCountIntercepter();
+//  }
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
@@ -76,10 +78,5 @@ public class App implements WebMvcConfigurer {
         .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PATCH.name(),
             HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.TRACE.name(),
             HttpMethod.PUT.name(), HttpMethod.OPTIONS.name());
-  }
-
-  @Bean
-  NotReadNotiCountIntercepter notReadNotiCountIntercepter() {
-    return new NotReadNotiCountIntercepter();
   }
 }

@@ -60,16 +60,15 @@ const initialState = {
 
   verificationCode: '',
 
-  user: { 
-    no : null,
-    nick : null,
-    name : null,
-    phoneNumber : null,
-    email : null,
-    password : null,
-    photo : null,
-    authError: null,
-  }
+  user: {
+    no: null,
+    nick: null,
+    name: null,
+    phoneNumber: null,
+    email: null,
+    password: null,
+    photo: null,
+  },
 };
 
 const auth = handleActions(
@@ -112,7 +111,7 @@ const auth = handleActions(
 
     [CHECK_SUCCESS]: (state, { payload: user }) => ({
       ...state,
-      // user: user === '' ? null : user,
+      user,
       authError: null,
     }),
     [CHECK_FAILURE]: (state, { payload: error }) => ({
