@@ -16,17 +16,12 @@ export const list = (category) =>
 export const detail = ({ category, boardNo }) =>
   springClient.get(`board/detail?category=${category}&boardNo=${boardNo}`);
 
-//댓글
+
+// 게시글삭제
+export const deleteBoard = ({ category, boardNo }) =>
+    springClient.delete(`board/delete/${boardNo}`, { params: { category } });
+
+
+// 댓글작성
 export const addComment = (boardComment) =>
     springClient.post('/board/addComment', boardComment);
-
-// 게시글 수정
-export const updatePost = ({ id, formData }) =>
-  springClient.put(`board/${id}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-// 게시글 삭제
-export const deletePost = (postId) => springClient.delete(`board/${postId}`);

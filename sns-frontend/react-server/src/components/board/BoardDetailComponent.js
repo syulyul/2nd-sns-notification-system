@@ -113,14 +113,14 @@ const StyledImage = styled.img`
 
 const BoardDetailComponent = ({
   board,
-  onEdit,
-  onReset,
-  onDelete,
   onNavigateToList,
   onLike,
   onUnlike,
   comments,
   content,
+  onEdit,
+  onReset,
+  onDelete,
   onSubmit,
   onChange
 }) => {
@@ -173,13 +173,13 @@ const BoardDetailComponent = ({
               : null}
           </div>
           <ButtonContainer>
-            {board && board.editable ? (
-              <>
-                <StyledButton onClick={onEdit}>변경</StyledButton>
+            {/*{board && board.editable ? (*/}
+            {/*  <>*/}
+                <StyledButton onClick={onEdit}>수정</StyledButton>
                 <StyledButton onClick={onReset}>초기화</StyledButton>
                 <StyledButton onClick={onDelete}>삭제</StyledButton>
-              </>
-            ) : null}
+              {/*</>*/}
+            {/*) : null}*/}
           </ButtonContainer>
         </form>
         <LikeButton onClick={board && board.liked ? onUnlike : onLike}>
