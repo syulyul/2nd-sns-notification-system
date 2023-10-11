@@ -106,8 +106,15 @@ public class AuthController {
 
         // 세션에 로그인 사용자 정보 저장
         loginUserObject = new LoginUser(loginUser);
-        loginUserObject.setFollowMemberSet(
-            new HashSet<>(myPageService.followingList(loginUser.getNo())));
+
+        HashSet<Member> followMemberSet = new HashSet<>(
+            myPageService.followingList(loginUser.getNo()));
+        HashSet<Integer> followMemberNoSet = new HashSet<>();
+        for (Member m : followMemberSet) {
+          followMemberNoSet.add(m.getNo());
+        }
+        loginUserObject.setFollowMemberSet(followMemberNoSet);
+
         loginUserObject.setLikeBoardSet(
             new HashSet<>(boardService.likelist(loginUser.getNo())));
         loginUserObject.setLikedGuestBookSet(
@@ -141,8 +148,15 @@ public class AuthController {
       if (temp != null) {
         int loginUserNo = Integer.parseInt(temp);
         loginUserObject = new LoginUser(memberService.get(loginUserNo));
-        loginUserObject.setFollowMemberSet(
-            new HashSet<>(myPageService.followingList(loginUserNo)));
+
+        HashSet<Member> followMemberSet = new HashSet<>(
+            myPageService.followingList(loginUserNo));
+        HashSet<Integer> followMemberNoSet = new HashSet<>();
+        for (Member m : followMemberSet) {
+          followMemberNoSet.add(m.getNo());
+        }
+        loginUserObject.setFollowMemberSet(followMemberNoSet);
+
         loginUserObject.setLikeBoardSet(
             new HashSet<>(boardService.likelist(loginUserNo)));
         loginUserObject.setLikedGuestBookSet(

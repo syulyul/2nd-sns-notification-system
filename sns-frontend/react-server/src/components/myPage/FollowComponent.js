@@ -39,16 +39,12 @@ const ToggleLabel = styled.label`
 const FollowComponent = ({
   user,
   followListData,
-  session,
   handleFollow,
   handleUnfollow,
+  followMemberSet,
 }) => {
   const location = useLocation();
   const isFollowing = location.search.includes('show=followings');
-  const followMemberSet = [];
-  user.followMemberSet.map((user) => {
-    followMemberSet.push(user.no);
-  });
 
   return (
     <MemberListBox>
