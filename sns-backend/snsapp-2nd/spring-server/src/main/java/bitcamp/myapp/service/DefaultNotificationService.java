@@ -4,7 +4,6 @@ import bitcamp.myapp.dao.NotificationDao;
 import bitcamp.myapp.vo.NotiLog;
 import bitcamp.myapp.vo.NotiType;
 import java.util.List;
-import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +15,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class DefaultNotificationService implements NotificationService {
 
-  @Autowired
-  ServletContext context;
   @Autowired
   NotificationDao notificationDao;
 
@@ -42,7 +39,7 @@ public class DefaultNotificationService implements NotificationService {
       // Request
       String url = "http://localhost:3001/node/notification/add";
       HttpEntity<String> response = restTemplate.postForEntity(url, requestMessage, String.class);
-      
+
     } catch (Exception e) {
       e.printStackTrace();
       return 0;
@@ -74,14 +71,6 @@ public class DefaultNotificationService implements NotificationService {
   @Override
   public int updateState(NotiLog notiLog, int notiState) throws Exception {
     int result = notificationDao.updateState(notiLog.getNo(), notiState);
-    String key = "notReadNotiCount" + notiLog.getMemberNo();
-    Integer value = (Integer) context.getAttribute(key);
-    if (value == null) {
-      value = notificationDao.getNotiLogCount(notiLog.getMemberNo());
-      context.setAttribute(key, value);
-    } else {
-      context.setAttribute(key, value - 1);
-    }
     return result;
   }
 

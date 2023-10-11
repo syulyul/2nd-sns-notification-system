@@ -14,7 +14,6 @@ import bitcamp.myapp.vo.MyPage;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,8 +56,6 @@ public class AuthController {
   NotificationService notificationService;
   @Autowired
   NcpObjectStorageService ncpObjectStorageService;
-  @Autowired
-  ServletContext context;
   @Autowired
   RedisService redisService;
 
@@ -118,10 +115,7 @@ public class AuthController {
         loginUserObject.setLikedGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUser.getNo())));
 
-        int notReadNotiCount = notificationService.notReadNotiLogCount(loginUser.getNo());
-        context.setAttribute("notReadNotiCount" + loginUser.getNo(), notReadNotiCount);
       } else { // 해당하는 유저가 없을 경우
-        System.out.println(loginUser + "@@@@");
         return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
@@ -324,5 +318,5 @@ public class AuthController {
       return new ResponseEntity<>("비밀번호 변경 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  
+
 }
