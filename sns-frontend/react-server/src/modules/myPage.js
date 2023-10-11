@@ -46,8 +46,8 @@ export const update = createAction(
 
 export const list = createAction(LIST, (userNo) => (userNo));
 export const info = createAction(INFO, (userNo) => (userNo));
-export const follow = createAction(FOLLOW, ( followingNo )  => (followingNo));
-export const unfollow = createAction(UNFOLLOW, (followingNo) => ( followingNo ));
+export const follow = createAction(FOLLOW, ( userNo )  => (userNo));
+export const unfollow = createAction(UNFOLLOW, (userNo) => ( userNo ));
 
 const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
 const listSaga = createRequestSaga(LIST, myPageAPI.list);

@@ -7,15 +7,15 @@ const FollowContainer = () => {
 
   const dispatch = useDispatch();
 
-  const {followList, error, followingNo} = useSelector(({myPage}) => ({
+  const {followList, error, userNo} = useSelector(({myPage}) => ({
     followList: myPage.followList,
     error: myPage.error,
-    followingNo: myPage.followingNo
+    userNo: myPage.userNo
   }));
 
   useEffect(() => {
-    dispatch(follow(followingNo));
-  }, [dispatch, followingNo]);  // 팔로우 버튼 클릭 시 실행되는 함수
+    dispatch(follow(userNo));
+  }, [dispatch, userNo]);  // 팔로우 버튼 클릭 시 실행되는 함수
 
   // 에러가 발생하면 에러 메시지를 출력합니다.
   if (error) {

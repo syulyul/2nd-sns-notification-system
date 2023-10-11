@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,7 +29,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,7 +60,8 @@ public class MyPageController {
   }
 
   @GetMapping("{no}")
-  public ResponseEntity<MyPage> detail(
+  @ResponseBody
+  public MyPage detail(
       @PathVariable int no,
       @RequestParam(defaultValue = "") String show,
       @RequestParam(name = "keyword", required = false) String keyword,
@@ -73,9 +71,8 @@ public class MyPageController {
       HttpSession session,
       @ModelAttribute("queryString") String queryString) throws Exception {
     LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-    MyPage myPage = myPageService.get(no);
     if (loginUser == null) {
-      return new ResponseEntity<>(myPage, HttpStatus.OK);
+      return myPageService.get(no);
     }
 
     // 세션에 저장된 방문한 마이페이지 번호 목록을 가져오기
@@ -119,7 +116,7 @@ public class MyPageController {
         break;
     }
     session.setAttribute("loginUser", loginUser);
-    return new ResponseEntity<>(myPage, HttpStatus.OK);
+    return myPageService.get(no);
   }
 
   @PostMapping("{no}")
@@ -135,7 +132,8 @@ public class MyPageController {
   }
 
   @GetMapping("{no}/info")
-  public ResponseEntity<MyPage> info(
+  @ResponseBody
+  public MyPage info(
       @PathVariable int no,
       Model model,
       HttpServletRequest request,
@@ -148,56 +146,52 @@ public class MyPageController {
     if (request != null) {
       model.addAttribute("request", request);
     } else {
-      return new ResponseEntity<>(myPage, HttpStatus.OK);
+      return myPageService.get(no);
     }
 
-    return new ResponseEntity<>(myPage, HttpStatus.OK);
+    return myPage;
   }
 
   @PostMapping("{no}/update")
   public String update(
-      @RequestBody(required = false) MyPage myPage,
+      Member member,
       @PathVariable int no,
+      @RequestParam("birthday") String birthday,
+      @RequestParam("gender") int gender,
+      @RequestParam("stateMessage") String stateMessage,
       Model model,
-      @RequestParam(required = false) MultipartFile photofile,
+      MultipartFile photofile,
       HttpSession session) throws Exception {
-    Member member = myPage;
-    Member loginUser = memberService.get(member.getPhoneNumber(), member.getPassword());
-    if (loginUser == null) {
-      // 로그인되지 않은 경우 처리
-      return "/auth/login"; // 로그인 페이지로 리다이렉트 또는 다른 처리
-    }
-
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
-    if (member.getNo() == myPage.getNo()) {
-      if (photofile != null && !photofile.isEmpty()) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_member/", photofile);
-        member.setPhoto(uploadFileUrl);
-      }
 
-      myPage.setGender(myPage.getGender());
-      myPage.setStateMessage(myPage.getStateMessage());
-      // myPage.setEmail(email);
-      myPage.setBirthday(myPage.getBirthday());
-//        if (birthday.isEmpty()) {
-//          birthday = null;
-//        } else {
-//          // 생일 값을 문자열에서 Timestamp로 변환
-//          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//          Date parsedDate = dateFormat.parse(birthday);
-//          Timestamp timestamp = new Timestamp(parsedDate.getTime());
-//
-//          myPage.setBirthday(timestamp);
-//
-//        }
+    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+    MyPage myPage = myPageService.get(member.getNo());
 
-      if (member.getEmail() == null) {
-        member.setEmail(""); // null인 경우 빈 문자열로 설정
-      }
-//      if (member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
-//        member.setEmail(" ");
-//      }
+    if (loginUser.getNo() == myPage.getNo()) {
+        if (photofile.getSize() > 0) {
+          String uploadFileUrl = ncpObjectStorageService.uploadFile(
+                  "bitcamp-nc7-bucket-14", "sns_member/", photofile);
+          member.setPhoto(uploadFileUrl);
+        }
+
+        myPage.setGender(gender);
+        myPage.setStateMessage(stateMessage);
+        // myPage.setEmail(email);
+        if (birthday.isEmpty()) {
+          birthday = null;
+        } else {
+          // 생일 값을 문자열에서 Timestamp로 변환
+          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+          Date parsedDate = dateFormat.parse(birthday);
+          Timestamp timestamp = new Timestamp(parsedDate.getTime());
+
+          myPage.setBirthday(timestamp);
+
+        }
+
+        if (member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
+          member.setEmail(null);
+        }
 
       if (memberService.update(member) == 0 || myPageService.update(myPage) == 0) {
         throw new Exception("회원이 없습니다.");
@@ -212,11 +206,11 @@ public class MyPageController {
         // 세션에 업데이트된 loginUser 속성을 다시 설정
         session.setAttribute("loginUser", loginUser);
 
-        return "/myPage/" + myPage.getNo();
+        return "redirect:/myPage/" + myPage.getNo();
       }
 
     } else {
-      return "/myPageError";
+      return "redirect:/error";
     }
 
   }
@@ -256,9 +250,8 @@ public class MyPageController {
   }
 
   @GetMapping("follow")
-  @ResponseBody
-  public ResponseEntity follow(
-      @RequestParam("followingNo") int followingNo, // 직접 쿼리 파라미터로 받도록 수정
+  public void follow(
+      @RequestParam("followingNo") int followingNo,
       HttpSession session,
       HttpServletResponse response) throws Exception {
     LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
@@ -281,7 +274,6 @@ public class MyPageController {
       }
     }
 
-    return new ResponseEntity<>(followingNo, HttpStatus.OK);
   }
 
   @GetMapping("unfollow")
@@ -310,4 +302,24 @@ public class MyPageController {
     }
   }
 
+  @GetMapping("/{no}/followers")
+  @ResponseBody
+  public List<Member> getFollowerList(@PathVariable int no,
+      Model model,
+      HttpServletRequest request,
+      HttpSession session) throws Exception {
+    List<Member> followerList = myPageService.followerList(no); // followerList를 가져오는 서비스 메서드 호출
+    return followerList;
+  }
+
+  @GetMapping("/{no}/following")
+  @ResponseBody
+  public List<Member> getFollowingList(@PathVariable int no,
+      Model model,
+      HttpServletRequest request,
+      HttpSession session) throws Exception {
+    model.addAttribute("followList", myPageService.followingList(no));
+    List<Member> followingList = myPageService.followingList(no); // followerList를 가져오는 서비스 메서드 호출
+    return followingList;
+  }
 }

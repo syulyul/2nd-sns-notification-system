@@ -12,11 +12,10 @@ const MemberInfoContainer = () => {
     user: auth.user,
   }));
 
-  const {myPage, myPageError, userNo, followingNo} = useSelector(({myPage}) => ({
+  const {myPage, myPageError, userNo} = useSelector(({myPage}) => ({
     myPage: myPage.myPage,
     myPageError: myPage.myPageError,
-    userNo: user.no,
-    followingNo: myPage.followingNo
+    userNo: myPage.no,
   }));
 
   //컴포넌트 초기 렌터링 때 form 초기화
@@ -30,7 +29,7 @@ const MemberInfoContainer = () => {
   }
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(follow( followingNo ));
+    dispatch(follow( userNo ));
     dispatch(initializeForm());
     navigate(`/myPage/${user.no}?show=followings`);
 
@@ -40,7 +39,7 @@ const MemberInfoContainer = () => {
   return (
       <MemberInfoComponent
           onSubmit={onSubmit}
-          follow={followingNo}
+          follow={userNo}
           myPageData={myPage}
           user={user}/>
   );
