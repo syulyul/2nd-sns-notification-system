@@ -26,17 +26,19 @@ public class Board implements Serializable {
   @Override
   public String toString() {
     return "Board{" +
-            "no=" + no +
-            ", title='" + title + '\'' +
-            ", content='" + content + '\'' +
-            ", viewCount=" + viewCount +
-            ", likes=" + likes +
-            ", category=" + category +
-            ", attachedFiles=" + attachedFiles +
-            ", createdAt=" + createdAt +
-            ", updateAt=" + updateAt +
-            '}';
-
+        "no=" + no +
+        ", title='" + title + '\'' +
+        ", content='" + content + '\'' +
+        ", writer=" + writer +
+        ", profile=" + profile +
+        ", viewCount=" + viewCount +
+        ", likes=" + likes +
+        ", category=" + category +
+        ", attachedFiles=" + attachedFiles +
+        ", createdAt=" + createdAt +
+        ", updateAt=" + updateAt +
+        ", comments=" + comments +
+        '}';
   }
 
   @Override
@@ -133,7 +135,7 @@ public class Board implements Serializable {
 
   public Timestamp getUpdateAt() {
     return updateAt;
-    
+
   }
 
   public void setUpdateAt(Timestamp updateAt) {
@@ -151,7 +153,7 @@ public class Board implements Serializable {
 
   public Member getProfile() {
     return profile;
- }
+  }
 
   public void setProfile(Member profile) {
     this.profile = profile;

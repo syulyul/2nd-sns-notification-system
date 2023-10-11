@@ -2,23 +2,30 @@ package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MyPageService;
+import bitcamp.myapp.vo.Board;
 import bitcamp.myapp.vo.GuestBook;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/guestBook")
 public class GuestBookController {
 
@@ -37,17 +44,11 @@ public class GuestBookController {
   }
 
   @PostMapping("add")
-  public String add(GuestBook guestBook, @RequestParam int mpno, HttpSession session)
-      throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
-    guestBook.setWriter(loginUser);
-    guestBook.setMpno(mpno);
+  public ResponseEntity add(@RequestBody GuestBook guestBook, HttpSession session) throws Exception {
+//    guestBook.setMpno(guestBook.getMpno());
 
     guestBookService.add(guestBook);
-    return "redirect:/guestBook/" + guestBook.getMpno();
+    return new ResponseEntity<>(guestBook, HttpStatus.OK);
   }
 
   @GetMapping("delete")
@@ -67,8 +68,10 @@ public class GuestBookController {
     }
   }
 
-  @GetMapping("/{no}")
-  public String list(@PathVariable int no, @RequestParam(defaultValue = "1") int page,
+  @GetMapping("{no}")
+  public ResponseEntity<Map<String, Object>> list(
+      @PathVariable int no,
+      @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       Model model, HttpSession session) throws Exception {
     Member loginUser = (Member) session.getAttribute("loginUser");
@@ -89,7 +92,12 @@ public class GuestBookController {
     model.addAttribute("mpno", no);
 
     session.setAttribute("loginUser", loginUser);
-    return "guestBook/read";
+
+    Map<String, Object> resultMap = new HashMap<>();
+    resultMap.put("guestBookList", guestBookList);
+    resultMap.put("guestBookOwnerNick", guestBookOwnerNick);
+
+    return new ResponseEntity<>(resultMap, HttpStatus.OK);
   }
 
   // 좋아요 기능

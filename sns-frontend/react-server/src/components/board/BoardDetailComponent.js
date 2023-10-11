@@ -42,7 +42,7 @@ const ButtonContainer = styled.div`
 `;
 
 const StyledButton = styled.button`
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: white;
   padding: 5px 10px;
   border: none;
@@ -61,14 +61,14 @@ const LikeButton = styled(StyledButton)`
 `;
 
 const ClockIcon = styled.img`
-    width: 16px;
-    height: 16px;
+  width: 16px;
+  height: 16px;
 `;
 
 const LikeList = styled.div`
-    position: absolute;
-    top: 730px;
-    right: 170px;
+  position: absolute;
+  top: 730px;
+  right: 170px;
 `;
 
 const CommentInputContainer = styled.div`
@@ -106,67 +106,137 @@ const ProfileImage = styled.img`
   margin-right: 10px;
 `;
 
-const BoardDetailComponent = ({ board, onEdit, onReset, onDelete, onNavigateToList, onLike, onUnlike, comments }) => {
+const StyledImage = styled.img`
+  width: 200px;
+  height: 200px;
+`;
+
+const BoardDetailComponent = ({
+  board,
+  onNavigateToList,
+  onLike,
+  onUnlike,
+  comments,
+  content,
+  onEdit,
+  onReset,
+  onDelete,
+  onSubmit,
+  onChange
+}) => {
   return (
-      <Container>
-        <ContentBox>
-          <form>
-            <Title>
-              <input type="text" defaultValue={board ? board.title : ""} readOnly={board ? !board.editable : true} />
-            </Title>
-            <MetaInfo>
-              <span className="nickname">{board && board.writer ? board.writer.nick : 'Unknown'}</span>
-              <ClockIcon src="/images/clock.png" alt="clock-icon" />
-              <span>{board && board.createdAt ? new Date(board.createdAt).toLocaleDateString() : 'Unknown date'}</span>
-              <ClockIcon src="/images/eye.png" alt="views-icon" />
-              <span>{board ? board.viewCount : 0}</span>
-            </MetaInfo>
-            <textarea defaultValue={board ? board.content : ""} readOnly={board ? !board.editable : true}></textarea>
-            <div>
-              {(board && board.attachedFiles) ? board.attachedFiles.map((file, index) => (
+    <Container>
+      <ContentBox>
+        <form>
+          <Title>
+            <input
+              type="text"
+              defaultValue={board ? board.title : ''}
+              onChange={e => onChange({ key: 'title', value: e.target.value })}
+            />
+          </Title>
+          <MetaInfo>
+            <span className="nickname">
+              {board && board.writer ? board.writer.nick : 'Unknown'}
+            </span>
+            <ClockIcon src="/images/clock.png" alt="clock-icon" />
+            <span>
+              {board && board.createdAt
+                ? new Date(board.createdAt).toLocaleDateString()
+                : 'Unknown date'}
+            </span>
+            <ClockIcon src="/images/eye.png" alt="views-icon" />
+            <span>{board ? board.viewCount : 0}</span>
+          </MetaInfo>
+          <textarea
+            defaultValue={board ? board.content : ''}
+            onChange={e => onChange({ key: 'content', value: e.target.value })}
+          ></textarea>
+          <div>
+            {board && board.attachedFiles
+              ? board.attachedFiles.map((file, index) => (
                   <div key={index}>
-                    <img src={`https://yourImageServer.com/${file.filePath}`} alt="Attached file" />
-                    <a href={`https://yourImageServer.com/${file.filePath}`}>Download</a>
-                    {board && board.editable ? <a href="#" onClick={() => onDelete(file.no)}>X</a> : null}
+                    <StyledImage
+                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                      alt="Attached file"
+                    />
+                    <a href={`https://yourImageServer.com/${file.filePath}`}>
+                      Download
+                    </a>
+                    {board && board.editable ? (
+                      <a href="#" onClick={() => onDelete(file.no)}>
+                        X
+                      </a>
+                    ) : null}
                   </div>
-              )) : null}
-            </div>
-            <ButtonContainer>
-              {board && board.editable ? (
-                  <>
-                    <StyledButton onClick={onEdit}>변경</StyledButton>
-                    <StyledButton onClick={onReset}>초기화</StyledButton>
-                    <StyledButton onClick={onDelete}>삭제</StyledButton>
-                  </>
-              ) : null}
-            </ButtonContainer>
-          </form>
-          <LikeButton onClick={board && board.liked ? onUnlike : onLike}>
-            {board && board.liked ? "좋아요 취소❤️" : "좋아요 누르기 🤍"}
-          </LikeButton>
-          <StyledButton onClick={onNavigateToList} style={{marginTop: '80px', marginLeft: '450px'}}>목록</StyledButton>
-        </ContentBox>
+                ))
+              : null}
+          </div>
+          <ButtonContainer>
+            {/*{board && board.editable ? (*/}
+            {/*  <>*/}
+                <StyledButton onClick={onEdit}>수정</StyledButton>
+                <StyledButton onClick={onReset}>초기화</StyledButton>
+                <StyledButton onClick={onDelete}>삭제</StyledButton>
+              {/*</>*/}
+            {/*) : null}*/}
+          </ButtonContainer>
+        </form>
+        <LikeButton onClick={board && board.liked ? onUnlike : onLike}>
+          {board && board.liked ? '좋아요 취소❤️' : '좋아요 누르기 🤍'}
+        </LikeButton>
+        <StyledButton
+          onClick={onNavigateToList}
+          style={{ marginTop: '80px', marginLeft: '450px' }}
+        >
+          목록
+        </StyledButton>
+      </ContentBox>
 
-        <CommentInputContainer>
-          <CommentTextArea placeholder="댓글을 입력하세요."></CommentTextArea>
-          <StyledButton>댓글 작성</StyledButton>
-        </CommentInputContainer>
+      <CommentInputContainer>
+          <CommentTextArea
+              name="content"
+              placeholder="댓글을 입력하세요."
+              value={content}
+              onChange={onChange}  // props로 전달받은 onChange 사용
+          />
+          <StyledButton type="submit" onClick={onSubmit}>작성</StyledButton>
+      </CommentInputContainer>
 
-        <div>
-          {comments && comments.length > 0 ? comments.map(comment => (
-              <CommentContainer key={comment.id}>
+      <div>
+        {comments && comments.length > 0
+          ? comments.map((boardComment) => (
+              <CommentContainer key={boardComment.id}>
                 <CommentMeta>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <ProfileImage src={comment && comment.user ? `https://yourImageServer.com/${comment.user.profileImage}` : "/images/default.png"} alt={comment && comment.user ? comment.user.name : 'Unknown'} />
-                    <span>{comment && comment.user ? comment.user.name : 'Unknown'}</span>
+                    <ProfileImage
+                      src={
+                        boardComment  && boardComment.writer.photo
+                          ? `https://yourImageServer.com/${boardComment.writer.photo}`
+                          : '/images/default.png'
+                      }
+                      alt={
+                        boardComment && boardComment.writer.nick ? boardComment.writer.nick : 'Unknown'
+                      }
+                    />
+                    <span>
+                      {boardComment && boardComment.writer ? boardComment.writer.nick : 'Unknown'}
+                    </span>
                   </div>
-                  <span>{comment && comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : 'Unknown date'}</span>
+                  <span>
+                    {boardComment && boardComment.createdAt
+                      ? new Date(boardComment.createdAt).toLocaleDateString()
+                      : 'Unknown date'}
+                  </span>
                 </CommentMeta>
-                <CommentContent>{comment ? comment.content : ''}</CommentContent>
+                <CommentContent>
+                  {boardComment ? boardComment.content : ''}
+                </CommentContent>
               </CommentContainer>
-          )) : null}
-        </div>
-      </Container>
+            ))
+          : null}
+      </div>
+    </Container>
   );
 };
 

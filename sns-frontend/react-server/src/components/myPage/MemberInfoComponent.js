@@ -27,7 +27,8 @@ const ButtonContainer = styled.div`
     justify-content: center;
 `;
 
-const SidebarButton = styled.button`
+
+const SidebarButton = styled(Link)`
     font-size: 20px;
     background-color: #426B1F;
     color: white;
@@ -45,7 +46,7 @@ const SidebarButton = styled.button`
     }
 `;
 
-const ChatRoomListButton = styled.a`
+const ChatRoomListButton = styled(Link)`
     font-size: 20px;
     background-color: #426B1F;
     color: white;
@@ -120,7 +121,7 @@ const MemberInfoComponent = ({ myPageData, onSubmit, onSubmit2 }) => {
           <SidebarButton type="button" onClick={onSubmit2}>팔로워</SidebarButton>
         </ButtonContainer>
         <ButtonContainer>
-          <ChatRoomListButton href={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>
+          <ChatRoomListButton to={`/myPage/${myPageData.no}/chat`}>채팅 리스트</ChatRoomListButton>
         </ButtonContainer>
       </Sidebar>
   );

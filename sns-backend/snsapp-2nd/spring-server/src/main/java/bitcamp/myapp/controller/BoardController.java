@@ -9,6 +9,7 @@ import bitcamp.myapp.vo.BoardPhoto;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,21 +18,20 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/board")
 public class BoardController {
 
@@ -51,51 +51,56 @@ public class BoardController {
   }
 
   @PostMapping("add")
-  public String add(@RequestBody Board board, MultipartFile[] files, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
+  public ResponseEntity add(@RequestPart("data") Board board,
+      @RequestPart(value = "files", required = false) MultipartFile[] files) throws Exception {
+    System.out.println(board);
+    Member loginUser = board.getWriter();
     if (loginUser == null) {
-      return "redirect:/auth/form";
+      return new ResponseEntity<>("not exist writer", HttpStatus.BAD_REQUEST);
     }
-    board.setWriter(loginUser);
 
-    ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
-    for (MultipartFile part : files) {
-      if (part.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_board/", part);
-        BoardPhoto attachedFile = new BoardPhoto();
-        attachedFile.setFilePath(uploadFileUrl);
-        attachedFiles.add(attachedFile);
+    try {
+      ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
+      if (files != null) {
+        for (MultipartFile part : files) {
+          if (part.getSize() > 0) {
+            String uploadFileUrl = ncpObjectStorageService.uploadFile(
+                "bitcamp-nc7-bucket-14", "sns_board/", part);
+            BoardPhoto attachedFile = new BoardPhoto();
+            attachedFile.setFilePath(uploadFileUrl);
+            attachedFiles.add(attachedFile);
+          }
+        }
       }
-    }
-    board.setAttachedFiles(attachedFiles);
+      board.setAttachedFiles(attachedFiles);
 
-    boardService.add(board);
-    return "redirect:/board/list?category=" + board.getCategory();
+      boardService.add(board);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return new ResponseEntity<>(board, HttpStatus.OK);
   }
 
-  @GetMapping("delete")
-  public String delete(int no, int category, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
+  @DeleteMapping("delete/{boardNo}")
+  public ResponseEntity delete(@PathVariable int boardNo, @RequestParam int category, HttpSession session) throws Exception {
 
-    System.out.println(no);
-    Board b = boardService.get(no);
+    System.out.println("BoardNo: " + boardNo);
+    System.out.println("Category: " + category);
 
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-    } else {
+    Board b = boardService.get(boardNo);
+
+    //if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
+     // return new ResponseEntity<>("게시글이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+    //} else {
       boardService.delete(b.getNo());
-      return "redirect:/board/list?category=" + category;
-    }
+      return new ResponseEntity<>(HttpStatus.OK);
+    //}
   }
 
   @GetMapping("detail")
   public ResponseEntity<Map<String, Object>> detail(
-       int category,
-       int boardNo) throws Exception {
+      int category,
+      int boardNo) throws Exception {
 
     Map<String, Object> response = new HashMap<>();
 
@@ -158,7 +163,7 @@ public class BoardController {
   public String searchBoards(@PathVariable int category,
       @RequestParam("keyword") String keyword,
       @RequestParam(defaultValue = "1") int page) throws Exception {
-    String encodedKeyword = URLEncoder.encode(keyword, "UTF-8");
+    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
     String queryString = String.format("&keyword=%s&page=%d", encodedKeyword, page);
     return "redirect:/board/list?category=" + category + queryString;
   }
@@ -260,20 +265,22 @@ public class BoardController {
 
   // 댓글 기능
   @PostMapping("addComment")
-  public String addComment(
+  public ResponseEntity addComment(
       BoardComment boardComment,
       HttpSession session,
       @RequestParam("boardNo") int boardNo) throws Exception {
+
     Member loginUser = (LoginUser) session.getAttribute("loginUser");
     if (loginUser == null) {
-      return "redirect:/auth/form";
+      return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
     }
 
     boardComment.setBoardNo(boardNo);
     boardComment.setWriter(loginUser);
 
     boardCommentService.add(boardComment);
-    return "redirect:/board/detail/1/" + boardComment.getBoardNo();
+
+    return new ResponseEntity<>(boardComment, HttpStatus.OK);
   }
 
   @GetMapping("detailComment/{boardNo}/{no}")

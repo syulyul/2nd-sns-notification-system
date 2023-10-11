@@ -8,7 +8,8 @@ import session from 'express-session';
 import api from './api';
 import mongodbConnect from './schemas';
 
-const { PORT, NODE_ENV, COOKIE_SECRET } = process.env;
+const { PORT, NODE_ENV, COOKIE_SECRET, REACT_SERVER_URL, SPRING_SERVER_URL } =
+  process.env;
 
 const app = express();
 app.set('port', PORT);
@@ -21,7 +22,7 @@ if (NODE_ENV === 'production') {
 }
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: [REACT_SERVER_URL, SPRING_SERVER_URL],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   credentials: true,
@@ -37,17 +38,18 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(COOKIE_SECRET));
-app.use(
-  session({
-    resave: false,
-    saveUninitialized: false,
-    secret: COOKIE_SECRET,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
-  })
-);
+
+const sessionMiddleware = session({
+  resave: false,
+  saveUninitialized: false,
+  secret: COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+});
+
+app.use(sessionMiddleware);
 
 app.use('/node', api);
 

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
+import guestBook from "../../modules/guestBook";
 
 const GuestbookTitle = styled.div`
     text-align: center;
@@ -243,9 +244,12 @@ const DeleteButtonContainer = styled.div`
     margin-top: 10px;
 `;
 
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
 
-
-const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList, guestBookOwnerNick }) => {
+const GuestBookComponent = ({ content, title, onChange, mpno, mno, onSubmit, guestBookList, guestBookOwnerNick, guestBook }) => {
 
   const [likes, setLikes] = useState(guestBookList.map(() => false));
 
@@ -273,6 +277,8 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                         name="title"
                         placeholder="제목을 입력하세요"
                         required
+                        value={title}
+                        onChange={onChange}
                     />
                   </td>
                 </tr>
@@ -285,19 +291,23 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                         cols="150"
                         placeholder="내용을 입력하세요"
                         required
+                        value={content}
+                        onChange={onChange}
                     ></StyledTextarea>
                   </td>
                 </tr>
+                <input type="hidden" name="mpno" value={mpno} />
+                <input type="hidden" name="mno" value={mno} />
               </tbody>
             </StyledTable>
             <StyledDiv>
-              <StyledButton type="submit">작성</StyledButton>
+              <StyledButton type="submit" onClick={onSubmit}>작성</StyledButton>
             </StyledDiv>
           </StyledForm>
         </AddGuestbookForm>
 
 
-        {guestBookList.map((guestBook,index) => (
+        {Array.isArray(guestBookList) && guestBookList.map((guestBook, index) => (
             <Container key={guestBook.no}>
               <ContentContainer>
               <ContentTable>
@@ -311,7 +321,7 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                         <span>{guestBook.title}</span>
                         <MetaInfo>
                           <ClockIcon src="/images/clock.png" />
-                          <span>{guestBook.createdAt}</span>
+                          <span>{formatDate(guestBook.createdAt)}</span>
                         </MetaInfo>
                       </HorizontalLayout>
                     </TitleMetaCell>
@@ -319,9 +329,9 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                   <SecondRow>
                     <WriterCell>
                       <ProfilePicture>
-                        <img src={guestBook.writer?.photo || "/images/avatar.png"} alt="프로필 사진" />
+                        <img src={guestBook.writer.photo || "/images/avatar.png"} alt="profile" />
                       </ProfilePicture>
-                      <NickNameDiv>{guestBook.writer?.nick || "임시 닉네임"}</NickNameDiv>
+                      <NickNameDiv>{guestBook.writer.nick || "임시 닉네임"}</NickNameDiv>
                     </WriterCell>
                     <ContentLikeCell colSpan="3">
                       <GuestBookTextarea readOnly>

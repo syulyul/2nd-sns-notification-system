@@ -1,11 +1,11 @@
 package bitcamp.myapp.controller;
 
+import bitcamp.myapp.App;
 import bitcamp.myapp.service.BoardService;
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.service.NcpObjectStorageService;
-import bitcamp.myapp.service.NotificationService;
 import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.service.SmsService;
 import bitcamp.myapp.vo.LoginUser;
@@ -14,14 +14,16 @@ import bitcamp.myapp.vo.MyPage;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -30,8 +32,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -49,11 +53,7 @@ public class AuthController {
   @Autowired
   MyPageService myPageService;
   @Autowired
-  NotificationService notificationService;
-  @Autowired
   NcpObjectStorageService ncpObjectStorageService;
-  @Autowired
-  ServletContext context;
   @Autowired
   RedisService redisService;
 
@@ -113,10 +113,7 @@ public class AuthController {
         loginUserObject.setLikedGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUser.getNo())));
 
-        int notReadNotiCount = notificationService.notReadNotiLogCount(loginUser.getNo());
-        context.setAttribute("notReadNotiCount" + loginUser.getNo(), notReadNotiCount);
       } else { // 해당하는 유저가 없을 경우
-        System.out.println(loginUser + "@@@@");
         return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
@@ -135,11 +132,11 @@ public class AuthController {
     LoginUser loginUserObject = null;
     try {
       String sessionId = sessionCookie.getValue();
-//      System.out.println(sessionId);
+      // System.out.println(sessionId);
 
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
-//          String temp = (String) redisService.getValuleOps()
-//              .getAndExpire(sessionId, 1, TimeUnit.DAYS);
+      // String temp = (String) redisService.getValuleOps()
+      // .getAndExpire(sessionId, 1, TimeUnit.DAYS);
       String temp = (String) redisService.getValuleOps().get(sessionId);
       if (temp != null) {
         int loginUserNo = Integer.parseInt(temp);
@@ -177,7 +174,7 @@ public class AuthController {
     }
     if (sessionId != null) {
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
-//      redisService.getValuleOps().getAndDelete(sessionId);
+      // redisService.getValuleOps().getAndDelete(sessionId);
     }
 
     Cookie cookie = new Cookie("sessionId", "invalidate");
@@ -188,30 +185,51 @@ public class AuthController {
   }
 
   @PostMapping("add")
-  public String add(
-      Member member,
-      MultipartFile photofile,
-      Model model) throws Exception {
+  public ResponseEntity add(
+      @RequestPart("data") Member member,
+      @RequestPart(value = "files", required = false) MultipartFile[] files,
+      HttpServletResponse response) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
     try {
-      System.out.println(member);
-      if (photofile.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_member/", photofile);
-        member.setPhoto(uploadFileUrl);
+      if (files != null) {
+        if (files[0].getSize() > 0) {
+          String uploadFileUrl = ncpObjectStorageService.uploadFile(
+              "bitcamp-nc7-bucket-14", "sns_member/", files[0]);
+          member.setPhoto(uploadFileUrl);
+        }
       }
+
       memberService.add(member);
-      MyPage myPage = new MyPage();
-      myPage.setNo(member.getNo());
+      MyPage myPage = new MyPage(member);
       myPageService.add(myPage);
 
-      return "auth/form";
+      String sessionId = UUID.randomUUID().toString();
+      Cookie cookie = new Cookie("sessionId", sessionId);
+      cookie.setPath("/");
+      response.addCookie(cookie);
+      redisService.getValuleOps()
+          .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.HOURS);
+
+      RestTemplate restTemplate = new RestTemplate();
+
+      // Header set
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+      // Message
+      HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
+
+      // Request
+      String url = App.NODE_SERVER_URL + "/node/user/add";
+      ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
+          String.class);
+
+      return new ResponseEntity<>(member, HttpStatus.OK);
 
     } catch (Exception e) {
-      model.addAttribute("message", "회원 등록 오류!");
-      model.addAttribute("refresh", "2;url=list");
-      throw e;
+      e.printStackTrace();
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -298,4 +316,5 @@ public class AuthController {
       return new ResponseEntity<>("비밀번호 변경 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
 }

@@ -1,26 +1,21 @@
 package bitcamp.myapp.service;
 
+import bitcamp.myapp.App;
 import bitcamp.myapp.dao.NotificationDao;
 import bitcamp.myapp.vo.NotiLog;
 import bitcamp.myapp.vo.NotiType;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class DefaultNotificationService implements NotificationService {
 
-  @Autowired
-  ServletContext context;
   @Autowired
   NotificationDao notificationDao;
 
@@ -31,36 +26,26 @@ public class DefaultNotificationService implements NotificationService {
   @Transactional
   @Override
   public int add(NotiLog notiLog) throws Exception {
-    RestTemplate restTemplate = new RestTemplate();
+    try {
 
-    // Header set
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+      RestTemplate restTemplate = new RestTemplate();
 
-    // Body set
-    MultiValueMap<String, String> body = new ObjectMapper().convertValue(notiLog,
-        new TypeReference<MultiValueMap<String, String>>() {
-        });
+      // Header set
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-    // Message
-    HttpEntity<?> requestMessage = new HttpEntity<>(body, httpHeaders);
+      // Message
+      HttpEntity<?> requestMessage = new HttpEntity<>(notiLog, httpHeaders);
 
-    // Request
-    String url = "http://localhost:3001/node/notification/add";
-    HttpEntity<String> response = restTemplate.postForEntity(url, requestMessage, String.class);
-    System.out.println(response);
+      // Request
+      String url = App.NODE_SERVER_URL + "/node/notification/add";
+      HttpEntity<String> response = restTemplate.postForEntity(url, requestMessage, String.class);
 
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    int result = notificationDao.insert(notiLog);
-    String key = "notReadNotiCount" + notiLog.getMemberNo();
-    Integer value = (Integer) context.getAttribute(key);
-    if (value == null) {
-      value = notificationDao.getNotiLogCount(notiLog.getMemberNo());
-      context.setAttribute(key, value);
-    } else {
-      context.setAttribute(key, value + 1);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return 0;
     }
-    return result;
+    return 1;
   }
 
   @Override
@@ -87,14 +72,6 @@ public class DefaultNotificationService implements NotificationService {
   @Override
   public int updateState(NotiLog notiLog, int notiState) throws Exception {
     int result = notificationDao.updateState(notiLog.getNo(), notiState);
-    String key = "notReadNotiCount" + notiLog.getMemberNo();
-    Integer value = (Integer) context.getAttribute(key);
-    if (value == null) {
-      value = notificationDao.getNotiLogCount(notiLog.getMemberNo());
-      context.setAttribute(key, value);
-    } else {
-      context.setAttribute(key, value - 1);
-    }
     return result;
   }
 
