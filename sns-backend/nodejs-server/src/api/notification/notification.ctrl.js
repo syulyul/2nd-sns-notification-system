@@ -29,8 +29,10 @@ export const listNotiLog = async (req, res, next) => {
       }),
     ]);
 
-    res.set('Last-Page', Math.ceil(notiLogCount / req.query.limit));
-    return res.json(notiLogs);
+    const lastPage = Math.ceil(
+      (notiLogCount + parseInt(req.query.limit) - 1) / req.query.limit
+    );
+    return res.json({ notis: notiLogs, lastPage });
   } catch (err) {
     console.error(err);
     res.status(403).send(err);

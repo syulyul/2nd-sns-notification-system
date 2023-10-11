@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Pagination from '../common/Pagination';
 
 const NotificationListStyledContainer = styled.div`
   display: flex;
@@ -52,29 +53,6 @@ const StyledButton = styled.button`
   cursor: pointer;
 `;
 
-const PaginationLink = styled.a`
-  display: inline-block;
-  width: 36px;
-  height: 36px;
-  line-height: 36px;
-  text-align: center;
-  margin-right: 4px;
-  border-radius: 50%;
-  background-color: #f2f2f2;
-  text-decoration: none;
-  color: black;
-
-  &.pagination-link-active {
-    background-color: #426b1f;
-    color: white;
-  }
-`;
-
-const PageLabel = styled.div`
-  margin-top: 60px;
-  text-align: center;
-`;
-
 const NotificationTitle = styled.h2`
   margin-left: 5%;
 `;
@@ -85,7 +63,7 @@ const NotificationLink = styled.a`
   text-decoration: none;
 `;
 
-const NotificationListComponent = ({ notificationData }) => {
+const NotificationListComponent = ({ notis, lastPage, page, query }) => {
   return (
     <>
       <NotificationListStyledContainer>
@@ -98,23 +76,16 @@ const NotificationListComponent = ({ notificationData }) => {
             </form>
           </NotificationTitleContainer>
 
-          {notificationData.map((noti) => (
+          {notis.map((noti) => (
             <NotificationItem key={noti.id}>
               <NotificationLink href={noti.url}>
                 {noti.content}
               </NotificationLink>
-              <span>{noti.notiState === 0 ? '안읽음' : '읽음'}</span>
+              <span>{noti.noti_state === 0 ? '안읽음' : '읽음'}</span>
             </NotificationItem>
           ))}
         </ListContainer>
-
-        <PageLabel>
-          {[1, 2, 3, 4, 5].map((page) => (
-            <PaginationLink key={page} href={`#page-${page}`}>
-              {page}
-            </PaginationLink>
-          ))}
-        </PageLabel>
+        <Pagination page={page} query={query} lastPage={lastPage} />
       </NotificationListStyledContainer>
     </>
   );

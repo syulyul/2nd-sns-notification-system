@@ -34,15 +34,17 @@ export function* notificationSaga() {
 
 const initialState = {
   notis: [],
+  lastPage: 1,
   notReadNotiCount: null,
   error: null,
 };
 
 const notification = handleActions(
   {
-    [LIST_SUCCESS]: (state, { payload: notis }) => ({
+    [LIST_SUCCESS]: (state, { payload: { notis, lastPage } }) => ({
       ...state,
       notis,
+      lastPage,
       error: null,
     }),
     [LIST_FAILURE]: (state, { payload: error }) => ({
