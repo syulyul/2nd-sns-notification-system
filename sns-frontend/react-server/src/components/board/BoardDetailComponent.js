@@ -121,6 +121,7 @@ const BoardDetailComponent = ({
   onEdit,
   onReset,
   onDelete,
+  onDeleteComment,
   onSubmit,
   onChange
 }) => {
@@ -232,6 +233,7 @@ const BoardDetailComponent = ({
                 <CommentContent>
                   {boardComment ? boardComment.content : ''}
                 </CommentContent>
+                <StyledButton onClick={() => onDeleteComment(boardComment.no)}>삭제</StyledButton>
               </CommentContainer>
             ))
           : null}

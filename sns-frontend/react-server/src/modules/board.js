@@ -22,6 +22,10 @@ const [DELETE, DELETE_SUCCESS, DELETE_FAILURE] = createRequestActionTypes('board
 const [ADD_COMMENT, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE] =
     createRequestActionTypes('comment/ADD_COMMENT');
 
+//댓글삭제
+const [DELETE_COMMENT, DELETE_COMMENT_SUCCESS, DELETE_COMMENT_FAILURE] =
+    createRequestActionTypes('comment/DELETE_COMMENT');
+
 
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
@@ -44,12 +48,15 @@ export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
 }));
 
 export const addComment = createAction(ADD_COMMENT, ({ content, boardNo }) => ({ content, boardNo }));
+export const deleteComment = createAction(DELETE_COMMENT, ({ commentNo, boardNo }) => ({ commentNo, boardNo }));
 
 const listSaga = createRequestSaga(LIST, boardAPI.list);
 const detailSaga = createRequestSaga(DETAIL, boardAPI.detail);
 const formSaga = createRequestSaga(FORM, boardAPI.form);
-const addCommentSaga = createRequestSaga(ADD_COMMENT, boardAPI.addComment);
 const deleteBoardSaga  = createRequestSaga(DELETE, boardAPI.deleteBoard);
+
+const addCommentSaga = createRequestSaga(ADD_COMMENT, boardAPI.addComment);
+const deleteCommentSaga = createRequestSaga(DELETE_COMMENT, boardAPI.deleteComment);
 
 export function* boardSaga() {
   yield takeLatest(LIST, listSaga);
@@ -57,6 +64,7 @@ export function* boardSaga() {
   yield takeLatest(FORM, formSaga);
   yield takeLatest(ADD_COMMENT, addCommentSaga);
   yield takeLatest(DELETE, deleteBoardSaga);
+  yield takeLatest(DELETE_COMMENT, deleteCommentSaga);
 }
 
 
@@ -133,6 +141,14 @@ const board = handleActions(
       boardComment,
     }),
     [ADD_COMMENT_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      commentError: error,
+    }),
+    [DELETE_COMMENT_SUCCESS]: (state, { payload: { commentNo, boardNo } }) => ({
+      ...state,
+      commentError: null,
+    }),
+    [DELETE_COMMENT_FAILURE]: (state, { payload: error }) => ({
       ...state,
       commentError: error,
     }),
