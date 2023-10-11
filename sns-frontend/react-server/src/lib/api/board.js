@@ -22,6 +22,7 @@ export const deleteBoard = ({ category, boardNo }) =>
     springClient.delete(`board/delete/${boardNo}`, { params: { category } });
 
 
+
 // 댓글작성
 export const addComment = (boardComment) =>
     springClient.post('/board/addComment', boardComment);

@@ -38,8 +38,8 @@ const BoardDetailContainer = () => {
 
   const { boardNo, category } = useParams();
 
-  const onChange = (e) => {
-    setContent(e.target.value);
+  const onChange = ({ key, value }) => {
+    dispatch(changeField({ key, value }));
   };
 
   const onSubmit = (e) => {
@@ -57,10 +57,13 @@ const BoardDetailContainer = () => {
 
   };
 
+  //게시글초기화
   const onReset = () => {
-    dispatch(detail({ category, boardNo }));
+    dispatch(initializeForm());  // 상태를 초기화
+    dispatch(detail({ category, boardNo }));  // 다시 상세 정보를 불러옴
   };
 
+  //게시글삭제
   const onDelete = (e) => {
     e.preventDefault();
     dispatch(deleteBoard({boardNo, category}));

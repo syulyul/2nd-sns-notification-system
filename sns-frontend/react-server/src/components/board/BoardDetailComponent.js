@@ -132,7 +132,7 @@ const BoardDetailComponent = ({
             <input
               type="text"
               defaultValue={board ? board.title : ''}
-              readOnly={board ? !board.editable : true}
+              onChange={e => onChange({ key: 'title', value: e.target.value })}
             />
           </Title>
           <MetaInfo>
@@ -150,7 +150,7 @@ const BoardDetailComponent = ({
           </MetaInfo>
           <textarea
             defaultValue={board ? board.content : ''}
-            readOnly={board ? !board.editable : true}
+            onChange={e => onChange({ key: 'content', value: e.target.value })}
           ></textarea>
           <div>
             {board && board.attachedFiles
