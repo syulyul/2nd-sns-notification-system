@@ -26,10 +26,10 @@ const HeaderContainer = () => {
   };
 
   useEffect(() => {
-    if (notReadNotiCount == null) {
+    if (user && notReadNotiCount == null) {
       dispatch(getNotReadNotiCount({ memberNo: user.no }));
     }
-  }, [notReadNotiCount]);
+  }, [user, notReadNotiCount]);
 
   return (
     <Header
