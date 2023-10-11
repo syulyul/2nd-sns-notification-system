@@ -9,13 +9,13 @@ const CHANGE_FIELD = 'myPage/CHANGE_FIELD';
 const INITIALIZE_FORM = 'myPage/INITIALIZE_FORM';
 
 const [UPDATE, UPDATE_SUCCESS, UPDATE_FAILURE] =
-    createRequestActionTypes('myPage/UPDATE');
+  createRequestActionTypes('myPage/UPDATE');
 
 const [LIST, LIST_SUCCESS, LIST_FAILURE] =
-    createRequestActionTypes('myPage/LIST');
+  createRequestActionTypes('myPage/LIST');
 
 const [INFO, INFO_SUCCESS, INFO_FAILURE] =
-    createRequestActionTypes('myPage/INFO');
+  createRequestActionTypes('myPage/INFO');
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -25,22 +25,32 @@ export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
 export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const update = createAction(
-    UPDATE,
-    ({ userNo, photo, name, nick, birthday, email, phoneNumber, password, gender }) => ({
-      userNo,
-      photo,
-      name,
-      nick,
-      birthday,
-      email,
-      phoneNumber,
-      password,
-      gender,
-    })
+  UPDATE,
+  ({
+    userNo,
+    photo,
+    name,
+    nick,
+    birthday,
+    email,
+    phoneNumber,
+    password,
+    gender,
+  }) => ({
+    userNo,
+    photo,
+    name,
+    nick,
+    birthday,
+    email,
+    phoneNumber,
+    password,
+    gender,
+  })
 );
 
-export const list = createAction(LIST, (userNo) => (userNo));
-export const info = createAction(INFO, (userNo) => (userNo));
+export const list = createAction(LIST, (userNo) => userNo);
+export const info = createAction(INFO, (userNo) => userNo);
 
 const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
 const listSaga = createRequestSaga(LIST, myPageAPI.list);
@@ -53,58 +63,57 @@ export function* myPageSaga() {
 }
 
 const initialState = {
-  myPage: {nick:""},
+  myPage: null,
   userNo: 0,
   myPageError: null,
   user: null,
 };
 
 const myPage = handleActions(
-    {
-      [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
-        ...state,
-        myPage:{...state.myPage, [key]: value},
+  {
+    [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
+      ...state,
+      myPage: { ...state.myPage, [key]: value },
+    }),
+    [INITIALIZE_FORM]: (state) => ({
+      ...state,
 
-      }),
-      [INITIALIZE_FORM]: (state) => ({
-        ...state,
+      myPage: null,
+      userNo: 0,
+    }),
 
-        myPage: null,
-        userNo: 0,
-      }),
+    [UPDATE_SUCCESS]: (state, { payload: myPage, user }) => ({
+      ...state,
+      myPageError: null,
+      user,
+      myPage,
+    }),
+    [UPDATE_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      myPageError: error,
+    }),
 
-      [UPDATE_SUCCESS]: (state, { payload: myPage, user }) => ({
-        ...state,
-        myPageError: null,
-        user,
-        myPage,
-      }),
-      [UPDATE_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        myPageError: error,
-      }),
+    [LIST_SUCCESS]: (state, { payload: myPage }) => ({
+      ...state,
+      myPage,
+      myPageError: null,
+    }),
+    [LIST_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      myPageError: error,
+    }),
 
-      [LIST_SUCCESS]: (state, { payload: myPage }) => ({
-        ...state,
-        myPage,
-        myPageError: null,
-      }),
-      [LIST_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        myPageError: error,
-      }),
-
-      [INFO_SUCCESS]: (state, { payload: myPage }) => ({
-        ...state,
-        myPage,
-        myPageError: null,
-      }),
-      [INFO_FAILURE]: (state, { payload: error }) => ({
-        ...state,
-        myPageError: error,
-      }),
-    },
-    initialState
+    [INFO_SUCCESS]: (state, { payload: myPage }) => ({
+      ...state,
+      myPage,
+      myPageError: null,
+    }),
+    [INFO_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      myPageError: error,
+    }),
+  },
+  initialState
 );
 
 export default myPage;

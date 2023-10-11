@@ -16,7 +16,7 @@ export const notiList = createAction(LIST, ({ memberNo, limit, page }) => ({
   limit,
   page,
 }));
-export const notReadNotiCount = createAction(
+export const getNotReadNotiCount = createAction(
   NOT_READ_COUNT,
   ({ memberNo }) => ({ memberNo })
 );
@@ -34,7 +34,7 @@ export function* notificationSaga() {
 
 const initialState = {
   notis: [],
-  notReadNotiCount: 0,
+  notReadNotiCount: null,
   error: null,
 };
 

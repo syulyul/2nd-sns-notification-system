@@ -106,7 +106,10 @@ const StyledH1 = styled.h1`
 `;
 
 const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
-const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
+  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
+  if (myPageData == null) {
+    return <div>loading...</div>;
+  }
   return (
     <FormContainer>
       <StyledH1>내 정보 수정</StyledH1>
@@ -138,20 +141,32 @@ const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPa
 
       <FormGroup>
         <FormLabel>🌱 닉네임</FormLabel>
-        <FormInput type="text" name="nick" value={myPageData.nick} onChange={onChange} />
+        <FormInput
+          type="text"
+          name="nick"
+          value={myPageData.nick}
+          onChange={onChange}
+        />
       </FormGroup>
 
       <FormGroup>
         <FormLabel htmlFor="birthday">🌱 생일</FormLabel>
-        <FormInput type="date"
-                   name="birthday"
-                   value={myPageData.birthday}
-                   onChange={onChange} />
+        <FormInput
+          type="date"
+          name="birthday"
+          value={myPageData.birthday}
+          onChange={onChange}
+        />
       </FormGroup>
 
       <FormGroup>
         <FormLabel htmlFor="email">🌱 이메일</FormLabel>
-        <FormInput type="email" name="email" value={myPageData.email} onChange={onChange} />
+        <FormInput
+          type="email"
+          name="email"
+          value={myPageData.email}
+          onChange={onChange}
+        />
       </FormGroup>
 
       <FormGroup>
@@ -171,15 +186,24 @@ const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPa
 
       <FormGroup>
         <FormLabel htmlFor="gender">🌱 성별</FormLabel>
-        <FormSelect id="gender" name="gender" value={myPageData.gender} onChange={onChange}>
+        <FormSelect
+          id="gender"
+          name="gender"
+          value={myPageData.gender}
+          onChange={onChange}
+        >
           <option value="1">남자</option>
           <option value="2">여자</option>
         </FormSelect>
       </FormGroup>
 
       <ButtonContainer>
-        <CustomButton type="submit" onClick={onSubmit}>수정</CustomButton>
-        <CustomButton type="reset" onClick={onSubmit}>초기화</CustomButton>
+        <CustomButton type="submit" onClick={onSubmit}>
+          수정
+        </CustomButton>
+        <CustomButton type="reset" onClick={onSubmit}>
+          초기화
+        </CustomButton>
       </ButtonContainer>
       <CustomLink href={`/myPage/${myPageData.no}/update`}>탈퇴하기</CustomLink>
     </FormContainer>
