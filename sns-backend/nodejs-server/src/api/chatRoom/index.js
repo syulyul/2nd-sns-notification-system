@@ -3,7 +3,7 @@ import * as roomCtrl from "./chatRoom.ctrl";
 
 const chatRoom = express.Router();
 
-chatRoom.get("/room", roomCtrl.roomList);
+chatRoom.get("/room/:mno", roomCtrl.roomList);
 
 // chatRoom.post("/room", roomCtrl.createRoom);
 

@@ -20,7 +20,7 @@ const CenteredContainer = styled.div`
 `;
 
 const ChatRoomListContainer = () => {
-
+  const dispatch = useDispatch();
   const [selectedRoom, setSelectedRoom] = useState(null);
 
   // const rooms = [
@@ -41,6 +41,10 @@ const ChatRoomListContainer = () => {
       user: auth.user,
     })
   );
+
+  useEffect(() => {
+    dispatch(roomList(user.no));
+  }, [dispatch, user.no]);
 
   const handleSelectRoom = (room) => {
     setSelectedRoom(room);

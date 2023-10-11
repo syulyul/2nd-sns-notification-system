@@ -5,9 +5,7 @@ import User from "../../schemas/user";
 export const roomList = async (req, res, next) => {
   try {
     const findRooms = await Room.find({
-    //   "user":{
-    //     $elemMatch: {"nick": "지나가율" } // auther배열객체 들 중에서 {"name":"park"} 검색.
-    //  }
+      users: {$all: [req.params.mno]}
     });
 
     res.json(findRooms);

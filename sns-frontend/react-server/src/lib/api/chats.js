@@ -1,8 +1,8 @@
 import qs from "qs";
-import client from './nodeClient';
+import nodeClient from './nodeClient';
 
-export const roomList = () => {
-  return client.get("room");
+export const roomList = (mno) => {
+  return nodeClient.get(`chatRoom/room/${mno}`);
 }
 
 export const createRoom = ({ mno1, mno2 }) => {
@@ -10,20 +10,20 @@ export const createRoom = ({ mno1, mno2 }) => {
     mno1,
     mno2,
   });
-  return client.post(`room?${queryString}`);
+  return nodeClient.post(`room?${queryString}`);
 };
 
 export const enterRoom = ({ roomId }) => {
-  return client.get(`room?${roomId}`);
+  return nodeClient.get(`room?${roomId}`);
 };
 
 export const removeRoom = ({ roomId }) => {
-  return client.delete(`room/${roomId}`);
+  return nodeClient.delete(`room/${roomId}`);
 }
 
 // 채팅 전송
 export const sendChat = ({ roomId, chat, files }) => {
-  return client.post(`room/${roomId}/chat`, {
+  return nodeClient.post(`room/${roomId}/chat`, {
     chat,
     files,
   });

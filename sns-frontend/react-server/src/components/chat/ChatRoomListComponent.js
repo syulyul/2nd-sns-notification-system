@@ -38,10 +38,10 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
     <ChatRoomList>
       <h2>채팅방 목록</h2>
       <ChatRoomListBox>
-        {rooms.map((room) => (
+        {rooms.map(room => (
           <ChatRoomItemContainer>
             <ChatRoomItem key={room._id} onClick={() => onSelectRoom(room)}>
-              {room.title}
+              {`${room.users[0]}, ${room.users[1]}`}
             </ChatRoomItem>
           </ChatRoomItemContainer>
           
