@@ -97,6 +97,9 @@ const StateMessageTextarea = styled.textarea`
 `;
 
 const MemberInfoComponent = ({ myPageData, onSubmit, onSubmit2 }) => {
+  if (myPageData == null) {
+    return <div>loading...</div>;
+  }
   const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   return (
     <Sidebar>
