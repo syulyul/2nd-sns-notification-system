@@ -1,49 +1,59 @@
 import React, {useEffect, useState} from 'react';
 import GuestBookComponent from '../../components/guestBook/GuestBookComponent';
-import guestBook, {list} from "../../modules/guestBook";
+import guestBook, {changeField, list, post} from "../../modules/guestBook";
 import {useDispatch, useSelector} from "react-redux";
+import auth from "../../modules/auth";
+import myPage from "../../modules/myPage";
+import { useNavigate, useParams } from 'react-router-dom';
 
 const GuestBookContainer = () => {
   const dispatch = useDispatch();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const navigate = useNavigate();
+  const{ no} = useParams();
 
-  const { guestBookList, error, userNo, guestBookOwnerNick} = useSelector(
-      ({auth, guestBook}) => ({
+  const { guestBookList, error, mpno, mno, guestBookOwnerNick, title, content} = useSelector(
+      ({auth, guestBook, myPage}) => ({
         guestBookList: guestBook.guestBookList,
         error: guestBook.guestBookError,
         guestBookOwnerNick: guestBook.guestBookOwnerNick,
-        userNo: auth.user.no,
+        title: guestBook.title,
+        content: guestBook.content,
+        mpno: no,
+        mno: auth.user.no,
       }));
 
   useEffect(() => {
-    dispatch(list(userNo));
-  }, [dispatch, userNo]);
-
-  const handleChange = (e) => {
-    const {name, value} = e.target;
-
-    if (name === 'title') {
-      setTitle(value);
-    } else if (name === 'content') {
-      setContent(value);
+    if (no) {
+      dispatch(list(no)); // no가 유효한 경우에만 요청을 보냅니다.
+      navigate(`/guestBook/${no}`);
     }
+  }, [dispatch, no]);
+
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    dispatch(
+        changeField({
+          key: name,
+          value,
+        })
+    );
   };
 
-  const handleSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    setTitle('');
-    setContent('');
+    dispatch(post({ mno, mpno, title, content}));
   };
 
   return (
       <GuestBookComponent
           title={title}
           content={content}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
+          onChange={onChange}
+          onSubmit={onSubmit}
           guestBookList={guestBookList}
           guestBookOwnerNick={guestBookOwnerNick}
+          mpno={no}
+          mno={mno}
       />
   );
 };
