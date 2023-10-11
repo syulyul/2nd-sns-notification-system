@@ -249,7 +249,7 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList, guestBookOwnerNick, guestBook }) => {
+const GuestBookComponent = ({ content, title, onChange, mpno, mno, onSubmit, guestBookList, guestBookOwnerNick, guestBook }) => {
 
   const [likes, setLikes] = useState(guestBookList.map(() => false));
 
@@ -277,6 +277,8 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                         name="title"
                         placeholder="제목을 입력하세요"
                         required
+                        value={title}
+                        onChange={onChange}
                     />
                   </td>
                 </tr>
@@ -289,19 +291,23 @@ const GuestBookComponent = ({ title, content, onChange, onSubmit, guestBookList,
                         cols="150"
                         placeholder="내용을 입력하세요"
                         required
+                        value={content}
+                        onChange={onChange}
                     ></StyledTextarea>
                   </td>
                 </tr>
+                <input type="hidden" name="mpno" value={mpno} />
+                <input type="hidden" name="mno" value={mno} />
               </tbody>
             </StyledTable>
             <StyledDiv>
-              <StyledButton type="submit">작성</StyledButton>
+              <StyledButton type="submit" onClick={onSubmit}>작성</StyledButton>
             </StyledDiv>
           </StyledForm>
         </AddGuestbookForm>
 
 
-        {guestBookList.map((guestBook,index) => (
+        {Array.isArray(guestBookList) && guestBookList.map((guestBook, index) => (
             <Container key={guestBook.no}>
               <ContentContainer>
               <ContentTable>

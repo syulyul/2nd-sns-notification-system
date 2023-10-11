@@ -11,9 +11,7 @@ import bitcamp.myapp.vo.MyPage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,9 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +29,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/myPage")
 public class MyPageController {
 
@@ -127,7 +121,7 @@ public class MyPageController {
       @RequestParam(defaultValue = "") String show,
       @RequestParam("keyword") String keyword,
       @RequestParam(defaultValue = "1") int page) throws Exception {
-    String encodedKeyword = URLEncoder.encode(keyword, "UTF-8");
+    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
     String queryString = String.format("?show=%s&keyword=%s&page=%d", show, encodedKeyword, page);
 
     return "redirect:/myPage/" + no + queryString;

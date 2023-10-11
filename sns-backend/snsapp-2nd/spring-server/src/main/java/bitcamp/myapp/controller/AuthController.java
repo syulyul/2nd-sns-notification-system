@@ -1,11 +1,11 @@
 package bitcamp.myapp.controller;
 
+import bitcamp.myapp.App;
 import bitcamp.myapp.service.BoardService;
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.service.NcpObjectStorageService;
-import bitcamp.myapp.service.NotificationService;
 import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.service.SmsService;
 import bitcamp.myapp.vo.LoginUser;
@@ -14,7 +14,6 @@ import bitcamp.myapp.vo.MyPage;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,11 +53,7 @@ public class AuthController {
   @Autowired
   MyPageService myPageService;
   @Autowired
-  NotificationService notificationService;
-  @Autowired
   NcpObjectStorageService ncpObjectStorageService;
-  @Autowired
-  ServletContext context;
   @Autowired
   RedisService redisService;
 
@@ -118,10 +113,7 @@ public class AuthController {
         loginUserObject.setLikedGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUser.getNo())));
 
-        int notReadNotiCount = notificationService.notReadNotiLogCount(loginUser.getNo());
-        context.setAttribute("notReadNotiCount" + loginUser.getNo(), notReadNotiCount);
       } else { // 해당하는 유저가 없을 경우
-        System.out.println(loginUser + "@@@@");
         return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
@@ -229,7 +221,7 @@ public class AuthController {
       HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
 
       // Request
-      String url = "http://localhost:3001/node/user/add";
+      String url = App.NODE_SERVER_URL + "/node/user/add";
       ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
           String.class);
 
@@ -324,5 +316,5 @@ public class AuthController {
       return new ResponseEntity<>("비밀번호 변경 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  
+
 }
