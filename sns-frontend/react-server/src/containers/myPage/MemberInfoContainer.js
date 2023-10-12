@@ -35,16 +35,10 @@ const MemberInfoContainer = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(following(userNo));
-    dispatch(list(userNo));
-    dispatch(initializeForm());
-    navigate(`/myPage/${user.no}?show=followings`);
   };
   const onSubmit2 = (e) => {
     e.preventDefault();
     dispatch(follower(userNo));
-    dispatch(list(userNo));
-    dispatch(initializeForm());
-    navigate(`/myPage/${user.no}?show=follower`);
   };
 
   return (

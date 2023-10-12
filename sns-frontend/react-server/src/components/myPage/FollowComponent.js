@@ -42,13 +42,11 @@ const FollowComponent = ({
   handleFollow,
   handleUnfollow,
   followMemberSet,
+  show,
 }) => {
-  const location = useLocation();
-  const isFollowing = location.search.includes('show=followings');
-
   return (
     <MemberListBox>
-      <h3>{isFollowing ? '🌱 팔로잉 리스트' : '🌱 팔로워 리스트'}</h3>
+      <h3>{show === 'following' ? '🌱 팔로잉 리스트' : '🌱 팔로워 리스트'}</h3>
       {Array.isArray(followListData) &&
         followListData.map((myPage, index) => (
           <MemberItem key={myPage.no}>
