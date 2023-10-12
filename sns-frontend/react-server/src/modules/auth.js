@@ -73,15 +73,7 @@ const initialState = {
 
   verificationCode: '',
 
-  user: {
-    no: null,
-    nick: null,
-    name: null,
-    phoneNumber: null,
-    email: null,
-    password: null,
-    photo: null,
-  },
+  user: null, // 변경 금지
 };
 
 const auth = handleActions(
