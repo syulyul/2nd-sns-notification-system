@@ -61,7 +61,7 @@ const ChatRoomListContainer = () => {
           <div>
             {/* <h2>{selectedRoom.title}</h2> */}
             {/* 선택한 채팅방 내용을 여기에 표시할 수 있음 */}
-            <ChatComponent error={error} rooms={rooms} />
+            {/* <ChatComponent error={error} rooms={rooms} /> */}
           </div>
         }
       </ChatRoomList>

@@ -12,7 +12,6 @@ import MemberInfoPage from './pages/MemberInfoPage';
 import MemberInfoUpdatePage from './pages/MemberInfoUpdatePage';
 import GuestBookPage from './pages/GuestBookPage';
 import MyPagePage from './pages/MyPagePage';
-import FollowPage from './pages/FollowPage';
 import PwFindPage from './pages/PwFindPage';
 import ChatPage from './pages/ChatPage';
 import ChatRoomListPage from './pages/ChatRoomListPage';

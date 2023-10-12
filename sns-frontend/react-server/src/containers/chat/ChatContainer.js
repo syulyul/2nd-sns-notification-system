@@ -1,6 +1,11 @@
 // import { useNavigate } from 'react-router-dom';
 import ChatComponent from '../../components/chat/ChatComponent';
-import { enterRoom, concatChats } from '../../modules/chats';
+import {
+  enterRoom,
+  concatChats,
+  changeField,
+  sendChat,
+} from '../../modules/chats';
 import qs from 'qs';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,14 +15,16 @@ import io from 'socket.io-client';
 const ChatContainer = () => {
   const params = useParams();
   const dispatch = useDispatch();
-  const { room, chats, error, user } = useSelector(({ chats, auth }) => ({
-    room: chats.room,
-    chats: chats.chats,
-    error: chats.error,
-    user: auth.user,
-  }));
+  const { room, chats, chatTxt, error, user } = useSelector(
+    ({ chats, auth }) => ({
+      room: chats.room,
+      chats: chats.chats,
+      chatTxt: chats.chatTxt,
+      error: chats.error,
+      user: auth.user,
+    })
+  );
 
-  const { roomId } = params;
   const { search } = useLocation();
   const { mno1, mno2 } = qs.parse(search, { ignoreQueryPrefix: true });
 
@@ -25,8 +32,18 @@ const ChatContainer = () => {
     dispatch(enterRoom({ mno1, mno2 }));
   }, [mno1, mno2]);
 
-  const sendChat = () => {
-    dispatch();
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    dispatch(
+      changeField({
+        key: name,
+        value,
+      })
+    );
+  };
+
+  const onSendChat = () => {
+    dispatch(sendChat({ roomId: room._id, chatTxt, user }));
   };
 
   // useEffect(() => {
@@ -59,7 +76,17 @@ const ChatContainer = () => {
   //   }
   // }, [room]);
 
-  return <ChatComponent room={room} chats={chats} user={user} error={error} />;
+  return (
+    <ChatComponent
+      room={room}
+      chats={chats}
+      user={user}
+      chatTxt={chatTxt}
+      error={error}
+      onChange={onChange}
+      onSendChat={onSendChat}
+    />
+  );
 };
 
 export default ChatContainer;
