@@ -96,7 +96,11 @@ const StateMessageTextarea = styled.textarea`
   resize: none;
 `;
 
-const MemberInfoComponent = ({ myPageData, onSubmit, onSubmit2 }) => {
+const MemberInfoComponent = ({
+  myPageData,
+  onFollowingList,
+  onFollowerList,
+}) => {
   if (myPageData == null) {
     return <div>loading...</div>;
   }
@@ -121,10 +125,10 @@ const MemberInfoComponent = ({ myPageData, onSubmit, onSubmit2 }) => {
       />
 
       <ButtonContainer>
-        <SidebarButton type="button" onClick={onSubmit}>
+        <SidebarButton type="button" onClick={onFollowingList}>
           팔로잉
         </SidebarButton>
-        <SidebarButton type="button" onClick={onSubmit2}>
+        <SidebarButton type="button" onClick={onFollowerList}>
           팔로워
         </SidebarButton>
       </ButtonContainer>

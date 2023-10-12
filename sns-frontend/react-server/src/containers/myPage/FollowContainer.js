@@ -17,10 +17,6 @@ const FollowContainer = () => {
       show: myPage.show,
     }));
 
-  useEffect(() => {
-    dispatch(following(userNo));
-  }, [dispatch, userNo]); // 팔로우 버튼 클릭 시 실행되는 함수
-
   const handleFollow = (myPagNo) => {
     dispatch(follow(myPagNo));
   };
