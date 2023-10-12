@@ -23,7 +23,7 @@ export const deleteBoard = ({ category, boardNo }) =>
 
 // 댓글작성
 export const addComment = (boardComment) =>
-    springClient.post('/board/addComment', boardComment);
+    springClient.post(`/board/addComment?boardNo=${boardComment.boardNo}`, boardComment);
 
 //댓글삭제
 export const deleteComment = ({ commentNo, boardNo }) =>

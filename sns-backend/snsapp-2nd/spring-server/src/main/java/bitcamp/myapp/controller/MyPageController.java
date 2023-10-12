@@ -260,7 +260,7 @@ public class MyPageController {
 
     try {
       String sessionId = sessionCookie.getValue();
-      int loginUserNo = Integer.parseInt((String) redisService.getValuleOps().get(sessionId));
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
       Member loginUser = memberService.get(loginUserNo);
 
       int result = myPageService.follow(loginUser, followingNo);
@@ -279,7 +279,7 @@ public class MyPageController {
 
     try {
       String sessionId = sessionCookie.getValue();
-      int loginUserNo = Integer.parseInt((String) redisService.getValuleOps().get(sessionId));
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
       Member loginUser = memberService.get(loginUserNo);
 
       int result = myPageService.unfollow(loginUser, followingNo);

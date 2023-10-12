@@ -2,7 +2,9 @@ package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.BoardCommentService;
 import bitcamp.myapp.service.BoardService;
+import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.NcpObjectStorageService;
+import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.vo.Board;
 import bitcamp.myapp.vo.BoardComment;
 import bitcamp.myapp.vo.BoardPhoto;
@@ -14,6 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +46,8 @@ public class BoardController {
   BoardCommentService boardCommentService;
   @Autowired
   NcpObjectStorageService ncpObjectStorageService;
+  @Autowired
+  RedisService redisService;
 
   {
     System.out.println("BoardController 생성됨!");
@@ -268,7 +275,7 @@ public class BoardController {
   public ResponseEntity addComment(
       BoardComment boardComment,
       HttpSession session,
-      @RequestParam("boardNo") int boardNo) throws Exception {
+      @RequestParam int boardNo) throws Exception {
 
     Member loginUser = (LoginUser) session.getAttribute("loginUser");
     if (loginUser == null) {
@@ -315,18 +322,50 @@ public class BoardController {
   }
 
   @DeleteMapping("deleteComment/{boardNo}/{commentNo}")
-  public ResponseEntity deleteComment(@PathVariable int commentNo, @PathVariable int boardNo, HttpSession session) throws Exception {
-//    Member loginUser = (Member) session.getAttribute("loginUser");
-//    if (loginUser == null) {
-//      return "redirect:/auth/form";
-//    }
+  public ResponseEntity deleteComment(
+      @PathVariable int commentNo,
+      @PathVariable int boardNo,
+      HttpServletRequest request,
+      HttpServletResponse response) {
 
-    BoardComment b = boardCommentService.get(commentNo, boardNo);
+    try {
+      // 1. 'sessionId' 쿠키에서 값 가져오기
+      String sessionId = null;
+      Cookie[] cookies = request.getCookies();
+      if (cookies != null) {
+        for (Cookie cookie : cookies) {
+          if ("sessionId".equals(cookie.getName())) {
+            sessionId = cookie.getValue();
+            break;
+          }
+        }
+      }
 
-//    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-//      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-//    } else {
+      if (sessionId == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      }
+
+      // 2. Redis에서 해당 sessionId로 사용자 정보를 가져오기
+      String loginUserNoStr = (String) redisService.getValueOps().get(sessionId);
+      if (loginUserNoStr == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      }
+
+      int loginUserNo = Integer.parseInt(loginUserNoStr);
+
+      // 3. 게시글 삭제 권한 검사
+      BoardComment b = boardCommentService.get(commentNo, boardNo);
+      if (b == null || b.getWriter().getNo() != loginUserNo) {
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+      }
+
       boardCommentService.delete(commentNo, boardNo);
       return new ResponseEntity<>(HttpStatus.OK);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
+
+
 }

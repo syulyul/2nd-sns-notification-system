@@ -76,6 +76,9 @@ const BoardDetailContainer = () => {
     dispatch(deleteComment({commentNo, boardNo}));
   };
 
+  const CommentChange = (e) => {
+    setContent(e.target.value);
+  };
 
   //좋아요
   const onLike = () => {
@@ -85,7 +88,6 @@ const BoardDetailContainer = () => {
   const onUnlike = () => {
     dispatch(unlikeBoard(boardNo));
   };
-
 
 
   useEffect(() => {
@@ -109,6 +111,7 @@ const BoardDetailContainer = () => {
             onDeleteComment={onDeleteComment}
             onLike={onLike}
             onUnlike={onUnlike}
+            CommentChange={CommentChange}
         />
   );
 };
