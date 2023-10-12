@@ -185,13 +185,15 @@ const StyledChatBtn = styled.button`
 const ChatItem = ({ chatlog, loginUser }) => {
   const { _id, room, user, chat, files, createdAt } = chatlog;
   const roomId = _id;
-
+  console.log(loginUser, user);
   return (
     <ChatMessage
       className={
         loginUser.nick === user.nick ? 'styledChatMine' : 'StyledChatOther'
       }
-    ></ChatMessage>
+    >
+      {chat}
+    </ChatMessage>
   );
 };
 
@@ -199,7 +201,6 @@ const ChatComponent = ({
   room,
   chats,
   user,
-  loginUser,
   onChange,
   chatTxt,
   onSendChat,
@@ -217,23 +218,32 @@ const ChatComponent = ({
           {/* <UserImage
             src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
             alt="User"
-          />
+          /> */}
           <div>
-            {room && <Username>닉네임 받아오기</Username>}
-            <ChatMessage className="StyledChatOther">
+            {/* {room && <Username></Username>} */}
+            {/* <ChatMessage className="StyledChatOther">
               남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
             </ChatMessage>
             <ChatMessage className="StyledChatMine">
               내가 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
-            </ChatMessage>
-          </div> */}
-          {chats && (
-            <div>
-              {chats.map((chatlog) => (
-                <ChatItem chatlog={chatlog} key={chatlog._id} user={user} />
+            </ChatMessage> */}
+            {/* </div> */}
+            {chats &&
+              chats.map((chatlog) => (
+                <div>
+                  <UserImage
+                    src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
+                    alt="User"
+                  />
+                  <Username>닉네임</Username>
+                  <ChatItem
+                    chatlog={chatlog}
+                    key={chatlog._id}
+                    loginUser={user}
+                  />
+                </div>
               ))}
-            </div>
-          )}
+          </div>
         </ChatMessage>
       </StyledChatList>
       <SendChatBlock>
