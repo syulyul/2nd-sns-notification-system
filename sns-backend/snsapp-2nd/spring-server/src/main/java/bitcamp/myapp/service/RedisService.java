@@ -18,7 +18,7 @@ public class RedisService {
     this.redisTemplate = redisTemplate;
   }
 
-  public ValueOperations getValuleOps() {
+  public ValueOperations getValueOps() {
     return redisTemplate.opsForValue();
   }
 

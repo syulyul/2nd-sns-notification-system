@@ -1,3 +1,4 @@
+import { redisClient } from '../../redis';
 import Chat from '../../schemas/chat';
 import Room from '../../schemas/room';
 import User from '../../schemas/user';
@@ -53,7 +54,8 @@ export const removeRoom = async (req, res, next) => {
 
 export const sendChat = async (req, res, next) => {
   try {
-    const sendUser = await User.findOne({ mno: req.body.user.no });
+    const userNo = await redisClient.get(req.cookies['sessionId']);
+    const sendUser = await User.findOne({ mno: userNo });
     const roomId = req.params.roomId;
     console.log(roomId);
     const chat = await Chat.create({

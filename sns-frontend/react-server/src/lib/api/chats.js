@@ -26,10 +26,9 @@ export const removeRoom = ({ roomId }) => {
 };
 
 // 채팅 전송
-export const sendChat = ({ roomId, user, chatTxt, files }) => {
+export const sendChat = ({ roomId, chatTxt, files }) => {
   return nodeClient.post(`chatRoom/room/${roomId}/chat`, {
     chatTxt,
     files,
-    user,
   });
 };
