@@ -43,7 +43,7 @@ const ChatContainer = () => {
   };
 
   const onSendChat = () => {
-    dispatch(sendChat({ roomId: room._id, chatTxt, user }));
+    dispatch(sendChat({ roomId: room._id, chatTxt }));
   };
 
   // useEffect(() => {
