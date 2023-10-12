@@ -217,32 +217,35 @@ public class BoardController {
 
   // 좋아요 기능
   @PostMapping("like")
-  public int like(@RequestParam int boardNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-    try {
-      Board board = boardService.get(boardNo);
-      boardService.like(loginUser, board);
-      loginUser.getLikeBoardSet().add(boardNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
-    } catch (Exception e) {
-      return -1;
-    }
+  public ResponseEntity like(@RequestParam int boardNo, HttpSession session) throws Exception {
+    //LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+    //try {
+    // Board board = boardService.get(boardNo);
+    boardService.increaseLikes(boardNo);
+    //boardService.like(loginUser, board);
+    //loginUser.getLikeBoardSet().add(boardNo);
+    //session.setAttribute("loginUser", loginUser);
+    //} catch (Exception e) {
+    //    return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //}
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PostMapping("unlike")
-  public int unlike(@RequestParam int boardNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-    try {
-      Board board = boardService.get(boardNo);
-      boardService.unlike(loginUser, board);
-      loginUser.getLikeBoardSet().remove(boardNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
-    } catch (Exception e) {
-      return -1;
-    }
+  public ResponseEntity unlike(@RequestParam int boardNo, HttpSession session) throws Exception {
+    //LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+    //try {
+    // Board board = boardService.get(boardNo);
+    boardService.decreaseLikes(boardNo);
+    //boardService.unlike(loginUser, board);
+    //loginUser.getLikeBoardSet().remove(boardNo);
+    //session.setAttribute("loginUser", loginUser);
+    //} catch (Exception e) {
+    //    return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //}
+    return new ResponseEntity<>(HttpStatus.OK);
   }
+
 
   @GetMapping("/likedBoards")
   public ResponseEntity<List<Integer>> getLikedBoards(HttpSession session) {
