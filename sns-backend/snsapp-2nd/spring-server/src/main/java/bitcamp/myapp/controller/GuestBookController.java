@@ -2,7 +2,6 @@ package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MyPageService;
-import bitcamp.myapp.vo.Board;
 import bitcamp.myapp.vo.GuestBook;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
@@ -13,9 +12,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/guestBook")
 public class GuestBookController {
 
@@ -55,21 +52,22 @@ public class GuestBookController {
     return new ResponseEntity<>(guestBook, HttpStatus.OK);
   }
 
-  @GetMapping("delete")
-  public String delete(@RequestParam int mpno, int no, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
+  @DeleteMapping("delete/{guestBookNo}")
+  public ResponseEntity delete(@PathVariable int guestBookNo, HttpSession session)
+      throws Exception {
+//    Member loginUser = (Member) session.getAttribute("loginUser");
+//    if (loginUser == null) {
+//      return new ResponseEntity<>("not exist writer", HttpStatus.BAD_REQUEST);
+//    }
 
-    GuestBook g = guestBookService.get(no);
+    GuestBook g = guestBookService.get(guestBookNo);
 
-    if (g == null || g.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-    } else {
-      guestBookService.delete(g.getNo());
-      return "redirect:/guestBook/" + mpno;
-    }
+//    if (g == null || g.getWriter().getNo() != loginUser.getNo()) {
+//      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
+//    } else {
+    guestBookService.delete(g.getNo());
+    return new ResponseEntity<>(HttpStatus.OK);
+//    }
   }
 
   @GetMapping("{no}")

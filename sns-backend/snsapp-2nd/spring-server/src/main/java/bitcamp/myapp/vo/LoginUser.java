@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class LoginUser extends Member {
 
-  private HashSet<Member> followMemberSet; // 로그인 한 유저가 팔로우하는 멤버 집합
+  private HashSet<Integer> followMemberSet; // 로그인 한 유저가 팔로우하는 멤버 집합
   private HashSet<Integer> likeBoardSet; // 로그인 한 유저가 좋아요를 누른 게시글 번호 집합
   private HashSet<Integer> likedGuestBookSet;  // 로그인 한 유저가 좋아요를 누른 방명록 번호 집합
   private HashSet<Integer> visitedMyPages = new HashSet<>(); // 방문한 유저를 담는 집합
@@ -33,11 +33,11 @@ public class LoginUser extends Member {
 
   // equals() & hashCode()는 부모 클래스인 Member의 것을 사용할 것
 
-  public Set<Member> getFollowMemberSet() {
+  public Set<Integer> getFollowMemberSet() {
     return followMemberSet;
   }
 
-  public void setFollowMemberSet(HashSet<Member> followMemberSet) {
+  public void setFollowMemberSet(HashSet<Integer> followMemberSet) {
     this.followMemberSet = followMemberSet;
   }
 

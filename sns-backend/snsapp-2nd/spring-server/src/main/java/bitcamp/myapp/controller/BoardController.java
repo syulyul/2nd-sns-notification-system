@@ -84,9 +84,6 @@ public class BoardController {
   @DeleteMapping("delete/{boardNo}")
   public ResponseEntity delete(@PathVariable int boardNo, @RequestParam int category, HttpSession session) throws Exception {
 
-    System.out.println("BoardNo: " + boardNo);
-    System.out.println("Category: " + category);
-
     Board b = boardService.get(boardNo);
 
     //if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
@@ -314,21 +311,19 @@ public class BoardController {
     return "redirect:/board/detail/1/" + boardComment.getBoardNo();
   }
 
-  @GetMapping("deleteComment/{boardNo}/{no}")
-  public String deleteComment(@PathVariable int no, @PathVariable int boardNo, HttpSession session)
-      throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
+  @DeleteMapping("deleteComment/{boardNo}/{commentNo}")
+  public ResponseEntity deleteComment(@PathVariable int commentNo, @PathVariable int boardNo, HttpSession session) throws Exception {
+//    Member loginUser = (Member) session.getAttribute("loginUser");
+//    if (loginUser == null) {
+//      return "redirect:/auth/form";
+//    }
 
-    BoardComment b = boardCommentService.get(no, boardNo);
+    BoardComment b = boardCommentService.get(commentNo, boardNo);
 
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-    } else {
-      boardCommentService.delete(no, boardNo);
-      return "redirect:/board/detail/1/" + boardNo;
-    }
+//    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
+//      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
+//    } else {
+      boardCommentService.delete(commentNo, boardNo);
+      return new ResponseEntity<>(HttpStatus.OK);
   }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
-import { changeField, initializeForm, detail, addComment, deleteBoard } from '../../modules/board';
+import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment } from '../../modules/board';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
@@ -42,6 +42,7 @@ const BoardDetailContainer = () => {
     dispatch(changeField({ key, value }));
   };
 
+  //댓글작성
   const onSubmit = (e) => {
     e.preventDefault();
     const commentData = {
@@ -68,6 +69,11 @@ const BoardDetailContainer = () => {
     e.preventDefault();
     dispatch(deleteBoard({boardNo, category}));
   };
+  
+  //댓글삭제
+  const onDeleteComment = (commentNo) => {
+    dispatch(deleteComment({commentNo, boardNo}));
+  };
 
   useEffect(() => {
     dispatch(detail({ category, boardNo }));
@@ -87,6 +93,7 @@ const BoardDetailContainer = () => {
             onEdit={onEdit}
             onReset={onReset}
             onDelete={onDelete}
+            onDeleteComment={onDeleteComment}
         />
   );
 };

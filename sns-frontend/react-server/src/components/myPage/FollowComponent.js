@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const MemberListBox = styled.div`
   margin-left: 18px;
-  width: 100%;
+  width: 80%;
   padding: 20px;
   background-color: #fff;
   border-radius: 5px;
@@ -37,10 +38,11 @@ const ToggleLabel = styled.label`
 `;
 
 const FollowComponent = ({
+  user,
   followListData,
-  session,
   handleFollow,
   handleUnfollow,
+  followMemberSet,
 }) => {
   const location = useLocation();
   const isFollowing = location.search.includes('show=followings');
@@ -60,11 +62,15 @@ const FollowComponent = ({
             />
             <MemberLink href={`/myPage/${myPage.no}`}>{myPage.nick}</MemberLink>
             <Link to={`/room`}>채팅하기</Link>
-            {/*{session.includes(myPage.no) ? (*/}
-            {/*    <button onClick={() => handleUnfollow(myPage.no)}>팔로잉 취소</button>*/}
-            {/*) : (*/}
-            {/*    <button onClick={() => handleFollow(myPage.no)}>팔로우 하기</button>*/}
-            {/*)}*/}
+            {followMemberSet.includes(myPage.no) ? (
+              <button onClick={() => handleUnfollow(myPage.no)}>
+                팔로잉 취소
+              </button>
+            ) : (
+              <button onClick={() => handleFollow(myPage.no)}>
+                팔로우 하기
+              </button>
+            )}
           </MemberItem>
         ))}
     </MemberListBox>
