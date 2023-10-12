@@ -46,7 +46,8 @@ const FollowComponent = ({
 }) => {
   return (
     <MemberListBox>
-      <h3>{show === 'following' ? '🌱 팔로잉 리스트' : '🌱 팔로워 리스트'}</h3>
+      <h3>{show === 'following' ? '🌱 팔로잉 리스트' : ''}</h3>
+      <h3>{show === 'follower' ? '🌱 팔로워 리스트' : ''}</h3>
       {Array.isArray(followListData) &&
         followListData.map((myPage, index) => (
           <MemberItem key={myPage.no}>

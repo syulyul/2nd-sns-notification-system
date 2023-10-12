@@ -24,7 +24,6 @@ const MemberInfoContainer = () => {
 
   //컴포넌트 초기 렌터링 때 form 초기화
   useEffect(() => {
-    dispatch(list(userNo));
     dispatch(info(userNo));
   }, [dispatch, userNo]);
 
@@ -32,19 +31,19 @@ const MemberInfoContainer = () => {
   if (myPageError) {
     return <div>오류가 발생했습니다: {myPageError.message}</div>;
   }
-  const onSubmit = (e) => {
+  const onFollowingList = (e) => {
     e.preventDefault();
     dispatch(following(userNo));
   };
-  const onSubmit2 = (e) => {
+  const onFollowerList = (e) => {
     e.preventDefault();
     dispatch(follower(userNo));
   };
 
   return (
     <MemberInfoComponent
-      onSubmit2={onSubmit2}
-      onSubmit={onSubmit}
+      onFollowerList={onFollowerList}
+      onFollowingList={onFollowingList}
       follow={userNo}
       myPageData={myPage}
       user={user}
