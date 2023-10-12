@@ -28,7 +28,7 @@ export const removeRoom = createAction(REMOVE_ROOM, ({ roomId }) => ({
 
 const roomListSaga = createRequestSaga(LIST_ROOMS, chatsAPI.roomList);
 
-export function* chatsSaga() {
+export function* roomsSaga() {
   yield takeLatest(LIST_ROOMS, roomListSaga);
 }
 

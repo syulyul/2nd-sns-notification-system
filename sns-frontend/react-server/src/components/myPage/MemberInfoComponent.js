@@ -129,9 +129,7 @@ const MemberInfoComponent = ({ myPageData, onSubmit, onSubmit2 }) => {
         </SidebarButton>
       </ButtonContainer>
       <ButtonContainer>
-        <ChatRoomListButton to={`/myPage/${myPageData.no}/chat`}>
-          채팅 리스트
-        </ChatRoomListButton>
+        <ChatRoomListButton to={`/room/list`}>채팅 리스트</ChatRoomListButton>
       </ButtonContainer>
     </Sidebar>
   );
