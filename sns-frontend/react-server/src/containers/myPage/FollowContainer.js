@@ -7,15 +7,15 @@ import { follow, unfollow } from '../../modules/auth';
 const FollowContainer = () => {
   const dispatch = useDispatch();
 
-  const { user, followList, error, userNo, followMemberSet } = useSelector(
-    ({ auth, myPage }) => ({
+  const { user, followList, error, userNo, followMemberSet, show } =
+    useSelector(({ auth, myPage }) => ({
       user: auth.user,
       followList: myPage.followList,
       error: myPage.error,
       userNo: myPage.userNo,
       followMemberSet: auth.followList,
-    })
-  );
+      show: myPage.show,
+    }));
 
   useEffect(() => {
     dispatch(following(userNo));
@@ -38,6 +38,7 @@ const FollowContainer = () => {
       user={user}
       followMemberSet={followMemberSet}
       followListData={followList}
+      show={show}
       handleFollow={handleFollow}
       handleUnfollow={handleUnfollow}
     />
