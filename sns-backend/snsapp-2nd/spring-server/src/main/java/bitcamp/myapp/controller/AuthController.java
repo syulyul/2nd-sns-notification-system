@@ -134,7 +134,11 @@ public class AuthController {
   @GetMapping("/check")
   public ResponseEntity check(
       HttpServletRequest request,
-      @CookieValue("sessionId") Cookie sessionCookie) {
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie) {
+
+    if (sessionCookie == null) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
 
     LoginUser loginUserObject = null;
     try {
