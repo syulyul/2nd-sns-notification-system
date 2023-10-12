@@ -1,4 +1,5 @@
 import springClient from './springClient';
+import qs from 'qs';
 
 // boardform
 export const form = ({ formData }) =>
@@ -9,8 +10,11 @@ export const form = ({ formData }) =>
   });
 
 // boardlist
-export const list = (category) =>
-  springClient.get(`board/list?category=${category}`);
+export const list = async ({ category, limit, page}) => {
+  const queryString = qs.stringify({ limit, page });
+  return await springClient.get(`/board/list?category=${category}&${queryString}`);
+};
+
 
 // boarddetail
 export const detail = ({ category, boardNo }) =>
@@ -22,8 +26,8 @@ export const deleteBoard = ({ category, boardNo }) =>
     springClient.delete(`board/delete/${boardNo}`, { params: { category } });
 
 // 댓글작성
-export const addComment = (boardComment) =>
-    springClient.post(`/board/addComment?boardNo=${boardComment.boardNo}`, boardComment);
+export const addComment = (commentData) =>
+    springClient.post('board/addComment', commentData);
 
 //댓글삭제
 export const deleteComment = ({ commentNo, boardNo }) =>

@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
-import PageDetailComponent from "../../components/myPage/PageDetailComponent";
+import PageDetailComponent from '../../components/myPage/PageDetailComponent';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { list } from '../../modules/myPage';
+import { useNavigate, useParams } from 'react-router-dom';
 
-      const PageDetailContainer = () => {
-  const [myPageList, setPageDetailList] = useState([
-    {
-      no: 1,
-      title: '첫 번째 게시글',
-      content: '안녕하세요. 첫 번째 게시글입니다.',
-      createdAt: '2023-10-04 14:30:00',
-      writer: {
-        no: 1,
-        nick: 'User1',
-        photo: 'user1.jpg',
-      },
-    },
-    {
-      no: 2,
-      title: '두 번째 게시글',
-      content: '두 번째 게시글 내용입니다.',
-      createdAt: '2023-10-04 15:45:00',
-      writer: {
-        no: 2,
-        nick: 'User2',
-        photo: 'user2.jpg',
-      },
-    },
-  ]);
+const PageDetailContainer = () => {
+  const dispatch = useDispatch();
+  const { myBoardList, myCommentList, show } = useSelector(({ myPage }) => ({
+    myBoardList: myPage.myBoardList,
+    myCommentList: myPage.myCommentList,
+    show: myPage.show,
+  }));
 
-  return (<PageDetailComponent myPageList={myPageList} />);
+  const { userNo } = useParams();
+
+  //컴포넌트 초기 렌터링 때 form 초기화
+  useEffect(() => {
+    dispatch(list(userNo));
+  }, [dispatch, userNo]);
+
+  const onSubmitSearch = () => {};
+
+  return (
+    <PageDetailComponent
+      onSubmitSearch={onSubmitSearch}
+      show={show}
+      myBoardList={myBoardList}
+      myCommentList={myCommentList}
+    />
+  );
 };
 
 export default PageDetailContainer;

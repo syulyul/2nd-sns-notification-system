@@ -13,6 +13,7 @@ import bitcamp.myapp.vo.Member;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -127,11 +131,13 @@ public class BoardController {
 
 
   @GetMapping("list")
-  public List<Board> list(@RequestParam int category,
+  public ResponseEntity<Map<String, Object>> list(
+      @RequestParam int category,
       @RequestParam(defaultValue = "") String keyword,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       Model model, HttpSession session) throws Exception {
+
     Member loginUser = (Member) session.getAttribute("loginUser");
     List<Board> boardList;
     int totalRecords;
@@ -149,19 +155,22 @@ public class BoardController {
       totalRecords = boardService.getSearchBoardsCount(keyword);
     }
 
-    model.addAttribute("boardList", boardList);
-    model.addAttribute("maxPage", (totalRecords + (pageSize - 1)) / pageSize);
-    model.addAttribute("page", page);
-    model.addAttribute("pageSize", pageSize);
-    model.addAttribute("category", category);
+    int maxPage = (totalRecords + (pageSize - 1)) / pageSize;
+
+    Map<String, Object> resultMap = new HashMap<>();
+    resultMap.put("boardList", boardList);
+    resultMap.put("maxPage", maxPage);
+    resultMap.put("currentPage", page);
+    resultMap.put("pageSize", pageSize);
+    resultMap.put("totalRecords", totalRecords);
 
     if (category == 1) {
-      return boardList; // 카테고리가 1일 때 "list.html"을 실행
-
+      return ResponseEntity.ok(resultMap);
     } else {
-      throw new Exception("유효하지 않은 카테고리입니다.");
+      return ResponseEntity.badRequest().body(Collections.singletonMap("error", "유효하지 않은 카테고리입니다."));
     }
   }
+
 
   @PostMapping("list/{category}")
   public String searchBoards(@PathVariable int category,
@@ -272,21 +281,21 @@ public class BoardController {
 
   // 댓글 기능
   @PostMapping("addComment")
-  public ResponseEntity addComment(
-      BoardComment boardComment,
-      HttpSession session,
-      @RequestParam int boardNo) throws Exception {
+  public ResponseEntity addComment(@RequestBody BoardComment boardComment)
+      throws Exception {
+    System.out.println(boardComment);
+//    Member loginUser = boardComment.getWriter();
+//
+//    if (loginUser == null) {
+//      return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
+//    }
 
-    Member loginUser = (LoginUser) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
+    try {
+      boardCommentService.add(boardComment);
+
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-
-    boardComment.setBoardNo(boardNo);
-    boardComment.setWriter(loginUser);
-
-    boardCommentService.add(boardComment);
-
     return new ResponseEntity<>(boardComment, HttpStatus.OK);
   }
 

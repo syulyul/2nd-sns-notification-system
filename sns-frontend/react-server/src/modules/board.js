@@ -46,7 +46,11 @@ export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
 export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 //게시글
-export const list = createAction(LIST, (category) => category);
+export const list = createAction(LIST, ({ category , limit, page }) => ({
+  category,
+  limit,
+  page,
+}));
 
 export const detail = createAction(DETAIL, ({ category, boardNo }) => ({
   category,
@@ -59,7 +63,7 @@ export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
 }));
 
 //댓글
-export const addComment = createAction(ADD_COMMENT, ({ content, boardNo }) => ({ content, boardNo }));
+export const addComment = createAction(ADD_COMMENT, ({ content, boardNo, writer }) => ({ content, boardNo, writer }));
 export const deleteComment = createAction(DELETE_COMMENT, ({ commentNo, boardNo }) => ({ commentNo, boardNo }));
 
 //좋아요
@@ -102,6 +106,7 @@ export function* boardSaga() {
 const initialState = {
   boardList: [],
   category: 1,
+  lastPage: 1,
   board: {},
   comments: null,
   boardError: null, // 에러 상태
@@ -125,10 +130,11 @@ const board = handleActions(
     }),
 
     //게시글
-    [LIST_SUCCESS]: (state, { payload: boardList }) => ({
+    [LIST_SUCCESS]: (state, { payload: { boardList, lastPage } }) => ({
       ...state,
       boardError: null,
       boardList,
+      lastPage,
     }),
     [LIST_FAILURE]: (state, { payload: error }) => ({
       ...state,
@@ -164,7 +170,7 @@ const board = handleActions(
     }),
 
     //댓글
-    [ADD_COMMENT_SUCCESS]: (state, { payload: boardComment }) => ({
+    [ADD_COMMENT_SUCCESS]: (state, { payload: boardComment}) => ({
       ...state,
       commentError: null,
       boardComment,
