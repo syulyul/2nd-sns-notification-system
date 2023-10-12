@@ -27,8 +27,14 @@ export const enterRoom = async (req, res, next) => {
       // const io = req.app.get('io');
       // io.of('/room').emit('newRoom', room);
     }
-    res.json(room);
+    let chats = await Chat.find({ room: room }).populate('user');
+
+    if (room && chats) {
+      const roomAndChats = { room, chats };
+      res.json(roomAndChats);
+    }
   } catch (error) {
+    res.status(403);
     console.error(error);
     return next(error);
   }

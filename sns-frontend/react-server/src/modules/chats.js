@@ -59,7 +59,7 @@ const chats = handleActions(
     }),
     [ENTER_ROOM_SUCCESS]: (
       state,
-      { payload: room, chats, meta: response }
+      { payload: { room, chats }, meta: response }
     ) => ({
       ...state,
       room: room,
