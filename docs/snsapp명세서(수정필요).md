@@ -1,27 +1,25 @@
 # 1조 snsapp 요구 명세서
 
-- 목차
-1. 프로젝트 목적
-   - 목표 
-   - 구현목표 
-   - 프로젝트 정보
-
-2. 비즈니스 요구사항 
-
-4. 상세 요구사항 
-
-4. 유스케이스 모델링 
-
-6. ERD 
-
-7. UI
+>- 목차
+>1. 프로젝트 목적
+>   - 목표 
+>   - 구현목표 
+>   - 프로젝트 정보
+>2. 비즈니스 요구사항 
+>4. 상세 요구사항 
+>5. 5.유스케이스 모델링 
+>6. ERD 
+>7. UI
+>8. 아키택처
+>   - API
+>   - Cloud
 
 
 
 
 ## 1. 프로젝트 목적
-### 목표: 글로벌 사용자 대상 웹 서버, 장애인 및 외국인에게 접근성 좋은 앱
-### 주제 : SNS 알림 시스템 구축 프로젝트
+### 목표: 글로벌 사용자 대상 힐링 웹 서버
+### 주제 : SNS 알림 및 채팅 시스템 구축 프로젝트
 #### 구현목표
 
 |  대분류  |                         중분류                         |                                              소분류                                           |
@@ -37,12 +35,12 @@
 | 메인화면  |                  헤더<br/>푸터<br/>본문	                  |                 채팅, 마이페이지, 게시판, 방명록, 로그아웃, 알림<br/>전화번호, 사업자명<br/>본 기능 화면|
 
 
-### 프로젝트 정보
-> ### DB : Mongo, MySQL, Redis
+### 2. 프로젝트 정보
+> ### DB : MongoDB, MySQL, Redis
 
 > ### Language : JAVA, JavaScript
 
-> ### Framwork : react, nodejs, springBoot
+> ### Framwork :  React, Node.js, Spring Boot
 
 > ### Tool : IntelliJ, VSCODE, Firebase
 
@@ -52,7 +50,7 @@
 
 
 
-## 2. 비즈니스 상세 요구사항
+## 3. 비즈니스 상세 요구사항
 
 [2차 팀 프로젝트 요구 명세서 - 이용자 기능 요구사항.pdf](2%EC%B0%A8%20%ED%8C%80%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%9A%94%EA%B5%AC%20%EB%AA%85%EC%84%B8%EC%84%9C%20-%20%EC%9D%B4%EC%9A%A9%EC%9E%90%20%EA%B8%B0%EB%8A%A5%20%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD.pdf)
 
@@ -65,14 +63,22 @@
 | 보류   | 논의가 필요한 것들                          |
 
 
-## 3.유스케이스 모델링
+## 4.유스케이스 모델링
+![img.png](image/Usecase.png)
 
+## 5. ERD
+![img_1.png](image/ERD.png)
 
-## 4. ERD
+## 6. UI
+![img_1.png](image/UI1.png)
+![img_1.png](image/UI.png)
+![img_1.png](image/UI2.png)
+![img_1.png](image/UI3.png)
+      + 채팅 화면
 
+ ### 7.아키택처
+- API
+  ![img.png](image/ar2.png)
 
-## 5. UI
-
-
-
-
+- Cloud
+  ![img.png](image/ar1.JPG)
