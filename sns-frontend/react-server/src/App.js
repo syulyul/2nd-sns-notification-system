@@ -39,7 +39,7 @@ function App() {
           element={<MemberInfoUpdatePage />}
           path={'/myPage/:userNo/info'}
         />
-        <Route element={<GuestBookPage />} path={'/guestBook/:userNo'} />
+        <Route element={<GuestBookPage />} path={'/guestBook/:no'} />
         <Route element={<MyPagePage />} path={'/myPage/detail'} />
         <Route element={<ChatPage />} path={'/room'} />
         <Route element={<ChatRoomListPage />} path={'/room/list'} />
