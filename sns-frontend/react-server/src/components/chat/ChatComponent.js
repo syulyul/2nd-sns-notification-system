@@ -89,7 +89,8 @@ const StyledChatList = styled.div`
 
 const ChatMessage = styled.div`
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  // align-items: flex-start;
   margin: 10px auto;
   word-wrap: break-word;
   .StyledChatMine {
@@ -99,7 +100,7 @@ const ChatMessage = styled.div`
     font-size: 16px;
     padding: 10px;
     border-radius: 10px;
-    max-width: 70%;
+    // max-width: 70%;
     float: right;
     margin: 10px auto;
     margin-bottom: 20px;
@@ -114,7 +115,7 @@ const ChatMessage = styled.div`
     font-size: 16px;
     padding: 10px;
     border-radius: 10px;
-    max-width: 70%;
+    // max-width: 70%;
     float: left;
     margin: 10px auto;
     align-self: flex-start;
@@ -189,7 +190,7 @@ const ChatItem = ({ chatlog, loginUser }) => {
   return (
     <ChatMessage
       className={
-        loginUser.nick === user.nick ? 'styledChatMine' : 'StyledChatOther'
+        loginUser.no === user.mno ? 'StyledChatMine' : 'StyledChatOther'
       }
     >
       {chat}
@@ -219,31 +220,31 @@ const ChatComponent = ({
             src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
             alt="User"
           /> */}
-          <div>
-            {/* {room && <Username></Username>} */}
-            {/* <ChatMessage className="StyledChatOther">
+          {/* <div> */}
+          {/* {room && <Username></Username>} */}
+          {/* <ChatMessage className="StyledChatOther">
               남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
             </ChatMessage>
             <ChatMessage className="StyledChatMine">
               내가 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
             </ChatMessage> */}
-            {/* </div> */}
-            {chats &&
-              chats.map((chatlog) => (
-                <div>
-                  <UserImage
-                    src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
-                    alt="User"
-                  />
-                  <Username>닉네임</Username>
-                  <ChatItem
-                    chatlog={chatlog}
-                    key={chatlog._id}
-                    loginUser={user}
-                  />
-                </div>
-              ))}
-          </div>
+          {/* </div> */}
+          {chats &&
+            chats.map((chatlog) => (
+              <div>
+                {user.no !== chatlog.user.mno && (
+                  <div className={'UserName'}>{`${chatlog.user.mno}`}</div>
+                )}
+                {/* <UserImage src="" /> */}
+                {/* <Username>{`${chatlog.user.mno}`}</Username> */}
+                <ChatItem
+                  chatlog={chatlog}
+                  key={chatlog._id}
+                  loginUser={user}
+                />
+              </div>
+            ))}
+          {/* </div> */}
         </ChatMessage>
       </StyledChatList>
       <SendChatBlock>
