@@ -46,7 +46,11 @@ export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
 export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 //게시글
-export const list = createAction(LIST, (category) => category);
+export const list = createAction(LIST, ({ category , limit, page }) => ({
+  category,
+  limit,
+  page,
+}));
 
 export const detail = createAction(DETAIL, ({ category, boardNo }) => ({
   category,
@@ -102,6 +106,7 @@ export function* boardSaga() {
 const initialState = {
   boardList: [],
   category: 1,
+  lastPage: 1,
   board: {},
   comments: null,
   boardError: null, // 에러 상태
@@ -125,10 +130,11 @@ const board = handleActions(
     }),
 
     //게시글
-    [LIST_SUCCESS]: (state, { payload: boardList }) => ({
+    [LIST_SUCCESS]: (state, { payload: { boardList, lastPage } }) => ({
       ...state,
       boardError: null,
       boardList,
+      lastPage,
     }),
     [LIST_FAILURE]: (state, { payload: error }) => ({
       ...state,
