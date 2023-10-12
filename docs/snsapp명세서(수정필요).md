@@ -38,9 +38,18 @@
 
 
 ### 프로젝트 정보
->(작성 예정 ex: DB,Language, Framwork,Tool...) 
+> ### DB : Mongo, MySQL, Redis
+
+> ### Language : JAVA, JavaScript
+
+> ### Framwork : react, nodejs, springBoot
+
+> ### Tool : IntelliJ, VSCODE, Firebase
+
+> ### API :  Papago Translation Api, Papago Detect Api, Naver Login Api
  
->GIT 주소 입력 필요
+> ### GIT : https://github.com/NC7-1st-TeamProject-1st-Team
+
 
 
 ## 2. 비즈니스 상세 요구사항
@@ -56,12 +65,14 @@
 | 보류   | 논의가 필요한 것들                          |
 
 
-## 3.유스케이스 모델링 
+## 3.유스케이스 모델링
 
 
 ## 4. ERD
 
 
 ## 5. UI
+
+
 
 
