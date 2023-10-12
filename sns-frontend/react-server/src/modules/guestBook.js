@@ -4,7 +4,6 @@ import createRequestSaga, {
   createRequestActionTypes,
 } from '../lib/createRequestSaga';
 import * as guestBookAPI from '../lib/api/guestBook';
-import auth from './auth';
 
 const CHANGE_FIELD = 'guestBook/CHANGE_FIELD';
 const INITIALIZE_FORM = 'guestBook/INITIALIZE_FORM';
@@ -13,6 +12,8 @@ const [POST, POST_SUCCESS, POST_FAILURE] =
     createRequestActionTypes('guestBook/POST');
 const [LIST, LIST_SUCCESS, LIST_FAILURE] =
     createRequestActionTypes('guestBook/LIST');
+const [DELETE, DELETE_SUCCESS, DELETE_FAILURE] =
+  createRequestActionTypes('guestBook/DELETE');
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -22,15 +23,18 @@ export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
 export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const post = createAction(POST,
-    ({ mno, mpno, title, content }) => ({ mno, mpno, title, content}));
+    ({ mpno, title, content, writer, }) => ({ mpno, title, content, writer, }));
 export const list = createAction(LIST, (no) => (no));
+export const deleteGuestBook = createAction(DELETE, (guestBookNo) => guestBookNo);
 
 const postSaga = createRequestSaga(POST, guestBookAPI.post);
 const listSaga = createRequestSaga(LIST, guestBookAPI.list);
+const deleteSaga = createRequestSaga(DELETE, guestBookAPI.deleteGuestBook);
 
 export function* guestBookSaga() {
   yield takeLatest(POST, postSaga);
   yield takeLatest(LIST, listSaga);
+  yield takeLatest(DELETE, deleteSaga);
 }
 
 const initialState = {
@@ -76,6 +80,16 @@ const guestBook = handleActions(
         guestBookError: null,
       }),
       [LIST_FAILURE]: (state, { payload: error }) => ({
+        ...state,
+        guestBookError: error,
+      }),
+
+      [DELETE_SUCCESS]: (state) => ({
+        ...state,
+        guestBook: initialState.guestBook,
+        guestBookError: null,
+      }),
+      [DELETE_FAILURE]: (state, { payload: error }) => ({
         ...state,
         guestBookError: error,
       }),

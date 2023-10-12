@@ -2,7 +2,9 @@ package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.BoardCommentService;
 import bitcamp.myapp.service.BoardService;
+import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.NcpObjectStorageService;
+import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.vo.Board;
 import bitcamp.myapp.vo.BoardComment;
 import bitcamp.myapp.vo.BoardPhoto;
@@ -14,6 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +46,8 @@ public class BoardController {
   BoardCommentService boardCommentService;
   @Autowired
   NcpObjectStorageService ncpObjectStorageService;
+  @Autowired
+  RedisService redisService;
 
   {
     System.out.println("BoardController 생성됨!");
@@ -83,9 +90,6 @@ public class BoardController {
 
   @DeleteMapping("delete/{boardNo}")
   public ResponseEntity delete(@PathVariable int boardNo, @RequestParam int category, HttpSession session) throws Exception {
-
-    System.out.println("BoardNo: " + boardNo);
-    System.out.println("Category: " + category);
 
     Board b = boardService.get(boardNo);
 
@@ -220,32 +224,35 @@ public class BoardController {
 
   // 좋아요 기능
   @PostMapping("like")
-  public int like(@RequestParam int boardNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-    try {
-      Board board = boardService.get(boardNo);
-      boardService.like(loginUser, board);
-      loginUser.getLikeBoardSet().add(boardNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
-    } catch (Exception e) {
-      return -1;
-    }
+  public ResponseEntity like(@RequestParam int boardNo, HttpSession session) throws Exception {
+    //LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+    //try {
+    // Board board = boardService.get(boardNo);
+    boardService.increaseLikes(boardNo);
+    //boardService.like(loginUser, board);
+    //loginUser.getLikeBoardSet().add(boardNo);
+    //session.setAttribute("loginUser", loginUser);
+    //} catch (Exception e) {
+    //    return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //}
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PostMapping("unlike")
-  public int unlike(@RequestParam int boardNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-    try {
-      Board board = boardService.get(boardNo);
-      boardService.unlike(loginUser, board);
-      loginUser.getLikeBoardSet().remove(boardNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
-    } catch (Exception e) {
-      return -1;
-    }
+  public ResponseEntity unlike(@RequestParam int boardNo, HttpSession session) throws Exception {
+    //LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+    //try {
+    // Board board = boardService.get(boardNo);
+    boardService.decreaseLikes(boardNo);
+    //boardService.unlike(loginUser, board);
+    //loginUser.getLikeBoardSet().remove(boardNo);
+    //session.setAttribute("loginUser", loginUser);
+    //} catch (Exception e) {
+    //    return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //}
+    return new ResponseEntity<>(HttpStatus.OK);
   }
+
 
   @GetMapping("/likedBoards")
   public ResponseEntity<List<Integer>> getLikedBoards(HttpSession session) {
@@ -268,7 +275,7 @@ public class BoardController {
   public ResponseEntity addComment(
       BoardComment boardComment,
       HttpSession session,
-      @RequestParam("boardNo") int boardNo) throws Exception {
+      @RequestParam int boardNo) throws Exception {
 
     Member loginUser = (LoginUser) session.getAttribute("loginUser");
     if (loginUser == null) {
@@ -314,21 +321,51 @@ public class BoardController {
     return "redirect:/board/detail/1/" + boardComment.getBoardNo();
   }
 
-  @GetMapping("deleteComment/{boardNo}/{no}")
-  public String deleteComment(@PathVariable int no, @PathVariable int boardNo, HttpSession session)
-      throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
+  @DeleteMapping("deleteComment/{boardNo}/{commentNo}")
+  public ResponseEntity deleteComment(
+      @PathVariable int commentNo,
+      @PathVariable int boardNo,
+      HttpServletRequest request,
+      HttpServletResponse response) {
 
-    BoardComment b = boardCommentService.get(no, boardNo);
+    try {
+      // 1. 'sessionId' 쿠키에서 값 가져오기
+      String sessionId = null;
+      Cookie[] cookies = request.getCookies();
+      if (cookies != null) {
+        for (Cookie cookie : cookies) {
+          if ("sessionId".equals(cookie.getName())) {
+            sessionId = cookie.getValue();
+            break;
+          }
+        }
+      }
 
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-    } else {
-      boardCommentService.delete(no, boardNo);
-      return "redirect:/board/detail/1/" + boardNo;
+      if (sessionId == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      }
+
+      // 2. Redis에서 해당 sessionId로 사용자 정보를 가져오기
+      String loginUserNoStr = (String) redisService.getValueOps().get(sessionId);
+      if (loginUserNoStr == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      }
+
+      int loginUserNo = Integer.parseInt(loginUserNoStr);
+
+      // 3. 게시글 삭제 권한 검사
+      BoardComment b = boardCommentService.get(commentNo, boardNo);
+      if (b == null || b.getWriter().getNo() != loginUserNo) {
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+      }
+
+      boardCommentService.delete(commentNo, boardNo);
+      return new ResponseEntity<>(HttpStatus.OK);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+
 }

@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import api from './api';
 import mongodbConnect from './schemas';
+import redisConnect from './redis';
 
 const { PORT, NODE_ENV, COOKIE_SECRET, REACT_SERVER_URL, SPRING_SERVER_URL } =
   process.env;
@@ -14,6 +15,8 @@ const { PORT, NODE_ENV, COOKIE_SECRET, REACT_SERVER_URL, SPRING_SERVER_URL } =
 const app = express();
 app.set('port', PORT);
 mongodbConnect();
+
+redisConnect();
 
 if (NODE_ENV === 'production') {
   app.use(morgan('combined'));

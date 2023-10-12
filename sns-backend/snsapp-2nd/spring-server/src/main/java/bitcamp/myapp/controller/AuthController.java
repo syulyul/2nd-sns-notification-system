@@ -101,13 +101,20 @@ public class AuthController {
         Cookie cookie = new Cookie("sessionId", sessionId);
         cookie.setPath("/");
         response.addCookie(cookie);
-        redisService.getValuleOps()
+        redisService.getValueOps()
             .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.HOURS);
 
         // 세션에 로그인 사용자 정보 저장
         loginUserObject = new LoginUser(loginUser);
-        loginUserObject.setFollowMemberSet(
-            new HashSet<>(myPageService.followingList(loginUser.getNo())));
+
+        HashSet<Member> followMemberSet = new HashSet<>(
+            myPageService.followingList(loginUser.getNo()));
+        HashSet<Integer> followMemberNoSet = new HashSet<>();
+        for (Member m : followMemberSet) {
+          followMemberNoSet.add(m.getNo());
+        }
+        loginUserObject.setFollowMemberSet(followMemberNoSet);
+
         loginUserObject.setLikeBoardSet(
             new HashSet<>(boardService.likelist(loginUser.getNo())));
         loginUserObject.setLikedGuestBookSet(
@@ -127,7 +134,11 @@ public class AuthController {
   @GetMapping("/check")
   public ResponseEntity check(
       HttpServletRequest request,
-      @CookieValue("sessionId") Cookie sessionCookie) {
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie) {
+
+    if (sessionCookie == null) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
 
     LoginUser loginUserObject = null;
     try {
@@ -135,14 +146,21 @@ public class AuthController {
       // System.out.println(sessionId);
 
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
-      // String temp = (String) redisService.getValuleOps()
+      // String temp = (String) redisService.getValueOps()
       // .getAndExpire(sessionId, 1, TimeUnit.DAYS);
-      String temp = (String) redisService.getValuleOps().get(sessionId);
+      String temp = (String) redisService.getValueOps().get(sessionId);
       if (temp != null) {
         int loginUserNo = Integer.parseInt(temp);
         loginUserObject = new LoginUser(memberService.get(loginUserNo));
-        loginUserObject.setFollowMemberSet(
-            new HashSet<>(myPageService.followingList(loginUserNo)));
+
+        HashSet<Member> followMemberSet = new HashSet<>(
+            myPageService.followingList(loginUserNo));
+        HashSet<Integer> followMemberNoSet = new HashSet<>();
+        for (Member m : followMemberSet) {
+          followMemberNoSet.add(m.getNo());
+        }
+        loginUserObject.setFollowMemberSet(followMemberNoSet);
+
         loginUserObject.setLikeBoardSet(
             new HashSet<>(boardService.likelist(loginUserNo)));
         loginUserObject.setLikedGuestBookSet(
@@ -174,7 +192,7 @@ public class AuthController {
     }
     if (sessionId != null) {
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
-      // redisService.getValuleOps().getAndDelete(sessionId);
+      // redisService.getValueOps().getAndDelete(sessionId);
     }
 
     Cookie cookie = new Cookie("sessionId", "invalidate");
@@ -208,7 +226,7 @@ public class AuthController {
       Cookie cookie = new Cookie("sessionId", sessionId);
       cookie.setPath("/");
       response.addCookie(cookie);
-      redisService.getValuleOps()
+      redisService.getValueOps()
           .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.HOURS);
 
       RestTemplate restTemplate = new RestTemplate();

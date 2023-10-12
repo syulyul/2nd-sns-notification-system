@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
-import { changeField, initializeForm, detail, addComment, deleteBoard } from '../../modules/board';
+import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment, likeBoard, unlikeBoard } from '../../modules/board';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
@@ -42,16 +42,6 @@ const BoardDetailContainer = () => {
     dispatch(changeField({ key, value }));
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const commentData = {
-      boardNo: parseInt(boardNo, 10),
-      content
-    };
-    dispatch(addComment(commentData));
-    setContent('');  // 입력 필드 초기화
-  };
-
   const onEdit = () => {
     const updatedBoard = { ...board, editable: true };
 
@@ -68,6 +58,37 @@ const BoardDetailContainer = () => {
     e.preventDefault();
     dispatch(deleteBoard({boardNo, category}));
   };
+
+  //댓글
+  //댓글작성
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const commentData = {
+      boardNo: parseInt(boardNo, 10),
+      content
+    };
+    dispatch(addComment(commentData));
+    setContent('');  // 입력 필드 초기화
+  };
+
+  //댓글삭제
+  const onDeleteComment = (commentNo) => {
+    dispatch(deleteComment({commentNo, boardNo}));
+  };
+
+  const CommentChange = (e) => {
+    setContent(e.target.value);
+  };
+
+  //좋아요
+  const onLike = () => {
+    dispatch(likeBoard(boardNo));
+  };
+
+  const onUnlike = () => {
+    dispatch(unlikeBoard(boardNo));
+  };
+
 
   useEffect(() => {
     dispatch(detail({ category, boardNo }));
@@ -87,6 +108,10 @@ const BoardDetailContainer = () => {
             onEdit={onEdit}
             onReset={onReset}
             onDelete={onDelete}
+            onDeleteComment={onDeleteComment}
+            onLike={onLike}
+            onUnlike={onUnlike}
+            CommentChange={CommentChange}
         />
   );
 };

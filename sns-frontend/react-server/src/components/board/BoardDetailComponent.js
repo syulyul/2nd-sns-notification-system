@@ -121,8 +121,10 @@ const BoardDetailComponent = ({
   onEdit,
   onReset,
   onDelete,
+  onDeleteComment,
   onSubmit,
-  onChange
+  onChange,
+  CommentChange
 }) => {
   return (
     <Container>
@@ -198,7 +200,7 @@ const BoardDetailComponent = ({
               name="content"
               placeholder="댓글을 입력하세요."
               value={content}
-              onChange={onChange}  // props로 전달받은 onChange 사용
+              onChange={CommentChange}
           />
           <StyledButton type="submit" onClick={onSubmit}>작성</StyledButton>
       </CommentInputContainer>
@@ -232,6 +234,7 @@ const BoardDetailComponent = ({
                 <CommentContent>
                   {boardComment ? boardComment.content : ''}
                 </CommentContent>
+                <StyledButton onClick={() => onDeleteComment(boardComment.no)}>삭제</StyledButton>
               </CommentContainer>
             ))
           : null}
