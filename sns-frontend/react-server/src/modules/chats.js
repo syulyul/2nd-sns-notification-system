@@ -23,14 +23,10 @@ export const enterRoom = createAction(ENTER_ROOM, ({ mno1, mno2 }) => ({
   mno2,
 }));
 
-export const sendChat = createAction(
-  SEND_CHAT,
-  ({ roomId, chatTxt, user }) => ({
-    roomId,
-    chatTxt,
-    user,
-  })
-);
+export const sendChat = createAction(SEND_CHAT, ({ roomId, chatTxt }) => ({
+  roomId,
+  chatTxt,
+}));
 
 export const concatChats = createAction(CONCAT_CHATS, ({ newChat }) => ({
   newChat,
