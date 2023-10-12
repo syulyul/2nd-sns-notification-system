@@ -13,6 +13,7 @@ import bitcamp.myapp.vo.Member;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,11 +128,13 @@ public class BoardController {
 
 
   @GetMapping("list")
-  public List<Board> list(@RequestParam int category,
+  public ResponseEntity<Map<String, Object>> list(
+      @RequestParam int category,
       @RequestParam(defaultValue = "") String keyword,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       Model model, HttpSession session) throws Exception {
+
     Member loginUser = (Member) session.getAttribute("loginUser");
     List<Board> boardList;
     int totalRecords;
@@ -149,19 +152,22 @@ public class BoardController {
       totalRecords = boardService.getSearchBoardsCount(keyword);
     }
 
-    model.addAttribute("boardList", boardList);
-    model.addAttribute("maxPage", (totalRecords + (pageSize - 1)) / pageSize);
-    model.addAttribute("page", page);
-    model.addAttribute("pageSize", pageSize);
-    model.addAttribute("category", category);
+    int maxPage = (totalRecords + (pageSize - 1)) / pageSize;
+
+    Map<String, Object> resultMap = new HashMap<>();
+    resultMap.put("boardList", boardList);
+    resultMap.put("maxPage", maxPage);
+    resultMap.put("currentPage", page);
+    resultMap.put("pageSize", pageSize);
+    resultMap.put("totalRecords", totalRecords);
 
     if (category == 1) {
-      return boardList; // 카테고리가 1일 때 "list.html"을 실행
-
+      return ResponseEntity.ok(resultMap);
     } else {
-      throw new Exception("유효하지 않은 카테고리입니다.");
+      return ResponseEntity.badRequest().body(Collections.singletonMap("error", "유효하지 않은 카테고리입니다."));
     }
   }
+
 
   @PostMapping("list/{category}")
   public String searchBoards(@PathVariable int category,
