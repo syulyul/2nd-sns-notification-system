@@ -67,6 +67,7 @@ const initialState = {
   myPage: null,
   userNo: 0,
   myPageError: null,
+  show: '',
   followList: [], // 팔로워 목록을 저장할 배열
 };
 
@@ -116,6 +117,7 @@ const myPage = handleActions(
     // 'followList' 업데이트 액션
     [FOLLOWING_SUCCESS]: (state, { payload: followList }) => ({
       ...state,
+      show: 'following',
       followList, // 팔로워 목록 업데이트
     }),
     [FOLLOWING_FAILURE]: (state, { payload: error }) => ({
@@ -125,6 +127,7 @@ const myPage = handleActions(
 
     [FOLLOWER_SUCCESS]: (state, { payload: followList }) => ({
       ...state,
+      show: 'follower',
       followList, // 팔로워 목록 업데이트
     }),
     [FOLLOWER_FAILURE]: (state, { payload: error }) => ({
