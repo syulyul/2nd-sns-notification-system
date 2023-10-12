@@ -251,8 +251,8 @@ const GuestBookComponent = ({
   content,
   title,
   onChange,
+  onDelete,
   mpno,
-  mno,
   onSubmit,
   guestBookList,
   guestBookOwnerNick,
@@ -355,7 +355,7 @@ const GuestBookComponent = ({
             </ContentTable>
           </ContentContainer>
           <DeleteButtonContainer>
-            <StyledButton>삭제</StyledButton>
+            <StyledButton onClick={(e) => onDelete(e, guestBook.no)} >삭제</StyledButton>
           </DeleteButtonContainer>
         </Container>
       ))}

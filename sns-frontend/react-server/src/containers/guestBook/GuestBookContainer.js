@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import GuestBookComponent from '../../components/guestBook/GuestBookComponent';
-import  {
+import {
   changeField,
   initializeForm,
   list,
+  deleteGuestBook,
   post
 } from '../../modules/guestBook';
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const GuestBookContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const{ no} = useParams();
+  const{ no } = useParams();
 
   const { guestBookList, error, mpno, guestBookOwnerNick, title, content, writer, guestBook } = useSelector(
       ({ auth, guestBook }) => ({
@@ -49,13 +50,20 @@ const GuestBookContainer = () => {
     dispatch(initializeForm());
   };
 
+  const onDelete =  (e, guestBookNo) => {
+    e.preventDefault();
+    dispatch(deleteGuestBook(guestBookNo));
+  };
+
   return (
       <GuestBookComponent
           title={title}
           content={content}
           onChange={onChange}
           onSubmit={onSubmit}
+          onDelete={onDelete}
           guestBookList={guestBookList}
+          guestBook={guestBook}
           guestBookOwnerNick={guestBookOwnerNick}
           mpno={no}
       />
