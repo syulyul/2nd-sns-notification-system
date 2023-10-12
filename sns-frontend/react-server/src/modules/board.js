@@ -63,7 +63,7 @@ export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
 }));
 
 //댓글
-export const addComment = createAction(ADD_COMMENT, ({ content, boardNo }) => ({ content, boardNo }));
+export const addComment = createAction(ADD_COMMENT, ({ content, boardNo, writer }) => ({ content, boardNo, writer }));
 export const deleteComment = createAction(DELETE_COMMENT, ({ commentNo, boardNo }) => ({ commentNo, boardNo }));
 
 //좋아요
@@ -170,7 +170,7 @@ const board = handleActions(
     }),
 
     //댓글
-    [ADD_COMMENT_SUCCESS]: (state, { payload: boardComment }) => ({
+    [ADD_COMMENT_SUCCESS]: (state, { payload: boardComment}) => ({
       ...state,
       commentError: null,
       boardComment,

@@ -30,10 +30,11 @@ const BoardDetailContainer = () => {
     createdAt: new Date().toISOString()
   };
 
-  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError }  = useSelector(state => ({
+  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError, user }  = useSelector(state => ({
     board: state.board.board,
     comments: state.board.comments,
-    boardError: state.board.boardError
+    boardError: state.board.boardError,
+    user: state.auth.user,
   }));
 
   const { boardNo, category } = useParams();
@@ -65,7 +66,8 @@ const BoardDetailContainer = () => {
     e.preventDefault();
     const commentData = {
       boardNo: parseInt(boardNo, 10),
-      content
+      content,
+      writer: user,
     };
     dispatch(addComment(commentData));
     setContent('');  // 입력 필드 초기화
