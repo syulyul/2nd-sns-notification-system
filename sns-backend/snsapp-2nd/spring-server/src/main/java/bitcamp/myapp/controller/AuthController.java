@@ -100,17 +100,17 @@ public class AuthController {
         String sessionId = UUID.randomUUID().toString();
         Cookie cookie = new Cookie("sessionId", sessionId);
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
         redisService.getValueOps()
             .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.HOURS);
         // 세션에 로그인 사용자 정보 저장
-        
+
         loginUserObject = new LoginUser(loginUser);
-        
+
         String fcmToken = member.getFcmToken();
         redisService.getValueOps()
-            .set("FcmToken:"+loginUser.getNo(), fcmToken, 1, TimeUnit.HOURS);
-
+            .set("FcmToken:" + loginUser.getNo(), fcmToken, 1, TimeUnit.HOURS);
 
         HashSet<Member> followMemberSet = new HashSet<>(
             myPageService.followingList(loginUser.getNo()));
@@ -185,24 +185,21 @@ public class AuthController {
 
   @GetMapping("logout")
   public String logout(
-      HttpSession session,
       HttpServletRequest request,
-      HttpServletResponse response)
+      HttpServletResponse response,
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie)
       throws Exception {
 
-    String sessionId = null;
-    for (Cookie cookie : request.getCookies()) {
-      if (cookie.getName().equals("sessionId")) {
-        sessionId = cookie.getValue();
-      }
-    }
+    String sessionId = sessionCookie.getValue();
+
     if (sessionId != null) {
       // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
       // redisService.getValueOps().getAndDelete(sessionId);
     }
 
     Cookie cookie = new Cookie("sessionId", "invalidate");
-    cookie.setMaxAge(0);
+    cookie.setPath("/");
+    cookie.setMaxAge(1000);
     response.addCookie(cookie);
 
     return null;
@@ -231,6 +228,7 @@ public class AuthController {
       String sessionId = UUID.randomUUID().toString();
       Cookie cookie = new Cookie("sessionId", sessionId);
       cookie.setPath("/");
+      cookie.setHttpOnly(true);
       response.addCookie(cookie);
       redisService.getValueOps()
           .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.HOURS);

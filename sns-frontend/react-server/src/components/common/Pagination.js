@@ -75,6 +75,7 @@ const Pagination = ({ page, lastPage, query }) => {
           to={buildLink({
             location,
             query,
+            page,
           })}
         >
           {page}
@@ -94,7 +95,7 @@ const Pagination = ({ page, lastPage, query }) => {
             {parseInt(page) + 1}
           </PaginationLink>
         )}
-        {page === lastPage ? null : (
+        {parseInt(page) == parseInt(lastPage) ? null : (
           <PaginationLink
             to={
               page === lastPage

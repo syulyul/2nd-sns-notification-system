@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import { Helmet } from 'react-helmet-async';
-import ExamplePage from './pages/ExamplePage';
+import MainPage from './pages/MainPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import BoardFormPage from './pages/BoardFormPage';
@@ -23,7 +23,7 @@ function App() {
         <title>BitSNS</title>
       </Helmet>
       <Routes>
-        <Route element={<ExamplePage />} path={'/'} />
+        <Route element={<MainPage />} path={'/'} />
         <Route element={<LoginPage />} path={'/auth/login'} />
         <Route element={<RegisterPage />} path={'/auth/register'} />
         <Route element={<PwFindPage />} path={'/auth/find'} />

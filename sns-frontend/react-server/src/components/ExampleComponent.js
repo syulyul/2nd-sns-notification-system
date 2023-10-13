@@ -5,8 +5,7 @@ const ExampleComponentBlock = styled.div``;
 const ExampleComponent = ({ onExample, onIncrease }) => {
   return (
     <ExampleComponentBlock>
-      <div onClick={onExample}>test</div>
-      <div onClick={onIncrease}>increase</div>
+      <div>test</div>
     </ExampleComponentBlock>
   );
 };
