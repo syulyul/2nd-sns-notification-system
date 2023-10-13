@@ -37,9 +37,10 @@ export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 export const register = createAction(REGISTER, ({ formData }) => ({
   formData,
 }));
-export const login = createAction(LOGIN, ({ phoneNumber, password }) => ({
+export const login = createAction(LOGIN, ({ phoneNumber, password, fcmToken }) => ({
   phoneNumber,
   password,
+  fcmToken,
 }));
 export const check = createAction(CHECK);
 export const logout = createAction(LOGOUT);
@@ -70,6 +71,7 @@ const initialState = {
   name: '',
   email: '',
   photo: '',
+  fcmToken: '',
 
   verificationCode: '',
 
@@ -92,6 +94,7 @@ const auth = handleActions(
       name: '',
       email: '',
       photo: '',
+      fcmToken: '',
 
       followList: [],
     }),

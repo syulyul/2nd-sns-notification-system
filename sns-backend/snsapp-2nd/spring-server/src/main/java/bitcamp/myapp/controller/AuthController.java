@@ -103,9 +103,14 @@ public class AuthController {
         response.addCookie(cookie);
         redisService.getValueOps()
             .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.HOURS);
-
         // 세션에 로그인 사용자 정보 저장
+        
         loginUserObject = new LoginUser(loginUser);
+        
+        String fcmToken = member.getFcmToken();
+        redisService.getValueOps()
+            .set("FcmToken:"+loginUser.getNo(), fcmToken, 1, TimeUnit.HOURS);
+
 
         HashSet<Member> followMemberSet = new HashSet<>(
             myPageService.followingList(loginUser.getNo()));
@@ -119,6 +124,7 @@ public class AuthController {
             new HashSet<>(boardService.likelist(loginUser.getNo())));
         loginUserObject.setLikedGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUser.getNo())));
+        loginUser.setFcmToken(fcmToken);
 
       } else { // 해당하는 유저가 없을 경우
         return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
