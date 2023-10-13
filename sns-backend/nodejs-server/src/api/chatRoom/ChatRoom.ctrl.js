@@ -25,11 +25,17 @@ export const enterRoom = async (req, res, next) => {
       room = await Room.create({
         users: [req.query.mno1, req.query.mno2],
       });
-      // const io = req.app.get('io');
-      // io.of('/room').emit('newRoom', room);
+      const io = req.app.get('io');
+      io.of('/room').emit('newRoom', room);
     }
-    res.json(room);
+    let chats = await Chat.find({ room: room }).populate('user');
+
+    if (room && chats) {
+      const roomAndChats = { room, chats };
+      res.json(roomAndChats);
+    }
   } catch (error) {
+    res.status(403);
     console.error(error);
     return next(error);
   }
@@ -58,7 +64,7 @@ export const sendChat = async (req, res, next) => {
       chat: req.body.chatTxt,
       files: req.body.fileUrl,
     });
-    // req.app.get('io').of('/chat').to(roomId).emit('chat', { chat });
+    req.app.get('io').of('/chat').to(roomId).emit('chat', { chat });
     res.json(chat);
   } catch (error) {
     console.error(error);

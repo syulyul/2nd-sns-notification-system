@@ -11,7 +11,7 @@ import bitcamp.myapp.vo.Member;
 import bitcamp.myapp.vo.MyPage;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +60,7 @@ public class MyPageController {
   }
 
   @GetMapping("{no}")
-  public ResponseEntity<MyPage> detail(
+  public ResponseEntity detail(
       @PathVariable int no,
       @RequestParam(defaultValue = "") String show,
       @RequestParam(name = "keyword", required = false) String keyword,
@@ -69,54 +69,23 @@ public class MyPageController {
       Model model,
       HttpSession session,
       @ModelAttribute("queryString") String queryString) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-    MyPage myPage = myPageService.get(no);
-    if (loginUser == null) {
-      return new ResponseEntity<>(myPage, HttpStatus.OK);
-    }
 
     // 세션에 저장된 방문한 마이페이지 번호 목록을 가져오기
-    HashSet<Integer> visitedMyPages = loginUser.getVisitedMyPages();
+//    HashSet<Integer> visitedMyPages = loginUser.getVisitedMyPages();
 
     // 만약 방문한 적 없는 마이페이지라면 조회수 증가
-    if (!visitedMyPages.contains(no) && loginUser.getNo() != no) {
-      myPageService.increaseVisitCount(no);
+//    if (!visitedMyPages.contains(no) && loginUser.getNo() != no) {
+//      myPageService.increaseVisitCount(no);
+//
+//      // 방문한 마이페이지 번호를 세션에 추가
+//      visitedMyPages.add(no);
+//    }
 
-      // 방문한 마이페이지 번호를 세션에 추가
-      visitedMyPages.add(no);
-    }
+    HashMap<String, Object> returnMap = new HashMap<>();
+    returnMap.put("myBoardList", boardService.myboardlist(1, no, pageSize, 1));
+    returnMap.put("myCommentList", boardCommentService.mycommentlist(no, pageSize, 1));
 
-    model.addAttribute("myPage", myPageService.get(no));
-    model.addAttribute("show", show);
-    model.addAttribute("page", page);
-
-    switch (show) {
-      case "followers":
-        model.addAttribute("followList", myPageService.followerList(no));
-        model.addAttribute("maxPage",
-            (myPageService.getFollowerCount(no) + pageSize - 1) / pageSize);
-        break;
-      case "followings":
-        model.addAttribute("followList", myPageService.followingList(no));
-        model.addAttribute("maxPage",
-            (myPageService.getFollowingCount(no) + pageSize - 1) / pageSize);
-        break;
-      case "searchMembers":
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("followList", myPageService.searchMembersList(keyword, pageSize, page));
-        model.addAttribute("maxPage",
-            (myPageService.getSearchMembersCount(keyword) + pageSize - 1) / pageSize);
-        break;
-      default:
-        model.addAttribute("followList", null);
-        model.addAttribute("boardList", boardService.list(1, pageSize, 1));
-        model.addAttribute("myboardList",
-            boardService.myboardlist(1, no, pageSize, 1));
-        model.addAttribute("mycommentList", boardCommentService.mycommentlist(no, pageSize, 1));
-        break;
-    }
-    session.setAttribute("loginUser", loginUser);
-    return new ResponseEntity<>(myPage, HttpStatus.OK);
+    return new ResponseEntity<>(returnMap, HttpStatus.OK);
   }
 
   @PostMapping("{no}")
@@ -260,7 +229,7 @@ public class MyPageController {
 
     try {
       String sessionId = sessionCookie.getValue();
-      int loginUserNo = Integer.parseInt((String) redisService.getValuleOps().get(sessionId));
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
       Member loginUser = memberService.get(loginUserNo);
 
       int result = myPageService.follow(loginUser, followingNo);
@@ -279,7 +248,7 @@ public class MyPageController {
 
     try {
       String sessionId = sessionCookie.getValue();
-      int loginUserNo = Integer.parseInt((String) redisService.getValuleOps().get(sessionId));
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
       Member loginUser = memberService.get(loginUserNo);
 
       int result = myPageService.unfollow(loginUser, followingNo);

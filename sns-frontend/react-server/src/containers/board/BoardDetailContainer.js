@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
-import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment } from '../../modules/board';
+import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment, likeBoard, unlikeBoard } from '../../modules/board';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
@@ -30,27 +30,17 @@ const BoardDetailContainer = () => {
     createdAt: new Date().toISOString()
   };
 
-  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError }  = useSelector(state => ({
+  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError, user }  = useSelector(state => ({
     board: state.board.board,
     comments: state.board.comments,
-    boardError: state.board.boardError
+    boardError: state.board.boardError,
+    user: state.auth.user,
   }));
 
   const { boardNo, category } = useParams();
 
   const onChange = ({ key, value }) => {
     dispatch(changeField({ key, value }));
-  };
-
-  //댓글작성
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const commentData = {
-      boardNo: parseInt(boardNo, 10),
-      content
-    };
-    dispatch(addComment(commentData));
-    setContent('');  // 입력 필드 초기화
   };
 
   const onEdit = () => {
@@ -69,11 +59,38 @@ const BoardDetailContainer = () => {
     e.preventDefault();
     dispatch(deleteBoard({boardNo, category}));
   };
-  
+
+  //댓글
+  //댓글작성
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const commentData = {
+      boardNo: parseInt(boardNo, 10),
+      content,
+      writer: user,
+    };
+    dispatch(addComment(commentData));
+    setContent('');  // 입력 필드 초기화
+  };
+
   //댓글삭제
   const onDeleteComment = (commentNo) => {
     dispatch(deleteComment({commentNo, boardNo}));
   };
+
+  const CommentChange = (e) => {
+    setContent(e.target.value);
+  };
+
+  //좋아요
+  const onLike = () => {
+    dispatch(likeBoard(boardNo));
+  };
+
+  const onUnlike = () => {
+    dispatch(unlikeBoard(boardNo));
+  };
+
 
   useEffect(() => {
     dispatch(detail({ category, boardNo }));
@@ -94,6 +111,9 @@ const BoardDetailContainer = () => {
             onReset={onReset}
             onDelete={onDelete}
             onDeleteComment={onDeleteComment}
+            onLike={onLike}
+            onUnlike={onUnlike}
+            CommentChange={CommentChange}
         />
   );
 };

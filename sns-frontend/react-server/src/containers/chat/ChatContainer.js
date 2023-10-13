@@ -9,11 +9,12 @@ import {
 import qs from 'qs';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+// import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
 
 const ChatContainer = () => {
-  const params = useParams();
+  // const params = useParams();
   const dispatch = useDispatch();
   const { room, chats, chatTxt, error, user } = useSelector(
     ({ chats, auth }) => ({
@@ -46,35 +47,38 @@ const ChatContainer = () => {
     dispatch(sendChat({ roomId: room._id, chatTxt }));
   };
 
-  // useEffect(() => {
-  //   if (room && !error) {
-  //     const socket = io.connect(`${process.env.REACT_APP_SERVERURL}/chat`, {
-  //       path: '/socket.io',
-  //       transports: ['websocket'],
-  //     });
+  useEffect(() => {
+    if (room && !error) {
+      const socket = io.connect(
+        `${process.env.REACT_APP_NODE_SERVER_URL}/chat`,
+        {
+          path: '/socket.io',
+          transports: ['websocket'],
+        }
+      );
 
-  //     socket.emit('join', { roomId, User: user });
-  //     socket.on('join', function (data) {
-  //       // 입장
-  //       const newChat = data.chat;
-  //       dispatch(concatChats({ newChat }));
-  //     });
-  //     socket.on('exit', function (data) {
-  //       // 퇴장
-  //       const newChat = data.chat;
-  //       dispatch(concatChats({ newChat }));
-  //     });
-  //     socket.on('chat', function (data) {
-  //       // 채팅
-  //       const newChat = data.chat;
-  //       dispatch(concatChats({ newChat }));
-  //     });
+      socket.emit('join', { roomId: room._id, User: user });
+      // socket.on('join', function (data) {
+      //   // 입장
+      //   const newChat = data.chat;
+      //   dispatch(concatChats({ newChat }));
+      // });
+      // socket.on('exit', function (data) {
+      //   // 퇴장
+      //   const newChat = data.chat;
+      //   dispatch(concatChats({ newChat }));
+      // });
+      socket.on('chat', function (data) {
+        // 채팅
+        const newChat = data.chat;
+        dispatch(concatChats({ newChat }));
+      });
 
-  //     return () => {
-  //       socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
-  //     };
-  //   }
-  // }, [room]);
+      return () => {
+        socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
+      };
+    }
+  }, [room]);
 
   return (
     <ChatComponent

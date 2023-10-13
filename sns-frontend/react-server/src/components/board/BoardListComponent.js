@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import Pagination from '../common/Pagination';
 
 const Container = styled.div`
 `;
@@ -86,31 +87,6 @@ const ProfileAuthor = styled.div`
     justify-content: center;
 `;
 
-const Pagination = styled.div`
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-
-    a {
-        margin: 0 5px;
-        padding: 5px 10px;
-        border-radius: 50%;
-        text-decoration: none;
-        color: black;
-        background-color: #f2f2f2;
-
-        &.active {
-            background-color: #426B1F;
-            color: white;
-        }
-
-        &:hover {
-            background-color: #426B1F;
-            color: white;
-        }
-    }
-`;
-
 const ActionButtonsContainer = styled.div`
   text-align: right;
   margin-right: 20px;
@@ -136,7 +112,15 @@ const AuthorLink = styled.a`
     color: black;
 `;
 
-const BoardListComponent = ({ boardListData, totalPages, currentPage, onPageChange }) => {
+const BoardListComponent = ({
+  boardListData,
+  totalPages,
+  currentPage,
+  onPageChange,
+  lastPage,
+  page,
+  query,
+}) => {
   return (
       <Container>
         <SearchBox>
@@ -187,17 +171,7 @@ const BoardListComponent = ({ boardListData, totalPages, currentPage, onPageChan
           </tbody>
         </BoardTable>
 
-        <Pagination>
-          {Array.from({length: totalPages}).map((_, idx) => (
-              <a
-                  key={idx}
-                  className={idx === currentPage ? 'active' : ''}
-                  onClick={() => onPageChange(idx)}
-              >
-                {idx + 1}
-              </a>
-          ))}
-        </Pagination>
+        <Pagination page={page} query={query} lastPage={lastPage} />
       </Container>
   );
 };

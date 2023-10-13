@@ -1,9 +1,10 @@
 import springClient from './springClient';
 
-export const login = ({ phoneNumber, password }) =>
+export const login = ({ phoneNumber, password, fcmToken }) =>
   springClient.post('auth/login', {
     phoneNumber,
     password,
+    fcmToken,
   });
 
 export const register = ({ formData }) =>
