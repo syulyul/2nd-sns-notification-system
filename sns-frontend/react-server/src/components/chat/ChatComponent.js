@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 // import { roomList } from '../../modules/rooms';
 
 const ChatContainer = styled.div`
@@ -209,6 +209,12 @@ const ChatComponent = ({
   onSendChat,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
+  const messageEndRef = useRef(null);
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: 'auto' });
+    }
+  }, [chats]);
 
   return (
     <ChatContainer>
@@ -244,6 +250,7 @@ const ChatComponent = ({
                   key={chatlog._id}
                   loginUser={user}
                 />
+                <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>
             ))}
           {/* </div> */}
