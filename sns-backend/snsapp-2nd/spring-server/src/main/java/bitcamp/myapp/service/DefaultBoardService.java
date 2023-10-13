@@ -96,13 +96,13 @@ public class DefaultBoardService implements BoardService {
   public int like(Member member, Board board) throws Exception {
     int result = boardDao.insertLike(member.getNo(), board.getNo());
     boardDao.updateLike(board.getNo());
-    if (!session.getAttribute("loginUser").equals(board.getWriter())) {
-      notificationService.add(new NotiLog(
-          board.getWriter().getNo(),
-          NotiType.LIKE_TYPE,
-          member.getNick() + "님이 회원님의 게시글을 좋아합니다.",
-          "/board/detail/" + board.getCategory() + "/" + board.getNo()));
-    }
+//    if (!session.getAttribute("loginUser").equals(board.getWriter())) {
+//      notificationService.add(new NotiLog(
+//          board.getWriter().getNo(),
+//          NotiType.LIKE_TYPE,
+//          member.getNick() + "님이 회원님의 게시글을 좋아합니다.",
+//          "/board/detail/" + board.getCategory() + "/" + board.getNo()));
+//    }
     return result;
   }
 
