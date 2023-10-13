@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
+import FollowButton from './FollowButton';
 
 const MemberListBox = styled.div`
   margin-left: 18px;
@@ -61,15 +62,12 @@ const FollowComponent = ({
             />
             <MemberLink href={`/myPage/${myPage.no}`}>{myPage.nick}</MemberLink>
             <Link to={`/room`}>채팅하기</Link>
-            {followMemberSet.includes(myPage.no) ? (
-              <button onClick={() => handleUnfollow(myPage.no)}>
-                팔로잉 취소
-              </button>
-            ) : (
-              <button onClick={() => handleFollow(myPage.no)}>
-                팔로우 하기
-              </button>
-            )}
+            <FollowButton
+              followMemberSet={followMemberSet}
+              memberNo={myPage.no}
+              handleUnfollow={handleUnfollow}
+              handleFollow={handleFollow}
+            />
           </MemberItem>
         ))}
     </MemberListBox>
