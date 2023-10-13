@@ -4,7 +4,7 @@ import createRequestSaga, {
   createRequestActionTypes,
 } from '../lib/createRequestSaga';
 import * as chatsAPI from '../lib/api/chats';
-import { useCookies } from 'react-cookie';
+// import { useCookies } from 'react-cookie';
 
 const CHANGE_FIELD = 'auth/CHANGE_FIELD';
 const [ENTER_ROOM, ENTER_ROOM_SUCCESS, ENTER_ROOM_FAILURE] =

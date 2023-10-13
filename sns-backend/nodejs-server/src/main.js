@@ -8,6 +8,7 @@ import session from 'express-session';
 import api from './api';
 import mongodbConnect from './schemas';
 import redisConnect from './redis';
+import webSocket from './socket';
 
 const { PORT, NODE_ENV, COOKIE_SECRET, REACT_SERVER_URL, SPRING_SERVER_URL } =
   process.env;
@@ -42,18 +43,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(COOKIE_SECRET));
 
-const sessionMiddleware = session({
-  resave: false,
-  saveUninitialized: false,
-  secret: COOKIE_SECRET,
-  cookie: {
-    httpOnly: true,
-    secure: false,
-  },
-});
-
-app.use(sessionMiddleware);
-
 app.use('/node', api);
 
 app.use((req, res, next) => {
@@ -71,3 +60,5 @@ app.use((err, req, res, next) => {
 const server = app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기중');
 });
+
+webSocket(server, app);
