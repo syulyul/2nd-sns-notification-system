@@ -12,6 +12,8 @@ const [NOT_READ_COUNT, NOT_READ_COUNT_SUCCESS, NOT_READ_COUNT_FAILURE] =
 const [READ_NOTI, READ_NOTI_SUCCESS, READ_NOTI_FAILURE] =
   createRequestActionTypes('notification/READ_NOTI');
 
+const INITIALIZE_NOTI = 'notification/INITIALIZE_NOTI';
+
 export const notiList = createAction(LIST, ({ memberNo, limit, page }) => ({
   memberNo,
   limit,
@@ -25,6 +27,7 @@ export const readNoti = createAction(READ_NOTI, ({ _id, notiState = 1 }) => ({
   _id,
   notiState,
 }));
+export const initializeNoti = createAction(INITIALIZE_NOTI, () => {});
 
 const listSaga = createRequestSaga(LIST, notiAPI.listNotiLog);
 const notReadNotiCountSaga = createRequestSaga(
@@ -48,6 +51,9 @@ const initialState = {
 
 const notification = handleActions(
   {
+    [INITIALIZE_NOTI]: () => ({
+      ...initialState,
+    }),
     [LIST_SUCCESS]: (state, { payload: { notis, lastPage } }) => ({
       ...state,
       notis,

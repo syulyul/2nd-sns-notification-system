@@ -4,7 +4,10 @@ import { useCookies } from 'react-cookie';
 import Header from '../../components/common/Header';
 import { logout } from '../../modules/auth';
 import { useEffect } from 'react';
-import { getNotReadNotiCount } from '../../modules/notification';
+import {
+  getNotReadNotiCount,
+  initializeNoti,
+} from '../../modules/notification';
 
 const HeaderContainer = () => {
   const [cookies, setCookie, removeCookie] = useCookies(['sessionId']);
@@ -23,6 +26,7 @@ const HeaderContainer = () => {
     setCookie('sessionId', '');
     removeCookie('sessionId');
     dispatch(logout());
+    dispatch(initializeNoti());
     navigate(`/`);
   };
 
