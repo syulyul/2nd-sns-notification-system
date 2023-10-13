@@ -47,3 +47,8 @@ export const unfollow = (followingNo) => {
   const queryString = qs.stringify({ followingNo });
   return springClient.get(`/myPage/unfollow?${queryString}`);
 };
+
+export const searchMembers = ({ searchTxt, pageSize = 10, page = 1 }) => {
+  const queryString = qs.stringify({ searchTxt, pageSize, page });
+  return springClient.get(`/myPage/searchMembers?${queryString}`);
+};

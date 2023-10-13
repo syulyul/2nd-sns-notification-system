@@ -5,6 +5,7 @@ import createRequestSaga, {
 } from '../lib/createRequestSaga';
 import * as myPageAPI from '../lib/api/myPage';
 
+const CHANGE_MYPAGE_FIELD = 'myPage/CHANGE_MYPAGE_FIELD';
 const CHANGE_FIELD = 'myPage/CHANGE_FIELD';
 const INITIALIZE_FORM = 'myPage/INITIALIZE_FORM';
 
@@ -23,6 +24,16 @@ const [FOLLOWING, FOLLOWING_SUCCESS, FOLLOWING_FAILURE] =
 const [FOLLOWER, FOLLOWER_SUCCESS, FOLLOWER_FAILURE] =
   createRequestActionTypes('myPage/FOLLOWER');
 
+const [SEARCH_MEMBERS, SEARCH_MEMBERS_SUCCESS, SEARCH_MEMBERS_FAILURE] =
+  createRequestActionTypes('myPage/SEARCH_MEMBERS');
+
+export const changeMyPageField = createAction(
+  CHANGE_MYPAGE_FIELD,
+  ({ key, value }) => ({
+    key,
+    value,
+  })
+);
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
   value,
@@ -48,12 +59,17 @@ export const list = createAction(LIST, (userNo) => userNo);
 export const info = createAction(INFO, (userNo) => userNo);
 export const following = createAction(FOLLOWING, (userNo) => userNo);
 export const follower = createAction(FOLLOWER, (userNo) => userNo);
+export const searchMembers = createAction(SEARCH_MEMBERS, (userNo) => userNo);
 
 const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
 const listSaga = createRequestSaga(LIST, myPageAPI.list);
 const infoSaga = createRequestSaga(INFO, myPageAPI.info);
 const followingSaga = createRequestSaga(FOLLOWING, myPageAPI.following);
 const followerSaga = createRequestSaga(FOLLOWER, myPageAPI.follower);
+const searchMembersSaga = createRequestSaga(
+  SEARCH_MEMBERS,
+  myPageAPI.searchMembers
+);
 
 export function* myPageSaga() {
   yield takeLatest(UPDATE, updateSaga);
@@ -61,24 +77,32 @@ export function* myPageSaga() {
   yield takeLatest(INFO, infoSaga);
   yield takeLatest(FOLLOWING, followingSaga);
   yield takeLatest(FOLLOWER, followerSaga);
+  yield takeLatest(SEARCH_MEMBERS, searchMembersSaga);
 }
 
 const initialState = {
   myPage: null,
   userNo: 0,
   myPageError: null,
-  show: '',
+  show: 'boardList',
   followList: [], // 팔로워 목록을 저장할 배열
   myBoardList: [],
   myCommentList: [],
+  searchTxt: '',
 };
 
 const myPage = handleActions(
   {
-    [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
+    [CHANGE_MYPAGE_FIELD]: (state, { payload: { key, value } }) => ({
       ...state,
       myPage: { ...state.myPage, [key]: value },
     }),
+
+    [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
+      ...state,
+      [key]: value,
+    }),
+
     [INITIALIZE_FORM]: (state) => ({
       ...state,
 
@@ -101,7 +125,7 @@ const myPage = handleActions(
       ...state,
       myBoardList: data.myBoardList,
       myCommentList: data.myCommentList,
-      show: '',
+      show: 'boardList',
       followList: null,
       myPageError: null,
     }),
@@ -136,6 +160,17 @@ const myPage = handleActions(
       followList, // 팔로워 목록 업데이트
     }),
     [FOLLOWER_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      myPageError: error,
+    }),
+
+    [SEARCH_MEMBERS_SUCCESS]: (state, { payload: resultList }) => ({
+      ...state,
+      show: 'searchResult',
+      followList: resultList,
+      searchTxt: '',
+    }),
+    [SEARCH_MEMBERS_FAILURE]: (state, { payload: error }) => ({
       ...state,
       myPageError: error,
     }),

@@ -62,8 +62,6 @@ public class MyPageController {
   @GetMapping("{no}")
   public ResponseEntity detail(
       @PathVariable int no,
-      @RequestParam(defaultValue = "") String show,
-      @RequestParam(name = "keyword", required = false) String keyword,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "6") int pageSize,
       Model model,
@@ -288,6 +286,25 @@ public class MyPageController {
       return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(followingList, HttpStatus.OK);
+  }
+
+
+  @GetMapping("/searchMembers")
+  @ResponseBody
+  public ResponseEntity searchMembers(
+      @RequestParam(name = "searchTxt") String keyword,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "6") int pageSize) {
+    List<Member> resultList;
+    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+    try {
+      resultList = myPageService.searchMembersList(encodedKeyword, pageSize, page);
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(resultList, HttpStatus.OK);
   }
 
 }
