@@ -4,7 +4,7 @@ import palette from '../../lib/styles/palette';
 import Button from '../common/Button';
 import AuthTemplate from './AuthTemplate';
 
-const LoginForm = styled.div`
+const LoginForm = styled.form`
   align-self: flex-start;
   display: grid;
   justify-items: center;
@@ -85,7 +85,7 @@ const LoginComponent = ({ phoneNumber, password, onChange, onSubmit }) => {
           <span id="error-msg-second-line">and/or password</span>
         </p>
       </div>
-      <LoginForm>
+      <LoginForm onSubmit={onSubmit}>
         <StyledInput
           type="text"
           name="phoneNumber"
@@ -100,9 +100,7 @@ const LoginComponent = ({ phoneNumber, password, onChange, onSubmit }) => {
           value={password}
           onChange={onChange}
         />
-        <SubmitButton type="submit" onClick={onSubmit}>
-          로그인
-        </SubmitButton>
+        <SubmitButton type="submit">로그인</SubmitButton>
         <label className="left-align">
           <input type="checkbox" name="savePhoneNumber" id="savePhoneNumber" />
           전화번호 저장
