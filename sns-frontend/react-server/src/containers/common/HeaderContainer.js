@@ -20,9 +20,10 @@ const HeaderContainer = () => {
 
   const onLogout = (e) => {
     e.preventDefault();
+    setCookie('sessionId', '');
     removeCookie('sessionId');
     dispatch(logout());
-    navigate(`/auth/login`);
+    navigate(`/`);
   };
 
   useEffect(() => {
