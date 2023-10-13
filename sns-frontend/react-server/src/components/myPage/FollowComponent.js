@@ -50,23 +50,27 @@ const FollowComponent = ({
       <h3>{show === 'follower' ? '🌱 팔로워 리스트' : ''}</h3>
       <h3>{show === 'searchResult' ? '🌱 검색 결과' : ''}</h3>
       {Array.isArray(followListData) &&
-        followListData.map((myPage, index) => (
-          <MemberItem key={myPage.no}>
+        followListData.map((followItem, index) => (
+          <MemberItem key={followItem.no}>
             <MemberPhoto
               src={
-                myPage.photo
-                  ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${myPage.photo}`
+                followItem.photo
+                  ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${followItem.photo}`
                   : 'images/default.jpg'
               }
             />
-            <MemberLink href={`/myPage/${myPage.no}`}>{myPage.nick}</MemberLink>
-            <Link to={`/room`}>채팅하기</Link>
-            {followMemberSet.includes(myPage.no) ? (
-              <button onClick={() => handleUnfollow(myPage.no)}>
+            <MemberLink href={`/myPage/${followItem.no}`}>
+              {followItem.nick}
+            </MemberLink>
+            <Link to={`/room?mno1=${followItem.no}&mno2=${user.no}`}>
+              채팅하기
+            </Link>
+            {followMemberSet.includes(followItem.no) ? (
+              <button onClick={() => handleUnfollow(followItem.no)}>
                 팔로잉 취소
               </button>
             ) : (
-              <button onClick={() => handleFollow(myPage.no)}>
+              <button onClick={() => handleFollow(followItem.no)}>
                 팔로우 하기
               </button>
             )}
