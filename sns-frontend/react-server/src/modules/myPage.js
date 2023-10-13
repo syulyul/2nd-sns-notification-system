@@ -69,6 +69,8 @@ const initialState = {
   myPageError: null,
   show: '',
   followList: [], // 팔로워 목록을 저장할 배열
+  myBoardList: [],
+  myCommentList: [],
 };
 
 const myPage = handleActions(
@@ -95,9 +97,11 @@ const myPage = handleActions(
       myPageError: error,
     }),
 
-    [LIST_SUCCESS]: (state, { payload: myPage }) => ({
+    [LIST_SUCCESS]: (state, { payload: data }) => ({
       ...state,
-      myPage,
+      myBoardList: data.myBoardList,
+      myCommentList: data.myCommentList,
+      show: '',
       myPageError: null,
     }),
     [LIST_FAILURE]: (state, { payload: error }) => ({

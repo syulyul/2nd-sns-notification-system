@@ -21,6 +21,7 @@ public class LoginUser extends Member {
     this.setPhoneNumber(member.getPhoneNumber());
     this.setEmail(member.getEmail());
     this.setPhoto(member.getPhoto());
+    this.setFcmToken(member.getFcmToken());
   }
 
   @Override
