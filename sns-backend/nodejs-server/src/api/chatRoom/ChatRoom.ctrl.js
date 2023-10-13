@@ -21,6 +21,7 @@ export const enterRoom = async (req, res, next) => {
     let room = await Room.findOne({
       users: { $all: [req.query.mno1, req.query.mno2] },
     });
+
     if (!room) {
       room = await Room.create({
         users: [req.query.mno1, req.query.mno2],
@@ -64,6 +65,7 @@ export const sendChat = async (req, res, next) => {
       chat: req.body.chatTxt,
       files: req.body.fileUrl,
     });
+    chat.user = sendUser;
     req.app.get('io').of('/chat').to(roomId).emit('chat', { chat });
     res.json(chat);
   } catch (error) {
