@@ -102,6 +102,7 @@ const myPage = handleActions(
       myBoardList: data.myBoardList,
       myCommentList: data.myCommentList,
       show: '',
+      followList: null,
       myPageError: null,
     }),
     [LIST_FAILURE]: (state, { payload: error }) => ({
