@@ -296,9 +296,9 @@ public class MyPageController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "6") int pageSize) {
     List<Member> resultList;
-    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+//    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
     try {
-      resultList = myPageService.searchMembersList(encodedKeyword, pageSize, page);
+      resultList = myPageService.searchMembersList(keyword, pageSize, page);
     } catch (Exception e) {
       e.printStackTrace();
       // 예외 발생 시 처리
