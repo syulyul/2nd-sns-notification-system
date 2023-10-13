@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
+const { Types: { ObjectId } } = Schema;
 const notiSchema = new Schema({
   mno: {
     type: Number,
@@ -27,6 +28,16 @@ const notiSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  user: { // 채팅을 한 사람
+    type: ObjectId,
+    required: true,
+    ref: 'User',
+  },
+  fcmToken: {
+    type: String,
+    required: true,
+
+  }
 });
 
 const Noti = mongoose.model('Noti', notiSchema);

@@ -1,4 +1,7 @@
 import Noti from '../../schemas/noti';
+import { redisClient } from '../../redis';
+import User from "../../schemas/user";
+import Chat from "../../schemas/chat";
 
 export const addLog = async (req, res, next) => {
   try {
@@ -78,5 +81,31 @@ export const updateAllNotiState = async (req, res, next) => {
     console.error(error);
     res.status(403).send(error);
     return next(error);
+  }
+};
+
+export const addFollowingLog = async (req, res) => {
+  try {
+
+    const userNo = await redisClient.get(req.cookies['sessionId']);
+    const userToken = await redisClient.get(req.fcmToken);
+    const sendUser = await User.findOne({ mno: userNo });
+    console.log(userToken);
+    console.log(sendUser);
+    const findToken = await Noti.create({
+    fcmToken: userToken.fcmToken,
+    user: sendUser._id,
+    });
+
+    if (findToken) {
+      // FCM 토큰을 찾았을 때
+      res.json({ findToken });
+    } else {
+      // FCM 토큰을 찾지 못했을 때
+      res.status(404).json({ error: 'FCM token not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
