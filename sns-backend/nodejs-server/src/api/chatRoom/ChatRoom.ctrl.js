@@ -80,7 +80,7 @@ export const sendChatBySocket = async (data) => {
     const userNo = await redisClient.get(data.cookies['sessionId']);
     const sendUser = await User.findOne({ mno: userNo });
     const roomId = data.body.roomId;
-    console.log(roomId);
+
     const chat = await Chat.create({
       room: roomId,
       user: sendUser._id,

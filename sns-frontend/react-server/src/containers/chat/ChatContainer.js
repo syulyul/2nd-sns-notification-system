@@ -17,7 +17,6 @@ import io from 'socket.io-client';
 const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
-  const [socket, setSocket] = useState(null);
   const [targetLanguage, setTargetLanguage] = useState('ko');
   const { room, chats, newChat, chatTxt, error, user, translatedChat } =
     useSelector(({ chats, auth }) => ({
@@ -47,42 +46,52 @@ const ChatContainer = () => {
     );
   };
 
+  const socket = io(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
+    path: '/socket.io',
+    transports: ['websocket'],
+  });
+
   useEffect(() => {
     if (room && !error) {
-      setSocket(
-        io.connect(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
-          path: '/socket.io',
-          transports: ['websocket'],
-        })
-      );
+      socket.connect();
 
-      if (socket) {
-        socket.emit('join', { roomId: room._id });
-        // socket.on('join', function (data) {
-        //   // 입장
-        //   const newChat = data.chat;
-        //   dispatch(concatChats({ newChat }));
-        // });
-        // socket.on('exit', function (data) {
-        //   // 퇴장
-        //   const newChat = data.chat;
-        //   dispatch(concatChats({ newChat }));
-        // });
-        socket.on('chat', function (data) {
-          // 채팅
-          const newChat = data.chat;
-          dispatch(concatChats({ newChat }));
-        });
+      socket.emit('join', { roomId: room._id });
+      // socket.on('join', function (data) {
+      //   // 입장
+      //   const newChat = data.chat;
+      //   dispatch(concatChats({ newChat }));
+      // });
+      // socket.on('exit', function (data) {
+      //   // 퇴장
+      //   const newChat = data.chat;
+      //   dispatch(concatChats({ newChat }));
+      // });
+      socket.on('chat', function (data) {
+        // 채팅
+        const newChat = data.chat;
+        dispatch(concatChats({ newChat }));
+        if (user.no !== newChat.user.mno) {
+          onTranslate(newChat);
+        }
+      });
 
-        socket.on('translateChat', function (data) {
-          // 채팅
-          const translatedChatLog = data.translatedChatLog;
-          dispatch(translateChat({ translatedChatLog }));
-          console.log(translatedChatLog);
-        });
-      }
+      socket.on('translateChat', function (data) {
+        // 채팅
+        const translatedChatLog = data.translatedChatLog;
+        dispatch(translateChat({ translatedChatLog }));
+        console.log(translatedChatLog);
+      });
     }
+
+    return () => {
+      socket.disconnect();
+    };
   }, [room]);
+
+  useEffect(() => {
+    if (socket) {
+    }
+  }, [socket]);
 
   let onSendChat = () => {
     // dispatch(sendChat({ roomId: room._id, chatTxt, user }));

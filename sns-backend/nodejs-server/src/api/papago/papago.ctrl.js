@@ -24,7 +24,7 @@ export const translateAndDetectLang = async (data) => {
 
   request.post(
     detectOptions,
-    function (detectError, detectResponse, detectBody) {
+    async function (detectError, detectResponse, detectBody) {
       if (!detectError && detectResponse.statusCode === 200) {
         const langCode = JSON.parse(detectBody).langCode;
 
@@ -48,8 +48,9 @@ export const translateAndDetectLang = async (data) => {
         };
 
         let isTranslated = false;
-        for (let i = 0; chatLog.translated[i] != null; i++) {
-          if (chatLog.translated[i].langCode === targetLanguage) {
+        const findChatLog = await Chat.findById(chatLog._id);
+        for (let i = 0; findChatLog.translated[i] != null; i++) {
+          if (findChatLog.translated[i].langCode === targetLanguage) {
             isTranslated = true;
             break;
           }
