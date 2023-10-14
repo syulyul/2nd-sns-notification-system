@@ -18,6 +18,7 @@ import io from 'socket.io-client';
 const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
+  const [socket, setSocket] = useState(null);
   const { room, chats, chatTxt, error, user, translatedChat } = useSelector(
     ({ chats, auth }) => ({
       room: chats.room,
@@ -46,49 +47,51 @@ const ChatContainer = () => {
     );
   };
 
-  let socket = io.connect(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
-    path: '/socket.io',
-    transports: ['websocket'],
-  });
-
   useEffect(() => {
     if (room && !error) {
-      socket = io.connect(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
-        path: '/socket.io',
-        transports: ['websocket'],
-      });
+      setSocket(
+        io.connect(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
+          path: '/socket.io',
+          transports: ['websocket'],
+        })
+      );
 
-      socket.emit('join', { roomId: room._id, user: chats.users });
-      // socket.on('join', function (data) {
-      //   // 입장
-      //   const newChat = data.chat;
-      //   dispatch(concatChats({ newChat }));
-      // });
-      // socket.on('exit', function (data) {
-      //   // 퇴장
-      //   const newChat = data.chat;
-      //   dispatch(concatChats({ newChat }));
-      // });
-      socket.on('chat', function (data) {
-        // 채팅
-        const newChat = data.chat;
-        dispatch(concatChats({ newChat }));
-      });
-
+      if (socket) {
+        socket.emit('join', { roomId: room._id });
+        // socket.on('join', function (data) {
+        //   // 입장
+        //   const newChat = data.chat;
+        //   dispatch(concatChats({ newChat }));
+        // });
+        // socket.on('exit', function (data) {
+        //   // 퇴장
+        //   const newChat = data.chat;
+        //   dispatch(concatChats({ newChat }));
+        // });
+        socket.on('chat', function (data) {
+          // 채팅
+          const newChat = data.chat;
+          dispatch(concatChats({ newChat }));
+        });
+      }
       return () => {
-        socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
+        socket && socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
       };
     }
   }, [room]);
 
-  const onSendChat = () => {
+  let onSendChat = () => {
     // dispatch(sendChat({ roomId: room._id, chatTxt, user }));
-    socket.emit('sendChat', { roomId: room._id, chatTxt });
+    if (socket) {
+      socket.emit('sendChat', { roomId: room._id, chatTxt });
+    }
   };
 
-  const onTranslate = (chatlog) => {
+  let onTranslate = (chatlog) => {
     // console.log(chatlog);
-    socket.emit('translateChat', chatlog);
+    if (socket) {
+      socket.emit('translateChat', chatlog);
+    }
   };
 
   return (

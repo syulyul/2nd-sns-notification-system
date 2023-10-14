@@ -27,9 +27,6 @@ export default (server, app) => {
 
     socket.on('join', (data) => {
       socket.join(data.roomId);
-
-      // data는 브라우저에서 보낸 방 아이디
-      socket.join(data); // 네임스페이스 아래에 존재하는 방에 접속
     });
 
     socket.on('sendChat', (data) => {
