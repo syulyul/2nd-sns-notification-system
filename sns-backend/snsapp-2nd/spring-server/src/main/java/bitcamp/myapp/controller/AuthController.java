@@ -122,7 +122,7 @@ public class AuthController {
 
         loginUserObject.setLikeBoardSet(
             new HashSet<>(boardService.likelist(loginUser.getNo())));
-        loginUserObject.setLikedGuestBookSet(
+        loginUserObject.setLikeGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUser.getNo())));
         loginUser.setFcmToken(fcmToken);
 
@@ -169,7 +169,7 @@ public class AuthController {
 
         loginUserObject.setLikeBoardSet(
             new HashSet<>(boardService.likelist(loginUserNo)));
-        loginUserObject.setLikedGuestBookSet(
+        loginUserObject.setLikeGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUserNo)));
 
       } else { // 해당하는 유저가 없을 경우

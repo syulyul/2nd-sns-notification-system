@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
 import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment } from '../../modules/board';
-import { like, unlike } from '../../modules/auth';
+import { boardlike, boardunlike } from '../../modules/auth';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   const [content, setContent] = useState('');
-  const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
 
   const boardDefault = {
@@ -19,7 +18,6 @@ const BoardDetailContainer = () => {
     },
     attachedFiles: [],
     editable: false,
-    liked: false,
     viewCount: 0,
     createdAt: new Date().toISOString()
   };
@@ -89,10 +87,10 @@ const BoardDetailContainer = () => {
 
 // 좋아요
   const handleLike = (boardNo) => {
-    dispatch(like(boardNo));
+    dispatch(boardlike(boardNo));
   };
   const handleUnlike = (boardNo) => {
-    dispatch(unlike(boardNo));
+    dispatch(boardunlike(boardNo));
   };
 
   useEffect(() => {

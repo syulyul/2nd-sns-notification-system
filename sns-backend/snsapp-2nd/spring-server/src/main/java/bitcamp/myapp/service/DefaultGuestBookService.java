@@ -82,13 +82,13 @@ public class DefaultGuestBookService implements GuestBookService {
   public int like(Member member, GuestBook guestBook) throws Exception {
     int result = guestBookDao.insertLike(member.getNo(), guestBook.getNo());
     guestBookDao.updateLike(guestBook.getNo());
-    if (!session.getAttribute("loginUser").equals(guestBook.getWriter())) {
-      notificationService.add(new NotiLog(
-          guestBook.getWriter().getNo(),
-          NotiType.FOLLOW_TYPE,
-          member.getNick() + "님이 회원의 방명록 글을 좋아합니다.",
-          "/guestBook/" + guestBook.getMpno()));
-    }
+    //if (!session.getAttribute("loginUser").equals(guestBook.getWriter())) {
+    //  notificationService.add(new NotiLog(
+    //      guestBook.getWriter().getNo(),
+    //      NotiType.FOLLOW_TYPE,
+    //      member.getNick() + "님이 회원의 방명록 글을 좋아합니다.",
+    //      "/guestBook/" + guestBook.getMpno()));
+    //}
     return result;
   }
 
