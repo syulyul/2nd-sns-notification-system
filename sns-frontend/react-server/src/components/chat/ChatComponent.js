@@ -191,8 +191,8 @@ const StyledChatBtn = styled.button`
   }
 `;
 
-const ChatItem = ({ chatlog, loginUser }) => {
-  const { _id, room, user, chat, files, createdAt } = chatlog;
+const ChatItem = ({ chatLog, loginUser }) => {
+  const { _id, room, user, chat, files, createdAt } = chatLog;
   const roomId = _id;
   return (
     <ChatMessage
@@ -244,20 +244,20 @@ const ChatComponent = ({
             </ChatMessage> */}
           {/* </div> */}
           {chats &&
-            chats.map((chatlog) => (
+            chats.map((chatLog) => (
               <div>
-                {user.no !== chatlog.user.mno && (
-                  <div className={'UserName'}>{`${chatlog.user.mno}`}</div>
+                {user.no !== chatLog.user.mno && (
+                  <div className={'UserName'}>{`${chatLog.user.mno}`}</div>
                 )}
                 {/* <UserImage src="" /> */}
                 {/* <Username>{`${chatlog.user.mno}`}</Username> */}
                 <ChatItem
-                  chatlog={chatlog}
-                  key={chatlog._id}
+                  chatLog={chatLog}
+                  key={chatLog._id}
                   loginUser={user}
                 />
-                {user.no !== chatlog.user.mno && (
-                  <button onClick={(e) => onTranslate(chatlog)}>번역</button>
+                {user.no !== chatLog.user.mno && (
+                  <button onClick={(e) => onTranslate(chatLog)}>번역</button>
                 )}
                 <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>

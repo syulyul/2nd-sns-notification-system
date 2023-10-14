@@ -1,6 +1,7 @@
 import SocketIO from 'socket.io';
 import cookieParser from 'cookie-parser';
 import { sendChatBySocket } from './api/chatRoom/ChatRoom.ctrl';
+import { translateAndDetectLang } from './api/papago/papago.ctrl';
 // import Room from './schemas/room';
 
 export default (server, app) => {
@@ -34,11 +35,12 @@ export default (server, app) => {
       reqData.cookies = parsedCookies;
       reqData.ioOfChat = chat;
       sendChatBySocket(reqData);
-      console.log(reqData.body);
     });
 
     socket.on('translateChat', (data) => {
-      console.log(data);
+      const reqData = { body: { chatLog: data } };
+      reqData.ioOfChat = chat;
+      translateAndDetectLang(reqData);
     });
 
     // socket.on('disconnect', async () => {

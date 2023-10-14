@@ -73,6 +73,12 @@ const ChatContainer = () => {
           const newChat = data.chat;
           dispatch(concatChats({ newChat }));
         });
+
+        socket.on('translateChat', function (data) {
+          // 채팅
+          const translatedCharLog = data.translatedCharLog;
+          console.log(translatedCharLog);
+        });
       }
       return () => {
         socket && socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
@@ -87,10 +93,10 @@ const ChatContainer = () => {
     }
   };
 
-  let onTranslate = (chatlog) => {
-    // console.log(chatlog);
+  let onTranslate = (chatLog) => {
+    // console.log(chatLog);
     if (socket) {
-      socket.emit('translateChat', chatlog);
+      socket.emit('translateChat', chatLog);
     }
   };
 
