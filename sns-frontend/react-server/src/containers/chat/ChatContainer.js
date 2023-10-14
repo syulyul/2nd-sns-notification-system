@@ -6,7 +6,6 @@ import {
   changeField,
   sendChat,
   translateChat,
-  translateChats,
 } from '../../modules/chats';
 import qs from 'qs';
 import { useEffect, useRef, useState } from 'react';
@@ -19,16 +18,16 @@ const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
-  const { room, chats, chatTxt, error, user, translatedChat } = useSelector(
-    ({ chats, auth }) => ({
+  const { room, chats, newChat, chatTxt, error, user, translatedChat } =
+    useSelector(({ chats, auth }) => ({
       room: chats.room,
       chats: chats.chats,
       chatTxt: chats.chatTxt,
       error: chats.error,
       user: auth.user,
       translatedChat: chats.translatedChat,
-    })
-  );
+      newChat: chats.newChat,
+    }));
 
   const { search } = useLocation();
   const { mno1, mno2 } = qs.parse(search, { ignoreQueryPrefix: true });
@@ -76,20 +75,21 @@ const ChatContainer = () => {
 
         socket.on('translateChat', function (data) {
           // 채팅
-          const translatedCharLog = data.translatedCharLog;
-          console.log(translatedCharLog);
+          const translatedChatLog = data.translatedChatLog;
+          dispatch(translateChat({ translatedChatLog }));
+          console.log(translatedChatLog);
         });
       }
-      return () => {
-        socket && socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
-      };
     }
   }, [room]);
 
   let onSendChat = () => {
     // dispatch(sendChat({ roomId: room._id, chatTxt, user }));
     if (socket) {
-      socket.emit('sendChat', { roomId: room._id, chatTxt });
+      if (chatTxt.length > 0) {
+        dispatch(sendChat({ roomId: room._id, chatTxt, user }));
+        socket.emit('sendChat', { roomId: room._id, chatTxt });
+      }
     }
   };
 
@@ -104,6 +104,7 @@ const ChatContainer = () => {
     <ChatComponent
       room={room}
       chats={chats}
+      newChat={newChat}
       user={user}
       chatTxt={chatTxt}
       translatedChat={translatedChat}

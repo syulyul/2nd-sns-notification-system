@@ -43,9 +43,9 @@ export default (server, app) => {
       translateAndDetectLang(reqData);
     });
 
-    // socket.on('disconnect', async () => {
-    //   console.log('chat 네임스페이스 접속 해제');
-    //   console.log(socket.id, '연결 종료 시 소켓');
-    // });
+    socket.on('disconnect', async () => {
+      console.log('chat 네임스페이스 접속 해제');
+      console.log(socket.id, '연결 종료 시 소켓');
+    });
   });
 };

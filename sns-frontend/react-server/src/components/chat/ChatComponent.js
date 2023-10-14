@@ -208,6 +208,7 @@ const ChatItem = ({ chatLog, loginUser }) => {
 const ChatComponent = ({
   room,
   chats,
+  newChat,
   user,
   onChange,
   chatTxt,
@@ -220,7 +221,7 @@ const ChatComponent = ({
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'auto' });
     }
-  }, [chats]);
+  }, [newChat]);
 
   return (
     <ChatContainer>

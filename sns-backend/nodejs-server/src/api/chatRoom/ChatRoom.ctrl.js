@@ -75,7 +75,7 @@ export const sendChat = async (req, res, next) => {
   }
 };
 
-export const sendChatBySocket = async (data, next) => {
+export const sendChatBySocket = async (data) => {
   try {
     const userNo = await redisClient.get(data.cookies['sessionId']);
     const sendUser = await User.findOne({ mno: userNo });
@@ -91,6 +91,6 @@ export const sendChatBySocket = async (data, next) => {
     data.ioOfChat.to(roomId).emit('chat', { chat });
   } catch (error) {
     console.error(error);
-    return next(error);
+    return;
   }
 };

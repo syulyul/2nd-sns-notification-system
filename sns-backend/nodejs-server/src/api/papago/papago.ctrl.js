@@ -9,7 +9,6 @@ const client_secret = process.env.NAVER_PAPAGO_CLIENT_SECRET;
 export const translateAndDetectLang = async (data) => {
   const chatLog = data.body.chatLog;
   const { chat } = chatLog; // 번역할 텍스트
-  console.log(chat);
   // const query = await Chat.findOne({ chat: req.params.chat});
 
   // 먼저 언어 감지 API를 호출
@@ -54,35 +53,51 @@ export const translateAndDetectLang = async (data) => {
           },
         };
 
-        request.post(
-          translateOptions,
-          function (translateError, translateResponse, translateBody) {
-            if (!translateError && translateResponse.statusCode === 200) {
-              const translatedText =
-                JSON.parse(translateBody).message.result.translatedText;
-
-              // const translatedCharLog = Chat.findByIdAndDelete(
-              //   chatLog._id,
-              //   {
-              //     $push: {
-              //       translated: {
-              //         langCode: langCode,
-              //         txt: translatedText,
-              //       },
-              //     },
-              //   },
-              //   { new: true }
-              // );
-
-              // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
-              data.ioOfChat.emit('translateChat', {
-                // translatedCharLog: translatedCharLog,
-              });
-            } else {
-              console.log('Translation Error:', translateResponse.statusCode);
-            }
+        let isTranslated = false;
+        for (let i = 0; chatLog.translated[i] != null; i++) {
+          console.log(chatLog.translated[i].langCode, targetLanguage);
+          if (chatLog.translated[i].langCode === targetLanguage) {
+            isTranslated = true;
+            break;
           }
-        );
+        }
+
+        if (isTranslated) {
+          console.log('이미 번역된 언어');
+          data.ioOfChat.to(chatLog.room).emit('translateChat', {
+            translatedChatLog: '이미 번역된 언어',
+          });
+        } else {
+          request.post(
+            translateOptions,
+            async function (translateError, translateResponse, translateBody) {
+              if (!translateError && translateResponse.statusCode === 200) {
+                const translatedText =
+                  JSON.parse(translateBody).message.result.translatedText;
+
+                const translatedChatLog = await Chat.findByIdAndUpdate(
+                  chatLog._id,
+                  {
+                    $push: {
+                      translated: {
+                        langCode: targetLanguage,
+                        txt: translatedText,
+                      },
+                    },
+                  },
+                  { new: true }
+                ).populate('user');
+
+                // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
+                data.ioOfChat.to(chatLog.room).emit('translateChat', {
+                  translatedChatLog,
+                });
+              } else {
+                console.log('Translation Error:', translateResponse.statusCode);
+              }
+            }
+          );
+        }
       } else {
         console.log('Language Detection Error:', detectResponse.statusCode);
       }
