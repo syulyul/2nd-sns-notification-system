@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { useLocation, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
-import axios from 'axios';
 
 const ChatContainer = () => {
   // const params = useParams();
@@ -47,11 +46,10 @@ const ChatContainer = () => {
     );
   };
 
-  const onSendChat = () => {
-    dispatch(sendChat({ roomId: room._id, chatTxt, user }));
-  };
-
-  let socket;
+  let socket = io.connect(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
+    path: '/socket.io',
+    transports: ['websocket'],
+  });
 
   useEffect(() => {
     if (room && !error) {
@@ -83,8 +81,13 @@ const ChatContainer = () => {
     }
   }, [room]);
 
+  const onSendChat = () => {
+    // dispatch(sendChat({ roomId: room._id, chatTxt, user }));
+    socket.emit('sendChat', { roomId: room._id, chatTxt });
+  };
+
   const onTranslate = (chatlog) => {
-    console.log(chatlog);
+    // console.log(chatlog);
     socket.emit('translateChat', chatlog);
   };
 
