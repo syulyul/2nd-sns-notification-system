@@ -14,7 +14,7 @@ const CONCAT_CHATS = 'chats/CONCAT_CHATS';
 const [SEND_CHAT, SEND_CHAT_SUCCESS, SEND_CHAT_FAILURE] =
   createRequestActionTypes('chats/SEND_CHAT');
 
-const TRANSLATE_CHATS = 'chats/TRANSLATE_CHATS';
+const TRANSLATE_CHAT = 'chats/TRANSLATE_CHAT';
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -34,16 +34,19 @@ export const concatChats = createAction(CONCAT_CHATS, ({ newChat }) => ({
   newChat,
 }));
 
-export const translateChats = createAction(TRANSLATE_CHATS, ({ translatedChat }) => ({
-  translatedChat,
-}));
+export const translateChat = createAction(
+  TRANSLATE_CHAT,
+  ({ translatedChatLog }) => ({
+    translatedChatLog,
+  })
+);
 
 const enterRoomSaga = createRequestSaga(ENTER_ROOM, chatsAPI.enterRoom);
 const sendChatSaga = createRequestSaga(SEND_CHAT, chatsAPI.sendChat);
 
 export function* chatsSaga() {
   yield takeLatest(ENTER_ROOM, enterRoomSaga);
-  yield takeLatest(SEND_CHAT, sendChatSaga);
+  // yield takeLatest(SEND_CHAT, sendChatSaga);
 }
 
 const initialState = {
@@ -51,6 +54,7 @@ const initialState = {
   chats: null,
   chatTxt: '',
   error: null,
+  newChat: null,
 };
 
 const chats = handleActions(
@@ -66,6 +70,7 @@ const chats = handleActions(
       ...state,
       room: room,
       chats: chats,
+      newChat: new Date(),
       error: null,
     }),
     [ENTER_ROOM_FAILURE]: (state, { payload: error }) => ({
@@ -75,6 +80,12 @@ const chats = handleActions(
     [CONCAT_CHATS]: (state, { payload: { newChat } }) => ({
       ...state,
       chats: [...state.chats, newChat],
+      newChat,
+    }),
+    [SEND_CHAT]: (state, { payload: { newChat } }) => ({
+      ...state,
+      chatTxt: '',
+      error: null,
     }),
     [SEND_CHAT_SUCCESS]: (state, { payload: { newChat } }) => ({
       ...state,
@@ -85,9 +96,13 @@ const chats = handleActions(
       ...state,
       error,
     }),
-    [TRANSLATE_CHATS]: (state, { payload: { translatedChat } }) => ({
+    [TRANSLATE_CHAT]: (state, { payload: { translatedChatLog } }) => ({
       ...state,
-      chats: [...state.chats, translatedChat],
+      chats: state.chats.map((chat) => {
+        if (chat._id === translatedChatLog._id) {
+          return translatedChatLog;
+        } else return chat;
+      }),
     }),
   },
   initialState

@@ -100,7 +100,7 @@ public class AuthController {
         String sessionId = UUID.randomUUID().toString();
         Cookie cookie = new Cookie("sessionId", sessionId);
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
+//        cookie.setHttpOnly(true);
         response.addCookie(cookie);
         redisService.getValueOps()
             .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.HOURS);

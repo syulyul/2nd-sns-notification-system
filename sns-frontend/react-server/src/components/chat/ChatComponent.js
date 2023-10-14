@@ -191,10 +191,9 @@ const StyledChatBtn = styled.button`
   }
 `;
 
-const ChatItem = ({ chatlog, loginUser }) => {
-  const { _id, room, user, chat, files, createdAt } = chatlog;
+const ChatItem = ({ chatLog, loginUser }) => {
+  const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
-  console.log(loginUser, user);
   return (
     <ChatMessage
       className={
@@ -202,6 +201,11 @@ const ChatItem = ({ chatlog, loginUser }) => {
       }
     >
       {chat}
+      {translated.map((result) => (
+        <span>
+          {result.langCode}:{result.txt}
+        </span>
+      ))}
     </ChatMessage>
   );
 };
@@ -209,10 +213,14 @@ const ChatItem = ({ chatlog, loginUser }) => {
 const ChatComponent = ({
   room,
   chats,
+  newChat,
   user,
   onChange,
   chatTxt,
   onSendChat,
+  onTranslate,
+  targetLanguage,
+  setTargetLanguage,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   const messageEndRef = useRef(null);
@@ -220,15 +228,7 @@ const ChatComponent = ({
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'auto' });
     }
-  }, [chats]);
-
-  const socket = io.connect(
-    `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
-    {
-      path: '/socket.io',
-      transports: ['websocket'],
-    }
-  );
+  }, [newChat]);
 
   return (
     <ChatContainer>
@@ -236,6 +236,24 @@ const ChatComponent = ({
         <TitleStyle>{`🌱 ${room.users[0]}, ${room.users[1]} 🌱`}</TitleStyle>
       )}
 
+      <select
+        onChange={(e) => setTargetLanguage(e.target.value)}
+        value={targetLanguage}
+      >
+        <option value="ko">한국어</option>
+        <option value="en">영어</option>
+        <option value="ja">일본어</option>
+        <option value="zh-CN">중국어 간체</option>
+        <option value="zh-TW">중국어 번체</option>
+        <option value="vi">베트남어</option>
+        <option value="id">인도네시아어</option>
+        <option value="th">태국어</option>
+        <option value="de">독일어</option>
+        <option value="ru">러시아어</option>
+        <option value="es">스페인어</option>
+        <option value="it">이탈리아어</option>
+        <option value="fr">프랑스어</option>
+      </select>
       <StyledChatList>
         <ChatMessage>
           {/* <UserImage
@@ -252,20 +270,20 @@ const ChatComponent = ({
             </ChatMessage> */}
           {/* </div> */}
           {chats &&
-            chats.map((chatlog) => (
+            chats.map((chatLog) => (
               <div>
-                {user.no !== chatlog.user.mno && (
-                  <div className={'UserName'}>{`${chatlog.user.mno}`}</div>
+                {user.no !== chatLog.user.mno && (
+                  <div className={'UserName'}>{`${chatLog.user.mno}`}</div>
                 )}
                 {/* <UserImage src="" /> */}
                 {/* <Username>{`${chatlog.user.mno}`}</Username> */}
                 <ChatItem
-                  chatlog={chatlog}
-                  key={chatlog._id}
+                  chatLog={chatLog}
+                  key={chatLog._id}
                   loginUser={user}
                 />
-                {user.no !== chatlog.user.mno && (
-                  <button onClick={() => socket.emit("translateChat", chatlog.chat)}>번역</button>
+                {user.no !== chatLog.user.mno && (
+                  <button onClick={(e) => onTranslate(chatLog)}>번역</button>
                 )}
                 <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>
@@ -276,12 +294,12 @@ const ChatComponent = ({
       <SendChatBlock>
         <StyledInputContainer>
           <StyledInput
-            type='text'
+            type="text"
             onChange={onChange}
             value={chatTxt}
-            name='chatTxt'
-            className='inputChatTxt'
-            placeholder='메시지를 입력하세요'
+            name="chatTxt"
+            className="inputChatTxt"
+            placeholder="메시지를 입력하세요"
           />
           {/* <StyledInput
             type="file"
