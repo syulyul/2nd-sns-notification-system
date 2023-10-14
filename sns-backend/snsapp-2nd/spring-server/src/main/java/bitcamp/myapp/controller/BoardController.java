@@ -177,11 +177,13 @@ public class BoardController {
 
 
   @PostMapping("list/{category}")
-  public String searchBoards(@PathVariable int category,
+  public String searchBoards(
+      @PathVariable int category,
       @RequestParam("keyword") String keyword,
       @RequestParam(defaultValue = "1") int page) throws Exception {
     String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
     String queryString = String.format("&keyword=%s&page=%d", encodedKeyword, page);
+
     return "redirect:/board/list?category=" + category + queryString;
   }
 
@@ -388,6 +390,25 @@ public class BoardController {
       e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  @GetMapping("/searchBoards")
+  @ResponseBody
+  public ResponseEntity searchBoards(
+      @RequestParam int category,
+      @RequestParam(name = "searchTxt") String keyword,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "6") int pageSize) {
+    List<Board> resultList;
+//    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+    try {
+      resultList = boardService.searchBoardsList(category, keyword, pageSize, page);
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(resultList, HttpStatus.OK);
   }
 
 

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeField, searchMembers } from '../../modules/myPage';
-import SearchUserComponent from '../../components/myPage/SearchUserComponent';
+import Search from '../../components/common/Search';
+
 
 const SearchUserContainer = () => {
   const dispatch = useDispatch();
@@ -19,9 +20,11 @@ const SearchUserContainer = () => {
   };
 
   return (
-    <SearchUserComponent
+    <Search
+      title="🔍️ 친구 찾기"
       searchTxt={searchTxt}
       onSubmitSearch={onSubmitSearch}
+      placeholder="이름을 입력하세요"
       onChange={onChange}
     />
   );
