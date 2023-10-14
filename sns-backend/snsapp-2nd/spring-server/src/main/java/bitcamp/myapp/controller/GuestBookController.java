@@ -24,15 +24,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CookieValue;
 
 @RestController
 @RequestMapping("/guestBook")
 public class GuestBookController {
 
   @Autowired
-  GuestBookService guestBookService;
-  @Autowired
   MemberService memberService;
+  @Autowired
+  GuestBookService guestBookService;
   @Autowired
   RedisService redisService;
 
@@ -115,32 +116,45 @@ public class GuestBookController {
 
   // 좋아요 기능
   @PostMapping("like")
-  public int like(@RequestParam int guestBookNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+  public ResponseEntity like(@RequestParam int guestBookNo, @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
     try {
+      String sessionId = sessionCookie.getValue();
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
+      Member loginUser = memberService.get(loginUserNo);
       GuestBook guestBook = guestBookService.get(guestBookNo);
+
+      if (guestBook == null) {
+        return new ResponseEntity<>(guestBookNo, HttpStatus.NOT_FOUND);
+      }
+
       guestBookService.like(loginUser, guestBook);
-      loginUser.getLikedGuestBookSet().add(guestBookNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
+      return new ResponseEntity<>(guestBookNo, HttpStatus.OK);
     } catch (Exception e) {
-      return -1;
+      e.printStackTrace();
+      return new ResponseEntity<>(guestBookNo, HttpStatus.BAD_REQUEST);
     }
   }
 
   @PostMapping("unlike")
-  public int unlike(@RequestParam int guestBookNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+  public ResponseEntity unlike(@RequestParam int guestBookNo, @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
     try {
+      String sessionId = sessionCookie.getValue();
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
+      Member loginUser = memberService.get(loginUserNo);
       GuestBook guestBook = guestBookService.get(guestBookNo);
+
+      if (guestBook == null) {
+        return new ResponseEntity<>(guestBookNo, HttpStatus.NOT_FOUND);
+      }
+
       guestBookService.unlike(loginUser, guestBook);
-      loginUser.getLikedGuestBookSet().remove(guestBookNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
+      return new ResponseEntity<>(guestBookNo, HttpStatus.OK);
     } catch (Exception e) {
-      return -1;
+      e.printStackTrace();
+      return new ResponseEntity<>(guestBookNo, HttpStatus.BAD_REQUEST);
     }
   }
+
 
   @GetMapping("/likedGuestBooks")
   public ResponseEntity<List<Integer>> getLikedGuestBooks(HttpSession session) {

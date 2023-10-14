@@ -9,13 +9,15 @@ import {
 } from '../../modules/guestBook';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
+import { guestBooklike, guestBookunlike } from '../../modules/auth';
 
 const GuestBookContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const{ no } = useParams();
+  const guestBookNo = no;
 
-  const { guestBookList, error, mpno, guestBookOwnerNick, title, content, writer, guestBook } = useSelector(
+  const { guestBookList, error, mpno, guestBookOwnerNick, title, content, writer, guestBook, likeGuestBookSet } = useSelector(
       ({ auth, guestBook }) => ({
         guestBookList: guestBook.guestBookList,
         error: guestBook.guestBookError,
@@ -25,6 +27,7 @@ const GuestBookContainer = () => {
         writer: auth.user,
         mpno: no,
         guestBook: guestBook.guestBook,
+        likeGuestBookSet : auth.likeGuestBookList,
       }));
 
   useEffect(() => {
@@ -55,6 +58,15 @@ const GuestBookContainer = () => {
     dispatch(deleteGuestBook(guestBookNo));
   };
 
+  const handleLike = (guestBookNo) => {
+    console.log("handlelike called with:", guestBookNo);
+    dispatch(guestBooklike(guestBookNo));
+  };
+  const handleUnlike = (guestBookNo) => {
+    console.log("handleUnlike called with:", guestBookNo);
+    dispatch(guestBookunlike(guestBookNo));
+  };
+
   return (
       <GuestBookComponent
           title={title}
@@ -66,6 +78,9 @@ const GuestBookContainer = () => {
           guestBook={guestBook}
           guestBookOwnerNick={guestBookOwnerNick}
           mpno={no}
+          handleLike={handleLike}
+          handleUnlike={handleUnlike}
+          likeGuestBookSet={likeGuestBookSet}
       />
   );
 };
