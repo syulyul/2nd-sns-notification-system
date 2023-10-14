@@ -241,7 +241,7 @@ const ChatComponent = ({
             chats.map((chatlog) => (
               <div>
                 {user.no !== chatlog.user.mno && (
-                  <div className={'UserName'}>{`${chatlog.user.mno}`}</div>
+                  <div className={'UserName'}>{`${chatlog.user.nick}`}</div>
                 )}
                 {/* <UserImage src="" /> */}
                 {/* <Username>{`${chatlog.user.mno}`}</Username> */}
