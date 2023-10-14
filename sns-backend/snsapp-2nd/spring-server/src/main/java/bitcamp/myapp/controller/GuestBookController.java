@@ -1,7 +1,6 @@
 package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.GuestBookService;
-import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.vo.GuestBook;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
@@ -28,9 +27,6 @@ public class GuestBookController {
 
   @Autowired
   GuestBookService guestBookService;
-
-  @Autowired
-  MyPageService myPageService;
 
   {
     System.out.println("GuestBookController 생성됨!");

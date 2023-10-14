@@ -113,9 +113,11 @@ const StyledImage = styled.img`
 
 const BoardDetailComponent = ({
   board,
+  boardNo,
   onNavigateToList,
-  onLike,
-  onUnlike,
+  handleUnlike,
+  handleLike,
+  likeBoardSet,
   comments,
   content,
   onEdit,
@@ -184,9 +186,15 @@ const BoardDetailComponent = ({
             {/*) : null}*/}
           </ButtonContainer>
         </form>
-        <LikeButton onClick={board && board.liked ? onUnlike : onLike}>
-          {board && board.liked ? '좋아요 취소❤️' : '좋아요 누르기 🤍'}
-        </LikeButton>
+        {likeBoardSet && likeBoardSet.includes(parseInt(boardNo)) ? (
+            <LikeButton onClick={() => handleUnlike(boardNo)}>
+              ️❤️
+            </LikeButton>
+        ) : (
+            <LikeButton onClick={() => handleLike(boardNo)}>
+              🤍
+            </LikeButton>
+        )}
         <StyledButton
           onClick={onNavigateToList}
           style={{ marginTop: '80px', marginLeft: '450px' }}

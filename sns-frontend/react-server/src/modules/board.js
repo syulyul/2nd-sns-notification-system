@@ -31,11 +31,6 @@ const [ADD_COMMENT, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE] =
 const [DELETE_COMMENT, DELETE_COMMENT_SUCCESS, DELETE_COMMENT_FAILURE] =
     createRequestActionTypes('comment/DELETE_COMMENT');
 
-//좋아요
-const [LIKE_BOARD, LIKE_BOARD_SUCCESS, LIKE_BOARD_FAILURE] = createRequestActionTypes('board/LIKE_BOARD');
-const [UNLIKE_BOARD, UNLIKE_BOARD_SUCCESS, UNLIKE_BOARD_FAILURE] = createRequestActionTypes('board/UNLIKE_BOARD');
-
-
 // --------------- createAction ------------------- //
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
@@ -66,10 +61,6 @@ export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
 export const addComment = createAction(ADD_COMMENT, ({ content, boardNo, writer }) => ({ content, boardNo, writer }));
 export const deleteComment = createAction(DELETE_COMMENT, ({ commentNo, boardNo }) => ({ commentNo, boardNo }));
 
-//좋아요
-export const likeBoard = createAction(LIKE_BOARD, (boardNo) => boardNo);
-export const unlikeBoard = createAction(UNLIKE_BOARD, (boardNo) => boardNo);
-
 // --------------- Saga ------------------- //
 
 //게시글
@@ -82,10 +73,6 @@ const deleteBoardSaga  = createRequestSaga(DELETE, boardAPI.deleteBoard);
 const addCommentSaga = createRequestSaga(ADD_COMMENT, boardAPI.addComment);
 const deleteCommentSaga = createRequestSaga(DELETE_COMMENT, boardAPI.deleteComment);
 
-//좋아요
-const likeBoardSaga = createRequestSaga(LIKE_BOARD, boardAPI.likeBoard);
-const unlikeBoardSaga = createRequestSaga(UNLIKE_BOARD, boardAPI.unlikeBoard);
-
 
 export function* boardSaga() {
   //게시글
@@ -93,14 +80,10 @@ export function* boardSaga() {
   yield takeLatest(DETAIL, detailSaga);
   yield takeLatest(FORM, formSaga);
   yield takeLatest(DELETE, deleteBoardSaga);
-
+  
   //댓글
   yield takeLatest(ADD_COMMENT, addCommentSaga);
   yield takeLatest(DELETE_COMMENT, deleteCommentSaga);
-
-  //좋아요
-  yield takeLatest(LIKE_BOARD, likeBoardSaga);
-  yield takeLatest(UNLIKE_BOARD, unlikeBoardSaga);
 }
 
 const initialState = {
@@ -186,26 +169,6 @@ const board = handleActions(
     [DELETE_COMMENT_FAILURE]: (state, { payload: error }) => ({
       ...state,
       commentError: error,
-    }),
-
-    //좋아요
-    [LIKE_BOARD_SUCCESS]: (state, { payload: board }) => ({
-      ...state,
-      boardError: null,
-      board,
-    }),
-    [LIKE_BOARD_FAILURE]: (state, { payload: error }) => ({
-      ...state,
-      boardError: error,
-    }),
-    [UNLIKE_BOARD_SUCCESS]: (state, { payload: board }) => ({
-      ...state,
-      boardError: null,
-      board,
-    }),
-    [UNLIKE_BOARD_FAILURE]: (state, { payload: error }) => ({
-      ...state,
-      boardError: error,
     }),
   },
   initialState

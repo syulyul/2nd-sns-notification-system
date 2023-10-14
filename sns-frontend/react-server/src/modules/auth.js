@@ -5,6 +5,7 @@ import createRequestSaga, {
 } from '../lib/createRequestSaga';
 import * as authAPI from '../lib/api/auth';
 import * as myPageAPI from '../lib/api/myPage';
+import * as boardAPI from '../lib/api/board';
 import { useCookies } from 'react-cookie';
 
 const CHANGE_FIELD = 'auth/CHANGE_FIELD';
@@ -27,6 +28,12 @@ const [FOLLOW, FOLLOW_SUCCESS, FOLLOW_FAILURE] =
 const [UNFOLLOW, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE] =
   createRequestActionTypes('myPage/UNFOLLOW');
 
+const [LIKE, LIKE_SUCCESS, LIKE_FAILURE] =
+    createRequestActionTypes('board/LIKE');
+
+const [UNLIKE, UNLIKE_SUCCESS, UNLIKE_FAILURE] =
+    createRequestActionTypes('board/UNLIKE');
+
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
   value,
@@ -46,6 +53,8 @@ export const check = createAction(CHECK);
 export const logout = createAction(LOGOUT);
 export const follow = createAction(FOLLOW, (followingNo) => followingNo);
 export const unfollow = createAction(UNFOLLOW, (followingNo) => followingNo);
+export const like = createAction(LIKE, (boardNo) => boardNo);
+export const unlike = createAction(UNLIKE, (boardNo) => boardNo);
 
 const registerSaga = createRequestSaga(REGISTER, authAPI.register);
 const loginSaga = createRequestSaga(LOGIN, authAPI.login);
@@ -53,6 +62,8 @@ const checkSaga = createRequestSaga(CHECK, authAPI.check);
 const logoutSaga = createRequestSaga(LOGOUT, authAPI.logout);
 const followSaga = createRequestSaga(FOLLOW, myPageAPI.follow);
 const unfollowSaga = createRequestSaga(UNFOLLOW, myPageAPI.unfollow);
+const likeSaga = createRequestSaga(LIKE, boardAPI.like);
+const unlikeSaga = createRequestSaga(UNLIKE, boardAPI.unlike);
 
 export function* authSaga() {
   yield takeLatest(REGISTER, registerSaga);
@@ -61,6 +72,8 @@ export function* authSaga() {
   yield takeLatest(LOGOUT, logoutSaga);
   yield takeLatest(FOLLOW, followSaga);
   yield takeLatest(UNFOLLOW, unfollowSaga);
+  yield takeLatest(LIKE, likeSaga);
+  yield takeLatest(UNLIKE, unlikeSaga);
 }
 
 const initialState = {
@@ -97,6 +110,7 @@ const auth = handleActions(
       fcmToken: '',
 
       followList: [],
+      likeBoardList: [],
     }),
 
     [REGISTER_SUCCESS]: (state, { payload: user }) => ({
@@ -104,6 +118,7 @@ const auth = handleActions(
       authError: null,
       user,
       followList: user.followMemberSet,
+      likeBoardList: user.likeBoardSet,
     }),
     [REGISTER_FAILURE]: (state, { payload: error }) => ({
       ...state,
@@ -115,6 +130,7 @@ const auth = handleActions(
       authError: null,
       user,
       followList: user.followMemberSet,
+      likeBoardList: user.likeBoardSet,
     }),
     [LOGIN_FAILURE]: (state, { payload: error }) => ({
       ...state,
@@ -125,6 +141,7 @@ const auth = handleActions(
       ...state,
       user,
       followList: user.followMemberSet,
+      likeBoardList: user.likeBoardSet,
       authError: null,
     }),
     [CHECK_FAILURE]: (state, { payload: error }) => ({
@@ -154,6 +171,23 @@ const auth = handleActions(
     [UNFOLLOW_FAILURE]: (state, { payload: error }) => ({
       ...state,
       myPageError: error,
+    }),
+    [LIKE_SUCCESS]: (state, { payload: boardNo }) => ({
+      ...state,
+      likeBoardList: state.likeBoardList.concat(boardNo),
+    }),
+    [LIKE_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
+    }),
+
+    [UNLIKE_SUCCESS]: (state, { payload: boardNo }) => ({
+      ...state,
+      likeBoardList: state.likeBoardList.filter((no) => no != boardNo),
+    }),
+    [UNLIKE_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
     }),
   },
   initialState

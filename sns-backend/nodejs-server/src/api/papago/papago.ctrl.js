@@ -1,17 +1,22 @@
 require('dotenv').config();
+import Chat from '../../schemas/chat';
+
 const request = require('request');
 
 const client_id = process.env.NAVER_PAPAGO_CLIENT_ID;
 const client_secret = process.env.NAVER_PAPAGO_CLIENT_SECRET;
 
-const translateAndDetectLang = (req, res) => {
-  const query = req.query.text;
+export const translateAndDetectLang = async (req, res) => {
+  const io = req.app.get('io');
+
+  const { text } = req.query; // 번역할 텍스트
+  // const query = await Chat.findOne({ chat: req.params.chat});
 
   // 먼저 언어 감지 API를 호출
   const detectApiUrl = 'https://naveropenapi.apigw.ntruss.com/langs/v1/dect';
   const detectOptions = {
     url: detectApiUrl,
-    form: { query },
+    form: { text },
     headers: {
       'X-NCP-APIGW-API-KEY-ID': client_id,
       'X-NCP-APIGW-API-KEY': client_secret,
@@ -38,7 +43,7 @@ const translateAndDetectLang = (req, res) => {
         form: {
           source: langCode,
           target: targetLanguage,
-          text: query,
+          text: text,
         },
         headers: {
           'X-NCP-APIGW-API-KEY-ID': client_id,
@@ -48,6 +53,18 @@ const translateAndDetectLang = (req, res) => {
 
       request.post(translateOptions, function (translateError, translateResponse, translateBody) {
         if (!translateError && translateResponse.statusCode === 200) {
+          const translatedText = JSON.parse(translateBody).message.result.translatedText;
+
+          const chat = Chat.create({
+            translated: [{
+              langCode: langCode,
+              txt: translatedText,
+            }],
+          });
+
+          // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
+          io.emit('translateChat', { translateChat: translatedText });
+
           res.writeHead(200, { 'Content-Type': 'text/json;charset=utf-8' });
           res.end(translateBody);
         } else {
@@ -61,5 +78,3 @@ const translateAndDetectLang = (req, res) => {
     }
   });
 };
-
-module.exports = { translateAndDetectLang };
