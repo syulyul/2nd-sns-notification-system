@@ -194,7 +194,6 @@ const StyledChatBtn = styled.button`
 const ChatItem = ({ chatlog, loginUser }) => {
   const { _id, room, user, chat, files, createdAt } = chatlog;
   const roomId = _id;
-  console.log(loginUser, user);
   return (
     <ChatMessage
       className={
@@ -213,6 +212,7 @@ const ChatComponent = ({
   onChange,
   chatTxt,
   onSendChat,
+  onTranslate,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   const messageEndRef = useRef(null);
@@ -221,14 +221,6 @@ const ChatComponent = ({
       messageEndRef.current.scrollIntoView({ behavior: 'auto' });
     }
   }, [chats]);
-
-  const socket = io.connect(
-    `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
-    {
-      path: '/socket.io',
-      transports: ['websocket'],
-    }
-  );
 
   return (
     <ChatContainer>
@@ -265,7 +257,7 @@ const ChatComponent = ({
                   loginUser={user}
                 />
                 {user.no !== chatlog.user.mno && (
-                  <button onClick={() => socket.emit("translateChat", chatlog.chat)}>번역</button>
+                  <button onClick={(e) => onTranslate(chatlog)}>번역</button>
                 )}
                 <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>
@@ -276,12 +268,12 @@ const ChatComponent = ({
       <SendChatBlock>
         <StyledInputContainer>
           <StyledInput
-            type='text'
+            type="text"
             onChange={onChange}
             value={chatTxt}
-            name='chatTxt'
-            className='inputChatTxt'
-            placeholder='메시지를 입력하세요'
+            name="chatTxt"
+            className="inputChatTxt"
+            placeholder="메시지를 입력하세요"
           />
           {/* <StyledInput
             type="file"

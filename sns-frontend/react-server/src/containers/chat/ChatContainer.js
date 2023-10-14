@@ -4,7 +4,9 @@ import {
   enterRoom,
   concatChats,
   changeField,
-  sendChat, translateChat, translateChats
+  sendChat,
+  translateChat,
+  translateChats,
 } from '../../modules/chats';
 import qs from 'qs';
 import { useEffect, useRef, useState } from 'react';
@@ -24,7 +26,7 @@ const ChatContainer = () => {
       chatTxt: chats.chatTxt,
       error: chats.error,
       user: auth.user,
-      translatedChat: chats.translatedChat
+      translatedChat: chats.translatedChat,
     })
   );
 
@@ -49,15 +51,14 @@ const ChatContainer = () => {
     dispatch(sendChat({ roomId: room._id, chatTxt, user }));
   };
 
+  let socket;
+
   useEffect(() => {
     if (room && !error) {
-      const socket = io.connect(
-        `${process.env.REACT_APP_NODE_SERVER_URL}/chat`,
-        {
-          path: '/socket.io',
-          transports: ['websocket'],
-        }
-      );
+      socket = io.connect(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
+        path: '/socket.io',
+        transports: ['websocket'],
+      });
 
       socket.emit('join', { roomId: room._id, user: chats.users });
       // socket.on('join', function (data) {
@@ -82,25 +83,10 @@ const ChatContainer = () => {
     }
   }, [room]);
 
-  useEffect(() => {
-    const socket = io.connect(
-      `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
-      {
-        path: '/socket.io',
-        transports: ['websocket'],
-      }
-    );
-
-    socket.on('translateChat', function (data) {
-      // 채팅 번역
-      const translatedChat = data.translateChat;
-      dispatch(translateChats({ translatedChat }));
-    });
-
-    return () => {
-      socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
-    };
-  });
+  const onTranslate = (chatlog) => {
+    console.log(chatlog);
+    socket.emit('translateChat', chatlog);
+  };
 
   return (
     <ChatComponent
@@ -112,6 +98,7 @@ const ChatContainer = () => {
       error={error}
       onChange={onChange}
       onSendChat={onSendChat}
+      onTranslate={onTranslate}
     />
   );
 };

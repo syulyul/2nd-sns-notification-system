@@ -24,6 +24,10 @@ export default (server, app) => {
       socket.join(data); // 네임스페이스 아래에 존재하는 방에 접속
     });
 
+    socket.on('translateChat', (data) => {
+      console.log(data);
+    });
+
     // socket.on('disconnect', async () => {
     //   console.log('chat 네임스페이스 접속 해제');
     //   console.log(socket.id, '연결 종료 시 소켓');
