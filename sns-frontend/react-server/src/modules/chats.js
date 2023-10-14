@@ -14,6 +14,8 @@ const CONCAT_CHATS = 'chats/CONCAT_CHATS';
 const [SEND_CHAT, SEND_CHAT_SUCCESS, SEND_CHAT_FAILURE] =
   createRequestActionTypes('chats/SEND_CHAT');
 
+const TRANSLATE_CHATS = 'chats/TRANSLATE_CHATS';
+
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
   value,
@@ -30,6 +32,10 @@ export const sendChat = createAction(SEND_CHAT, ({ roomId, chatTxt }) => ({
 
 export const concatChats = createAction(CONCAT_CHATS, ({ newChat }) => ({
   newChat,
+}));
+
+export const translateChats = createAction(TRANSLATE_CHATS, ({ translatedChat }) => ({
+  translatedChat,
 }));
 
 const enterRoomSaga = createRequestSaga(ENTER_ROOM, chatsAPI.enterRoom);
@@ -78,6 +84,10 @@ const chats = handleActions(
     [SEND_CHAT_FAILURE]: (state, { payload: error }) => ({
       ...state,
       error,
+    }),
+    [TRANSLATE_CHATS]: (state, { payload: { translatedChat } }) => ({
+      ...state,
+      chats: [...state.chats, translatedChat],
     }),
   },
   initialState
