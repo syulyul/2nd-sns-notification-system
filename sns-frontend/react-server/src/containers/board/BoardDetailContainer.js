@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
-import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment, likeBoard, unlikeBoard } from '../../modules/board';
+import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment } from '../../modules/board';
+import { like, unlike } from '../../modules/auth';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   const [content, setContent] = useState('');
+  const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
 
   const boardDefault = {
@@ -30,11 +32,12 @@ const BoardDetailContainer = () => {
     createdAt: new Date().toISOString()
   };
 
-  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError, user }  = useSelector(state => ({
+  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError, user, likeBoardSet}  = useSelector(state => ({
     board: state.board.board,
     comments: state.board.comments,
     boardError: state.board.boardError,
     user: state.auth.user,
+    likeBoardSet : state.auth.likeBoardList,
   }));
 
   const { boardNo, category } = useParams();
@@ -82,15 +85,13 @@ const BoardDetailContainer = () => {
     setContent(e.target.value);
   };
 
-  //좋아요
-  const onLike = () => {
-    dispatch(likeBoard(boardNo));
+// 좋아요
+  const handleLike = (boardNo) => {
+    dispatch(like(boardNo));
   };
-
-  const onUnlike = () => {
-    dispatch(unlikeBoard(boardNo));
+  const handleUnlike = (boardNo) => {
+    dispatch(unlike(boardNo));
   };
-
 
   useEffect(() => {
     dispatch(detail({ category, boardNo }));
@@ -111,9 +112,11 @@ const BoardDetailContainer = () => {
             onReset={onReset}
             onDelete={onDelete}
             onDeleteComment={onDeleteComment}
-            onLike={onLike}
-            onUnlike={onUnlike}
             CommentChange={CommentChange}
+            boardNo={boardNo}
+            handleLike={handleLike}
+            handleUnlike={handleUnlike}
+            likeBoardSet={likeBoardSet}
         />
   );
 };

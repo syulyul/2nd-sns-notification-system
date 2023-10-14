@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
+import FollowButton from './FollowButton';
 
 const Sidebar = styled.div`
   float: left;
@@ -97,9 +98,13 @@ const StateMessageTextarea = styled.textarea`
 `;
 
 const MemberInfoComponent = ({
+  user,
   myPageData,
   onFollowingList,
   onFollowerList,
+  handleFollow,
+  handleUnfollow,
+  followMemberSet,
 }) => {
   if (myPageData == null) {
     return <div>loading...</div>;
@@ -115,9 +120,18 @@ const MemberInfoComponent = ({
       )}
       <h2>{myPageData.nick}</h2>
       <StateMessageLabel>상태메시지</StateMessageLabel>
-      <EditInfoLink to={`/myPage/${myPageData.no}/info`}>
-        내 정보 수정
-      </EditInfoLink>
+      {user.no === myPageData.no ? (
+        <EditInfoLink to={`/myPage/${myPageData.no}/info`}>
+          내 정보 수정
+        </EditInfoLink>
+      ) : (
+        <FollowButton
+          memberNo={myPageData.no}
+          followMemberSet={followMemberSet}
+          handleUnfollow={handleUnfollow}
+          handleFollow={handleFollow}
+        />
+      )}
       <StateMessageTextarea
         name="stateMessage"
         readOnly

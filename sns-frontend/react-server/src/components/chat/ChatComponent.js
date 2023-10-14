@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRef } from 'react';
-import { translateChat } from '../../modules/chats';
-import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
+import { useRef, useEffect } from 'react';
 // import { roomList } from '../../modules/rooms';
 
 const ChatContainer = styled.div`
@@ -33,7 +31,7 @@ const SendChatBlock = styled.div`
 `;
 
 const StyledInputContainer = styled.div`
-  // display: inline-flex;
+  display: inline-flex;
   margin-bottom: 10px;
   align-items: center;
 `;
@@ -75,7 +73,7 @@ const StyledInput = styled.input`
 
   &[type='text'] {
     font-size: 20px;
-    width: 60%;
+    width: 68%;
     border-radius: 6px;
     background: #ffffff;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
@@ -90,7 +88,7 @@ const StyledInput = styled.input`
 const StyledChatList = styled.div`
   flex-direction: column-reverse; /* 역순으로 채팅이 쌓이도록 설정 */
   overflow-y: auto; /* 채팅이 넘치면 스크롤 가능하도록 설정 */
-  margin: 0 40px 10px 40px;
+  margin: 0 30px 10px 40px;
 `;
 
 const ChatMessage = styled.div`
@@ -111,6 +109,8 @@ const ChatMessage = styled.div`
     float: right;
     margin: 10px auto;
     margin-bottom: 20px;
+    margin-right: 20px;
+    padding-right: 10px;
     align-self: flex-end;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
   }
@@ -215,6 +215,12 @@ const ChatComponent = ({
   onSendChat,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
+  const messageEndRef = useRef(null);
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: 'auto' });
+    }
+  }, [chats]);
 
   const socket = io.connect(
     `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
@@ -261,6 +267,7 @@ const ChatComponent = ({
                 {user.no !== chatlog.user.mno && (
                   <button onClick={() => socket.emit("translateChat", chatlog.chat)}>번역</button>
                 )}
+                <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>
             ))}
           {/* </div> */}

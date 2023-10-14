@@ -46,7 +46,7 @@ const ChatContainer = () => {
   };
 
   const onSendChat = () => {
-    dispatch(sendChat({ roomId: room._id, chatTxt }));
+    dispatch(sendChat({ roomId: room._id, chatTxt, user }));
   };
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const ChatContainer = () => {
         }
       );
 
-      socket.emit('join', { roomId: room._id, User: user });
+      socket.emit('join', { roomId: room._id, user: chats.users });
       // socket.on('join', function (data) {
       //   // 입장
       //   const newChat = data.chat;

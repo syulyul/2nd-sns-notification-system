@@ -1,12 +1,11 @@
-import ExampleContainer from '../containers/ExampleContainer';
+import MainPageContainer from '../containers/MainPageContainer';
 import HeaderContainer from '../containers/common/HeaderContainer';
 
 const ExamplePage = () => {
   return (
     <>
       <HeaderContainer />
-      <ExampleContainer />
-      <ExampleContainer />
+      <MainPageContainer />
     </>
   );
 };
