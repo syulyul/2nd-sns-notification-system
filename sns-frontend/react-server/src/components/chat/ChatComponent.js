@@ -192,7 +192,7 @@ const StyledChatBtn = styled.button`
 `;
 
 const ChatItem = ({ chatLog, loginUser }) => {
-  const { _id, room, user, chat, files, createdAt } = chatLog;
+  const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
   return (
     <ChatMessage
@@ -201,6 +201,11 @@ const ChatItem = ({ chatLog, loginUser }) => {
       }
     >
       {chat}
+      {translated.map((result) => (
+        <span>
+          {result.langCode}:{result.txt}
+        </span>
+      ))}
     </ChatMessage>
   );
 };

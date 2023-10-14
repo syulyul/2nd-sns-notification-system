@@ -70,6 +70,7 @@ const chats = handleActions(
       ...state,
       room: room,
       chats: chats,
+      newChat: new Date(),
       error: null,
     }),
     [ENTER_ROOM_FAILURE]: (state, { payload: error }) => ({
