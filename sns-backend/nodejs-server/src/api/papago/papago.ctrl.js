@@ -32,13 +32,7 @@ export const translateAndDetectLang = async (data) => {
         const translateApiUrl =
           'https://naveropenapi.apigw.ntruss.com/nmt/v1/translation';
 
-        let targetLanguage = 'en'; // 기본적으로 영어로 설정
-
-        if (langCode === 'ko') {
-          targetLanguage = 'en'; // 한국어일 때 영어로 번역
-        } else if (langCode === 'en') {
-          targetLanguage = 'ko'; // 영어일 때 한국어로 번역
-        }
+        let targetLanguage = data.body.targetLanguage;
 
         const translateOptions = {
           url: translateApiUrl,
@@ -55,14 +49,13 @@ export const translateAndDetectLang = async (data) => {
 
         let isTranslated = false;
         for (let i = 0; chatLog.translated[i] != null; i++) {
-          console.log(chatLog.translated[i].langCode, targetLanguage);
           if (chatLog.translated[i].langCode === targetLanguage) {
             isTranslated = true;
             break;
           }
         }
 
-        if (isTranslated) {
+        if (isTranslated || langCode === targetLanguage) {
           console.log('이미 번역된 언어');
           data.ioOfChat.to(chatLog.room).emit('translateChat', {
             translatedChatLog: '이미 번역된 언어',

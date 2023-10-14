@@ -18,6 +18,7 @@ const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
+  const [targetLanguage, setTargetLanguage] = useState('ko');
   const { room, chats, newChat, chatTxt, error, user, translatedChat } =
     useSelector(({ chats, auth }) => ({
       room: chats.room,
@@ -95,8 +96,11 @@ const ChatContainer = () => {
 
   let onTranslate = (chatLog) => {
     // console.log(chatLog);
+    const req = {};
+    req.targetLanguage = targetLanguage;
+    req.chatLog = chatLog;
     if (socket) {
-      socket.emit('translateChat', chatLog);
+      socket.emit('translateChat', req);
     }
   };
 
@@ -112,6 +116,8 @@ const ChatContainer = () => {
       onChange={onChange}
       onSendChat={onSendChat}
       onTranslate={onTranslate}
+      targetLanguage={targetLanguage}
+      setTargetLanguage={setTargetLanguage}
     />
   );
 };

@@ -38,7 +38,7 @@ export default (server, app) => {
     });
 
     socket.on('translateChat', (data) => {
-      const reqData = { body: { chatLog: data } };
+      const reqData = { body: data };
       reqData.ioOfChat = chat;
       translateAndDetectLang(reqData);
     });
