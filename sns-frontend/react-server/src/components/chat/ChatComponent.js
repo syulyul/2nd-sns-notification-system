@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import io from 'socket.io-client';
 import { useRef, useEffect } from 'react';
 // import { roomList } from '../../modules/rooms';
 
@@ -63,11 +64,13 @@ const StyledInput = styled.input`
     line-height: 130%;
     border: none;
     font-family: 'UhBeeKeongKeong', sans-serif;
+
     &:hover {
       background: rgb(77, 77, 77);
       color: #fff;
     }
   }
+
   &[type='text'] {
     font-size: 20px;
     width: 68%;
@@ -75,6 +78,7 @@ const StyledInput = styled.input`
     background: #ffffff;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
     /* 포커스 스타일 제거 */
+
     &:focus {
       outline: none;
     }
@@ -93,6 +97,7 @@ const ChatMessage = styled.div`
   // align-items: flex-start;
   margin: 10px auto;
   word-wrap: break-word;
+
   .StyledChatMine {
     position: relative;
     background: #426b1f;
@@ -179,6 +184,7 @@ const StyledChatBtn = styled.button`
   cursor: pointer;
   margin: 10px;
   align-self: flex-end; /* 맨 아래에 정렬 */
+
   &:hover {
     background: rgb(77, 77, 77);
     color: #fff;
@@ -216,6 +222,14 @@ const ChatComponent = ({
     }
   }, [chats]);
 
+  const socket = io.connect(
+    `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
+    {
+      path: '/socket.io',
+      transports: ['websocket'],
+    }
+  );
+
   return (
     <ChatContainer>
       {room && (
@@ -250,6 +264,9 @@ const ChatComponent = ({
                   key={chatlog._id}
                   loginUser={user}
                 />
+                {user.no !== chatlog.user.mno && (
+                  <button onClick={() => socket.emit("translateChat", chatlog.chat)}>번역</button>
+                )}
                 <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>
             ))}
@@ -259,12 +276,12 @@ const ChatComponent = ({
       <SendChatBlock>
         <StyledInputContainer>
           <StyledInput
-            type="text"
+            type='text'
             onChange={onChange}
             value={chatTxt}
-            name="chatTxt"
-            className="inputChatTxt"
-            placeholder="메시지를 입력하세요"
+            name='chatTxt'
+            className='inputChatTxt'
+            placeholder='메시지를 입력하세요'
           />
           {/* <StyledInput
             type="file"
