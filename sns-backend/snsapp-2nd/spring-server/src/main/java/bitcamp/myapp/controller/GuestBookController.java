@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,21 +58,32 @@ public class GuestBookController {
   }
 
   @DeleteMapping("delete/{guestBookNo}")
-  public ResponseEntity delete(@PathVariable int guestBookNo, HttpSession session)
-      throws Exception {
-//    Member loginUser = (Member) session.getAttribute("loginUser");
-//    if (loginUser == null) {
-//      return new ResponseEntity<>("not exist writer", HttpStatus.BAD_REQUEST);
-//    }
-
+  public ResponseEntity delete(
+      @PathVariable int guestBookNo,
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie) throws Exception {
     GuestBook g = guestBookService.get(guestBookNo);
 
-//    if (g == null || g.getWriter().getNo() != loginUser.getNo()) {
-//      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-//    } else {
-    guestBookService.delete(g.getNo());
-    return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    LoginUser loginUserObject = null;
+    try {
+      String sessionId = sessionCookie.getValue();
+      String temp = (String) redisService.getValueOps().get(sessionId);
+      if (temp != null) {
+        int loginUserNo = Integer.parseInt(temp);
+        loginUserObject = new LoginUser(memberService.get(loginUserNo));
+        if (g == null || g.getWriter().getNo() != loginUserObject.getNo()) {
+          return new ResponseEntity<>("해당하는 방명록이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        } else {
+          guestBookService.delete(g.getNo());
+          return new ResponseEntity<>(HttpStatus.OK);
+        }
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @GetMapping("{no}")
@@ -90,7 +102,6 @@ public class GuestBookController {
 //    model.addAttribute("page", page);
 //    model.addAttribute("pageSize", pageSize);
 
-    // 이 부분에서 회원의 닉네임을 가져와서 모델에 추가
     String guestBookOwnerNick = guestBookService.getMemberNickByNo(no);
 //    model.addAttribute("guestBookOwnerNick", guestBookOwnerNick);
 //

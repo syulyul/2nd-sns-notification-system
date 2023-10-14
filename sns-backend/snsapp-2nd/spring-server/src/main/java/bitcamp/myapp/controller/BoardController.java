@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.Cookie;
@@ -97,16 +98,33 @@ public class BoardController {
   }
 
   @DeleteMapping("delete/{boardNo}")
-  public ResponseEntity delete(@PathVariable int boardNo, @RequestParam int category, HttpSession session) throws Exception {
-
+  public ResponseEntity delete(
+      @PathVariable int boardNo,
+      @RequestParam int category,
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie) throws Exception {
     Board b = boardService.get(boardNo);
 
-    //if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-     // return new ResponseEntity<>("게시글이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
-    //} else {
-      boardService.delete(b.getNo());
-      return new ResponseEntity<>(HttpStatus.OK);
-    //}
+    LoginUser loginUserObject = null;
+    try {
+      String sessionId = sessionCookie.getValue();
+      String temp = (String) redisService.getValueOps().get(sessionId);
+      if (temp != null) {
+        int loginUserNo = Integer.parseInt(temp);
+        loginUserObject = new LoginUser(memberService.get(loginUserNo));
+        if (b == null || b.getWriter().getNo() != loginUserObject.getNo()) {
+          return new ResponseEntity<>("게시글이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        } else {
+          boardService.delete(b.getNo());
+          return new ResponseEntity<>(HttpStatus.OK);
+        }
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @GetMapping("detail")
@@ -171,7 +189,8 @@ public class BoardController {
     if (category == 1) {
       return ResponseEntity.ok(resultMap);
     } else {
-      return ResponseEntity.badRequest().body(Collections.singletonMap("error", "유효하지 않은 카테고리입니다."));
+      return ResponseEntity.badRequest()
+          .body(Collections.singletonMap("error", "유효하지 않은 카테고리입니다."));
     }
   }
 
@@ -237,14 +256,15 @@ public class BoardController {
 
   // 좋아요 기능
   @PostMapping("like")
-  public ResponseEntity like(@RequestParam int boardNo, @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
+  public ResponseEntity like(@RequestParam int boardNo,
+      @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
     try {
       String sessionId = sessionCookie.getValue();
       int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
       Member loginUser = memberService.get(loginUserNo);
       Board board = boardService.get(boardNo);
 
-      if(board == null) {
+      if (board == null) {
         return new ResponseEntity<>(boardNo, HttpStatus.NOT_FOUND);
       }
 
@@ -257,14 +277,15 @@ public class BoardController {
   }
 
   @PostMapping("unlike")
-  public ResponseEntity unlike(@RequestParam int boardNo, @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
+  public ResponseEntity unlike(@RequestParam int boardNo,
+      @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
     try {
       String sessionId = sessionCookie.getValue();
       int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
       Member loginUser = memberService.get(loginUserNo);
       Board board = boardService.get(boardNo);
 
-      if(board == null) {
+      if (board == null) {
         return new ResponseEntity<>(boardNo, HttpStatus.NOT_FOUND);
       }
 
