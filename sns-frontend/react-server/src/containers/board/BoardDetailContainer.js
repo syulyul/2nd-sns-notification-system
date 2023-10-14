@@ -73,12 +73,14 @@ const BoardDetailContainer = () => {
       writer: user,
     };
     dispatch(addComment(commentData));
+    dispatch(detail({ category, boardNo }));
     setContent('');  // 입력 필드 초기화
   };
 
   //댓글삭제
   const onDeleteComment = (commentNo) => {
     dispatch(deleteComment({commentNo, boardNo}));
+    dispatch(detail({ category, boardNo }));
   };
 
   const CommentChange = (e) => {
