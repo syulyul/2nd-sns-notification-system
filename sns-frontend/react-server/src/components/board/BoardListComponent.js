@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
 import Pagination from '../common/Pagination';
+import Search from '../common/Search';
 
 const Container = styled.div`
 `;
@@ -123,14 +124,6 @@ const BoardListComponent = ({
 }) => {
   return (
       <Container>
-        <SearchBox>
-          <form>
-            <p>🔍️ 게시글 찾기
-              <SearchInput type="text" placeholder="검색어를 입력해주세요." />
-              <SearchButton>검색</SearchButton>
-            </p>
-          </form>
-        </SearchBox>
 
         <ActionButtonsContainer>
           <Link to={`/board/form/1`}>
