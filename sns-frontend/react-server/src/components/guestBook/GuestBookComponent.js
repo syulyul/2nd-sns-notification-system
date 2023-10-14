@@ -242,6 +242,15 @@ const DeleteButtonContainer = styled.div`
   margin-top: 10px;
 `;
 
+const LikeButton = styled(StyledButton)`
+  margin-top: 30px;
+  margin-left: 500px;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  color: black;
+`;
+
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
@@ -256,17 +265,12 @@ const GuestBookComponent = ({
   onSubmit,
   guestBookList,
   guestBookOwnerNick,
-  guestBook
+  guestBook,
+  guestBookNo,
+  handleUnlike,
+  handleLike,
+  likeGuestBookSet
 }) => {
-
-  const [likes, setLikes] = useState(guestBookList.map(() => false));
-
-  const toggleLike = (index) => {
-    const newLikes = [...likes];
-    newLikes[index] = !newLikes[index];
-    setLikes(newLikes);
-  };
-
   return (
     <>
       <GuestbookTitle>
@@ -346,9 +350,15 @@ const GuestBookComponent = ({
                     <GuestBookTextarea readOnly>
                       {guestBook.content || '내용'}
                     </GuestBookTextarea>
-                    <LikeButtonContainer onClick={() => toggleLike(index)}>
-                      {likes[index] ? '❤️' : '🤍'}
-                    </LikeButtonContainer>
+                    {likeGuestBookSet && likeGuestBookSet.includes(guestBook.no) ? (
+                        <LikeButton onClick={() => handleUnlike(guestBook.no)}>
+                          ❤️
+                        </LikeButton>
+                    ) : (
+                        <LikeButton onClick={() => handleLike(guestBook.no)}>
+                          🤍
+                        </LikeButton>
+                    )}
                   </ContentLikeCell>
                 </SecondRow>
               </tbody>
