@@ -237,7 +237,7 @@ const ChatComponent = ({
   return (
     <ChatContainer>
       {room && (
-        <TitleStyle>{`🌱 ${room.users[0]}, ${room.users[1]} 🌱`}</TitleStyle>
+        <TitleStyle>{`🌱 ${room.users[0].nick}, ${room.users[1].nick} 🌱`}</TitleStyle>
       )}
 
       <select
@@ -293,7 +293,7 @@ const ChatComponent = ({
             chats.map((chatLog) => (
               <div>
                 {user.no !== chatLog.user.mno && (
-                  <div className={'UserName'}>{`${chatLog.user.mno}`}</div>
+                  <div className={'UserName'}>{`${chatLog.user.nick}`}</div>
                 )}
                 {/* <UserImage src="" /> */}
                 {/* <Username>{`${chatlog.user.mno}`}</Username> */}
