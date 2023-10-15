@@ -112,6 +112,7 @@ const StyledImage = styled.img`
 `;
 
 const BoardDetailComponent = ({
+  user,
   board,
   boardNo,
   onNavigateToList,
@@ -177,13 +178,13 @@ const BoardDetailComponent = ({
               : null}
           </div>
           <ButtonContainer>
-            {/*{board && board.editable ? (*/}
-            {/*  <>*/}
-                <StyledButton onClick={onEdit}>수정</StyledButton>
-                <StyledButton onClick={onReset}>초기화</StyledButton>
-                <StyledButton onClick={onDelete}>삭제</StyledButton>
-              {/*</>*/}
-            {/*) : null}*/}
+            {board?.writer?.no === user?.no && (
+                <>
+                  <StyledButton onClick={onEdit}>수정</StyledButton>
+                  <StyledButton onClick={onReset}>초기화</StyledButton>
+                  <StyledButton onClick={onDelete}>삭제</StyledButton>
+                </>
+            )}
           </ButtonContainer>
         </form>
         {likeBoardSet && likeBoardSet.includes(parseInt(boardNo)) ? (
@@ -216,34 +217,39 @@ const BoardDetailComponent = ({
       <div>
         {comments && comments.length > 0
           ? comments.map((boardComment) => (
-              <CommentContainer key={boardComment.id}>
-                <CommentMeta>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <ProfileImage
-                      src={
-                        boardComment  && boardComment.writer.photo
-                          ? `https://yourImageServer.com/${boardComment.writer.photo}`
-                          : '/images/default.png'
-                      }
-                      alt={
-                        boardComment && boardComment.writer.nick ? boardComment.writer.nick : 'Unknown'
-                      }
-                    />
-                    <span>
-                      {boardComment && boardComment.writer ? boardComment.writer.nick : 'Unknown'}
+                  <CommentContainer key={boardComment.id}>
+                    <CommentMeta>
+                      <div style={{display: 'flex', alignItems: 'center'}}>
+                        <ProfileImage
+                            src={
+                              boardComment && boardComment.writer.photo
+                                  ? `https://yourImageServer.com/${boardComment.writer.photo}`
+                                  : '/images/default.png'
+                            }
+                            alt={
+                              boardComment && boardComment.writer.nick
+                                  ? boardComment.writer.nick : 'Unknown'
+                            }
+                        />
+                        <span>
+                      {boardComment && boardComment.writer
+                          ? boardComment.writer.nick : 'Unknown'}
                     </span>
-                  </div>
-                  <span>
+                      </div>
+                      <span>
                     {boardComment && boardComment.createdAt
-                      ? new Date(boardComment.createdAt).toLocaleDateString()
-                      : 'Unknown date'}
+                        ? new Date(boardComment.createdAt).toLocaleDateString()
+                        : 'Unknown date'}
                   </span>
-                </CommentMeta>
-                <CommentContent>
-                  {boardComment ? boardComment.content : ''}
-                </CommentContent>
-                <StyledButton onClick={() => onDeleteComment(boardComment.no)}>삭제</StyledButton>
-              </CommentContainer>
+                    </CommentMeta>
+                    <CommentContent>
+                      {boardComment ? boardComment.content : ''}
+                    </CommentContent>
+                    {boardComment.writer.no === user.no && (
+                        <StyledButton onClick={() => onDeleteComment(
+                            boardComment.no)}>삭제</StyledButton>
+                    )}
+                  </CommentContainer>
             ))
           : null}
       </div>
