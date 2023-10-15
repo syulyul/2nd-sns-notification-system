@@ -73,7 +73,10 @@ export const loadBeforeChats = async (req, res, next) => {
       .skip((req.query.page - 1) * req.query.limit)
       .populate('user');
 
-    res.json({ beforeChats: chats, nextPage: parseInt(req.query.page) + 1 });
+    res.json({
+      beforeChats: chats.reverse(),
+      nextPage: parseInt(req.query.page) + 1,
+    });
   } catch (error) {
     res.status(403);
     console.error(error);
