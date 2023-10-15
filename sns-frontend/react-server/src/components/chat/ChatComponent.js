@@ -237,7 +237,7 @@ const ChatComponent = ({
   return (
     <ChatContainer>
       {room && (
-        <TitleStyle>{`🌱 ${room.users[0]}, ${room.users[1]} 🌱`}</TitleStyle>
+        <TitleStyle>{`🌱 ${room.users[0].nick}, ${room.users[1].nick} 🌱`}</TitleStyle>
       )}
 
       <select
