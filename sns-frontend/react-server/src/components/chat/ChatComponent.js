@@ -280,15 +280,6 @@ const ChatComponent = ({
             src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
             alt="User"
           /> */}
-          {/* <div> */}
-          {/* {room && <Username></Username>} */}
-          {/* <ChatMessage className="StyledChatOther">
-              남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
-            </ChatMessage>
-            <ChatMessage className="StyledChatMine">
-              내가 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
-            </ChatMessage> */}
-          {/* </div> */}
           {chats &&
             chats.map((chatLog) => (
               <div>
