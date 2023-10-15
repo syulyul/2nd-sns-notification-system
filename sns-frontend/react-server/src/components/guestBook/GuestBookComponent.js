@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
 import guestBook from '../../modules/guestBook';
+import Pagination from '../common/Pagination';
 
 const GuestbookTitle = styled.div`
   text-align: center;
@@ -269,7 +270,13 @@ const GuestBookComponent = ({
   guestBookNo,
   handleUnlike,
   handleLike,
-  likeGuestBookSet
+  likeGuestBookSet,
+  totalPages,
+  currentPage,
+  onPageChange,
+  lastPage,
+  page,
+  query,
 }) => {
   return (
     <>
@@ -369,6 +376,7 @@ const GuestBookComponent = ({
           </DeleteButtonContainer>
         </Container>
       ))}
+      <Pagination page={page} query={query} lastPage={lastPage} />
     </>
   );
 };

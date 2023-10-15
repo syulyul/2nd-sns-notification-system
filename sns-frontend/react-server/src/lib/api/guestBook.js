@@ -4,7 +4,10 @@ import qs from 'qs';
 export const post = ({ mpno, title, content, writer }) =>
     springClient.post('guestBook/add', { mpno, title, content, writer, });
 
-export const list = (no) => springClient.get(`/guestBook/${no}`);
+export const list = async ({ no, limit, page }) => {
+  const queryString = qs.stringify({ limit, page });
+  return await springClient.get(`/guestBook/${no}?${queryString}`);
+};
 
 export const deleteGuestBook = (guestBookNo) => springClient.delete(`/guestBook/delete/${guestBookNo}`);
 

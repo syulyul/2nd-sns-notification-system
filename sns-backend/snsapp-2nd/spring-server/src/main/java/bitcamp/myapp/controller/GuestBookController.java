@@ -92,27 +92,29 @@ public class GuestBookController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int pageSize,
       Model model, HttpSession session) throws Exception {
+
+    Member loginUser = (Member) session.getAttribute("loginUser");
+    List<GuestBook> guestBookList;
     int totalRecords;
 
-    List<GuestBook> guestBookList = guestBookService.list(no, pageSize, page);
+    guestBookList = guestBookService.list(no, pageSize, page);
     totalRecords = guestBookService.getTotalCount(no);
 
-//    model.addAttribute("guestBookList", guestBookList);
-//    model.addAttribute("maxPage", (totalRecords + (pageSize - 1)) / pageSize);
-//    model.addAttribute("page", page);
-//    model.addAttribute("pageSize", pageSize);
+    int maxPage = (totalRecords + (pageSize - 1)) / pageSize;
 
     String guestBookOwnerNick = guestBookService.getMemberNickByNo(no);
-//    model.addAttribute("guestBookOwnerNick", guestBookOwnerNick);
-//
-//    model.addAttribute("mpno", no);
 
     Map<String, Object> resultMap = new HashMap<>();
     resultMap.put("guestBookList", guestBookList);
+    resultMap.put("maxPage", maxPage);
+    resultMap.put("currentPage", page);
+    resultMap.put("pageSize", pageSize);
+    resultMap.put("totalRecords", totalRecords);
     resultMap.put("guestBookOwnerNick", guestBookOwnerNick);
 
-    return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    return ResponseEntity.ok(resultMap);
   }
+
 
   // 좋아요 기능
   @PostMapping("like")
