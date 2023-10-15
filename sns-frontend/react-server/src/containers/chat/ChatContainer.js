@@ -6,6 +6,7 @@ import {
   changeField,
   sendChat,
   translateChat,
+  loadBeforeChats,
 } from '../../modules/chats';
 import qs from 'qs';
 import { useEffect, useRef, useState } from 'react';
@@ -18,7 +19,7 @@ const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
   const [targetLanguage, setTargetLanguage] = useState('ko');
-  const { room, chats, newChat, chatTxt, error, user, translatedChat } =
+  const { room, chats, newChat, chatTxt, error, user, translatedChat, page } =
     useSelector(({ chats, auth }) => ({
       room: chats.room,
       chats: chats.chats,
@@ -27,6 +28,7 @@ const ChatContainer = () => {
       user: auth.user,
       translatedChat: chats.translatedChat,
       newChat: chats.newChat,
+      page: chats.nextPage,
     }));
 
   const { search } = useLocation();
@@ -93,7 +95,7 @@ const ChatContainer = () => {
     }
   }, [socket]);
 
-  let onSendChat = (e) => {
+  const onSendChat = (e) => {
     e.preventDefault();
 
     // dispatch(sendChat({ roomId: room._id, chatTxt, user }));
@@ -105,7 +107,7 @@ const ChatContainer = () => {
     }
   };
 
-  let onTranslate = (chatLog) => {
+  const onTranslate = (chatLog) => {
     // console.log(chatLog);
     const req = {};
     req.targetLanguage = targetLanguage;
@@ -113,6 +115,10 @@ const ChatContainer = () => {
     if (socket) {
       socket.emit('translateChat', req);
     }
+  };
+
+  const onLoadBeforeChats = () => {
+    dispatch(loadBeforeChats({ roomId: room._id, mno1, mno2, page }));
   };
 
   return (
@@ -129,6 +135,7 @@ const ChatContainer = () => {
       onTranslate={onTranslate}
       targetLanguage={targetLanguage}
       setTargetLanguage={setTargetLanguage}
+      onLoadBeforeChats={onLoadBeforeChats}
     />
   );
 };
