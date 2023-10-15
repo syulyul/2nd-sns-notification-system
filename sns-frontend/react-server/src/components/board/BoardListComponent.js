@@ -1,72 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate  } from 'react-router-dom';
+import { useSpring, animated } from 'react-spring';
 import Pagination from '../common/Pagination';
-import Search from '../common/Search';
+import SearchBoardContainer from '../../containers/board/SearchBoardContainer';
 
 const Container = styled.div`
-`;
-
-const SearchBox = styled.div`
-    margin-top: 20px;
-    text-align: left;
-`;
-
-const SearchInput = styled.input`
-    padding: 5px;
-    width: 200px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
-    margin-left: 20px;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
 `;
 
 const Button = styled.button`
+  background-color: #426B1F;
+  color: white;
+  padding: 5px 10px;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  margin-right: ${props => props.main ? '300px' : props.write ? '10px' : '0'};
+  &:hover {
     background-color: #426B1F;
-    color: white;
-    padding: 5px 10px;
-    text-decoration: none;
-    border: none;  // 테두리 제거
-    border-radius: 4px;
-    margin-right: ${props => props.main ? '300px' : props.write ? '10px' : '0'};
-    &:hover {
-        background-color: #426B1F;
-    }
+  }
 `;
 
-const BoardTable = styled.table`
-    border-collapse: collapse;
-    width: 1500px;
-    margin: 1rem auto;
-    background-color: white;
-    border: 1px solid #ddd;
+const BoardLink = styled.a`
+  color: black;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+`;
 
-    th, td {
-        padding: 8px;
-        text-align: center;
-        border: 1px solid #ddd;
-        border-left: none;
-        border-right: none;
-    }
+const CardContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  margin: 0 auto;
+  height: 600px;
+`;
 
-    th {
-        background-color: #f2f2f2;
-    }
+const Card = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s;
 
-    tbody tr:hover {
-        background-color: #ccc;
-        opacity: 0.9;
-        cursor: pointer;
-    }
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
 
-    th:nth-child(1), td:nth-child(1) {
-        width: 10%;
-    }
+const CardImage = styled.img`
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+`;
 
-    th:nth-child(2), td:nth-child(2) {
-        width: 50%;
-    }
+const CardContent = styled.div`
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+`;
+
+const CardFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid #eee;
+`;
+
+const AuthorText = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const DateText = styled.span`
+  color: #888;
+`;
+
+const ActionButtonsContainer = styled.div`
+  text-align: right;
+  margin-right: 20px;
+  margin-top: -30px;
+  margin-bottom: 20px;
 `;
 
 const ProfilePicture = styled.div`
@@ -81,88 +103,64 @@ const ProfilePicture = styled.div`
     }
 `;
 
-const ProfileAuthor = styled.div`
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-`;
-
-const ActionButtonsContainer = styled.div`
-  text-align: right;
-  margin-right: 20px;
-  margin-top: -30px;
-  margin-bottom: 20px;
-`;
-
-const SearchButton = styled(Button)`
-    margin-right: 10px;
-`;
-
-const MainButton = styled(Button)`
-    margin-right: 500px;
-`;
-
-const BoardLink = styled.a`
-    color: black;
-    text-decoration: none;
-`;
-
-const AuthorLink = styled.a`
-    text-decoration-line: none;
-    color: black;
-`;
 
 const BoardListComponent = ({
   boardListData,
-  totalPages,
-  currentPage,
-  onPageChange,
   lastPage,
   page,
   query,
 }) => {
+  const navigate = useNavigate();
+
+  // Card 아무곳이나 클릭 시 detail 페이지로 이동하는 함수
+  const handleCardClick = (category, no) => {
+    navigate(`/board/detail/${category}/${no}`); // navigate 함수로 페이지 이동
+  };
+
+  const fadeIn = useSpring({
+    opacity: 1,
+    from: { opacity: 0 },
+    delay: 0,
+    reset: true,
+    config: {
+      duration: 1000 // 애니메이션의 지속 시간을 1초로 설정
+    }
+  });
+
   return (
       <Container>
-
+        <SearchBoardContainer></SearchBoardContainer>
         <ActionButtonsContainer>
           <Link to={`/board/form/1`}>
-            <Button>글쓰기</Button>
+            <Button>✏️글쓰기</Button>
           </Link>
-          <MainButton>메인</MainButton>
         </ActionButtonsContainer>
 
-        <BoardTable>
-          <thead>
-            <tr>
-              <th>번호🌱</th>
-              <th>제목🌱</th>
-              <th>작성자🌱</th>
-              <th>좋아요🌱</th>
-              <th>조회수🌱</th>
-              <th>등록일🌱</th>
-            </tr>
-          </thead>
-          <tbody>
+        <animated.div style={fadeIn}>
+          <CardContainer>
             {boardListData && boardListData.map(board => (
-                <tr key={board.no}>
-                  <td>{board.no}</td>
-                  <td><BoardLink href={`/board/detail/${board.category}/${board.no}`}>{board.title || '제목없음'}</BoardLink></td>
-                  <td>
-                    <ProfileAuthor>
+                <Card key={board.no} onClick={() => handleCardClick(board.category, board.no)}>
+                  <CardImage src={board.attachedFiles && board.attachedFiles.length > 0
+                      ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${board.attachedFiles[0].filePath}`
+                      : '/images/mangom.png'}
+                  />
+                  <CardContent>
+                    <BoardLink href={`/board/detail/${board.category}/${board.no}`}>{board.title || '제목없음'}</BoardLink>
+                    <p>{board.content}</p>
+                  </CardContent>
+                  <CardFooter>
+                    <AuthorText>
                       <ProfilePicture>
                         <img src={board.writer.photo || '/images/avatar.png'} alt="profile"/>
                       </ProfilePicture>
-                      <AuthorLink href={`/myPage/${board.writer.no}`}>{board.writer.nick}</AuthorLink>
-                    </ProfileAuthor>
-                  </td>
-                  <td>{board.likes}</td>
-                  <td>{board.viewCount}</td>
-                  <td>{new Date(board.createdAt).toLocaleDateString()}</td>
-                </tr>
+                      {board.writer.nick}
+                    </AuthorText>
+                    <DateText>{new Date(board.createdAt).toLocaleDateString()}</DateText>
+                  </CardFooter>
+                </Card>
             ))}
-          </tbody>
-        </BoardTable>
+          </CardContainer>
+        </animated.div>
 
         <Pagination page={page} query={query} lastPage={lastPage} />
       </Container>

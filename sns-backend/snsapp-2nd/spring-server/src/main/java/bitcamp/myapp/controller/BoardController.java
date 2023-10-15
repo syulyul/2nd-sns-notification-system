@@ -157,7 +157,7 @@ public class BoardController {
       @RequestParam int category,
       @RequestParam(defaultValue = "") String keyword,
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(defaultValue = "5") int pageSize,
       Model model, HttpSession session) throws Exception {
 
     Member loginUser = (Member) session.getAttribute("loginUser");
