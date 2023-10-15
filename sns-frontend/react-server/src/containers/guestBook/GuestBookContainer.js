@@ -19,7 +19,8 @@ const GuestBookContainer = () => {
   const{ no } = useParams();
   const guestBookNo = no;
 
-  const { guestBookList, error, mpno, guestBookOwnerNick, title, content, writer, guestBook, likeGuestBookSet, lastPage } = useSelector(
+  const { guestBookList, error, mpno, guestBookOwnerNick, title, content,
+    writer, guestBook, likeGuestBookSet, lastPage, user } = useSelector(
       ({ auth, guestBook }) => ({
         guestBookList: guestBook.guestBookList,
         error: guestBook.guestBookError,
@@ -27,6 +28,7 @@ const GuestBookContainer = () => {
         title: guestBook.title,
         content: guestBook.content,
         writer: auth.user,
+        user: auth.user,
         mpno: no,
         guestBook: guestBook.guestBook,
         likeGuestBookSet : auth.likeGuestBookList,
@@ -43,7 +45,7 @@ const GuestBookContainer = () => {
   // 방명록 리스트를 불러오는 useEffect
   useEffect(() => {
     dispatch(list({ no, limit, page }));
-  }, [dispatch, no, limit, page]);
+  }, [dispatch, no, limit, page, guestBook]);
 
 // URL의 no가 변경되었을 때 페이지 이동을 위한 useEffect
   useEffect(() => {
@@ -62,13 +64,14 @@ const GuestBookContainer = () => {
 
   const onSubmit =  (e) => {
     e.preventDefault();
-    dispatch(post({ mpno, title, content, writer }));
     dispatch(initializeForm());
+    dispatch(post({ mpno, title, content, writer }));
   };
 
   const onDelete =  (e, guestBookNo) => {
     e.preventDefault();
     dispatch(deleteGuestBook(guestBookNo));
+    dispatch(list({ no, limit, page }));
   };
 
   const handleLike = (guestBookNo) => {
@@ -97,6 +100,7 @@ const GuestBookContainer = () => {
           page={page}
           query={query}
           lastPage={lastPage}
+          user={user}
       />
   );
 };
