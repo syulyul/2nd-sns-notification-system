@@ -221,6 +221,7 @@ const ChatComponent = ({
   onTranslate,
   targetLanguage,
   setTargetLanguage,
+  onLoadBeforeChats,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   const messageEndRef = useRef(null);
@@ -254,6 +255,8 @@ const ChatComponent = ({
         <option value="it">이탈리아어</option>
         <option value="fr">프랑스어</option>
       </select>
+
+      <button onClick={onLoadBeforeChats}>무한 스크롤 테스트용</button>
       <StyledChatList>
         <ChatMessage>
           {/* <UserImage
