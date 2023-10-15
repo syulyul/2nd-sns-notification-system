@@ -104,6 +104,7 @@ const BoardDetailContainer = () => {
 
   return (
         <BoardDetailComponent
+            user={user}
             board={board}
             comments={comments}
             content={content}
