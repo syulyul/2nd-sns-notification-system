@@ -109,7 +109,7 @@ export const sendChat = async (req, res, next) => {
     const userNo = await redisClient.get(req.cookies['sessionId']);
     const sendUser = await User.findOne({ mno: userNo });
     const roomId = req.params.roomId;
-    console.log(roomId);
+
     const chat = await Chat.create({
       room: roomId,
       user: sendUser._id,

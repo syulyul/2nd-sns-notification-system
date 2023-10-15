@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import { useLocation, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import io from 'socket.io-client';
+import { socket } from '../../socket';
 
 const ChatContainer = () => {
   // const params = useParams();
@@ -47,11 +47,6 @@ const ChatContainer = () => {
       })
     );
   };
-
-  const socket = io(`${process.env.REACT_APP_NODE_SERVER_URL}/chat`, {
-    path: '/socket.io',
-    transports: ['websocket'],
-  });
 
   useEffect(() => {
     if (room && !error) {

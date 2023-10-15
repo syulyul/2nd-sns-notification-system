@@ -263,7 +263,6 @@ const ChatComponent = ({
       <StyledChatList
         onScroll={async (e) => {
           const element = e.target;
-          console.log(element.scrollHeight);
           if (element.scrollTop === 0) {
             setBeforeScrollHeight(element.scrollHeight);
             await onLoadBeforeChats();
