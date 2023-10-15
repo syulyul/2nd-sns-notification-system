@@ -30,7 +30,7 @@ const SendChatBlock = styled.div`
   margin-top: 20px;
 `;
 
-const StyledInputContainer = styled.div`
+const StyledSubmitForm = styled.form`
   display: inline-flex;
   margin-bottom: 10px;
   align-items: center;
@@ -285,14 +285,14 @@ const ChatComponent = ({
                 {user.no !== chatLog.user.mno && (
                   <button onClick={(e) => onTranslate(chatLog)}>번역</button>
                 )}
-                <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>
             ))}
+          <div ref={messageEndRef}></div> {/* Scroll to this div */}
           {/* </div> */}
         </ChatMessage>
       </StyledChatList>
       <SendChatBlock>
-        <StyledInputContainer>
+        <StyledSubmitForm onSubmit={onSendChat}>
           <StyledInput
             type="text"
             onChange={onChange}
@@ -308,8 +308,8 @@ const ChatComponent = ({
             ref={inputFile}
             className="inputFile"
           /> */}
-          <StyledChatBtn onClick={onSendChat}>보내기</StyledChatBtn>
-        </StyledInputContainer>
+          <StyledChatBtn type="submit">보내기</StyledChatBtn>
+        </StyledSubmitForm>
       </SendChatBlock>
     </ChatContainer>
   );
