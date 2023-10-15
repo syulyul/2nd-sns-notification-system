@@ -2,7 +2,6 @@ import User from '../../schemas/user';
 
 export const addUser = async (req, res, next) => {
   try {
-    console.log(req.body);
     const user = await User.create({
       mno: req.body.no,
       nick: req.body.nick,
