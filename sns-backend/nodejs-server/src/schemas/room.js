@@ -1,9 +1,17 @@
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
+const {
+  Types: { ObjectId },
+} = Schema;
 
 const roomSchema = new Schema({
-  users: [Number],
+  users: [
+    {
+      type: ObjectId,
+      ref: 'User',
+    },
+  ],
   updatedAt: {
     // 채팅방 생성 시간
     type: Date,
