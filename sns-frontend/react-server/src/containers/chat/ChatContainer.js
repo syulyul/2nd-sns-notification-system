@@ -93,7 +93,9 @@ const ChatContainer = () => {
     }
   }, [socket]);
 
-  let onSendChat = () => {
+  let onSendChat = (e) => {
+    e.preventDefault();
+
     // dispatch(sendChat({ roomId: room._id, chatTxt, user }));
     if (socket) {
       if (chatTxt.length > 0) {
