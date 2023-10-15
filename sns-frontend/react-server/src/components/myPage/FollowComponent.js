@@ -63,7 +63,9 @@ const FollowComponent = ({
             <MemberLink href={`/myPage/${followItem.no}`}>
               {followItem.nick}
             </MemberLink>
-            <Link to={`/room`}>채팅하기</Link>
+            <Link to={`/room?mno1=${followItem.no}&mno2=${user.no}`}>
+              채팅하기
+            </Link>
             <FollowButton
               followMemberSet={followMemberSet}
               memberNo={followItem.no}

@@ -31,6 +31,10 @@ const [ADD_COMMENT, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE] =
 const [DELETE_COMMENT, DELETE_COMMENT_SUCCESS, DELETE_COMMENT_FAILURE] =
     createRequestActionTypes('comment/DELETE_COMMENT');
 
+//검색
+const [SEARCH_BOARDS, SEARCH_BOARDS_SUCCESS, SEARCH_BOARDS_FAILURE] =
+    createRequestActionTypes('board/SEARCH_BOARDS');
+
 // --------------- createAction ------------------- //
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
@@ -61,6 +65,14 @@ export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
 export const addComment = createAction(ADD_COMMENT, ({ content, boardNo, writer }) => ({ content, boardNo, writer }));
 export const deleteComment = createAction(DELETE_COMMENT, ({ commentNo, boardNo }) => ({ commentNo, boardNo }));
 
+//검색
+export const searchBoards = createAction(SEARCH_BOARDS, ({ category, searchTxt, pageSize, page }) => ({
+  category,
+  searchTxt,
+  pageSize,
+  page
+}));
+
 // --------------- Saga ------------------- //
 
 //게시글
@@ -73,6 +85,13 @@ const deleteBoardSaga  = createRequestSaga(DELETE, boardAPI.deleteBoard);
 const addCommentSaga = createRequestSaga(ADD_COMMENT, boardAPI.addComment);
 const deleteCommentSaga = createRequestSaga(DELETE_COMMENT, boardAPI.deleteComment);
 
+//검색
+const searchBoardsSaga = createRequestSaga(
+    SEARCH_BOARDS,
+    boardAPI.searchBoards
+);
+
+
 
 export function* boardSaga() {
   //게시글
@@ -84,6 +103,9 @@ export function* boardSaga() {
   //댓글
   yield takeLatest(ADD_COMMENT, addCommentSaga);
   yield takeLatest(DELETE_COMMENT, deleteCommentSaga);
+
+  //검색
+  yield takeLatest(SEARCH_BOARDS, searchBoardsSaga);
 }
 
 const initialState = {
@@ -95,6 +117,7 @@ const initialState = {
   boardError: null, // 에러 상태
   boardComment: null,
   commentError: null,
+  searchTxt: '',
 };
 
 // --------------- Reducer ------------------- //
@@ -169,6 +192,18 @@ const board = handleActions(
     [DELETE_COMMENT_FAILURE]: (state, { payload: error }) => ({
       ...state,
       commentError: error,
+    }),
+
+    //검색
+    [SEARCH_BOARDS_SUCCESS]: (state, { payload: resultList }) => ({
+      ...state,
+      show: 'searchResult',
+      boardList: resultList,
+      searchTxt: '',
+    }),
+    [SEARCH_BOARDS_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
     }),
   },
   initialState

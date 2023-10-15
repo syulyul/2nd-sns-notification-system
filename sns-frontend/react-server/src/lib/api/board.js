@@ -45,3 +45,8 @@ export const unlike = (boardNo) => {
   return springClient.post(`/board/unlike?${queryString}`);
 };
 
+//검색
+export const searchBoards = ({ category, searchTxt, pageSize = 6, page = 1 }) => {
+  const queryString = qs.stringify({ category, searchTxt, pageSize, page });
+  return springClient.get(`/board/searchBoards?${queryString}`);
+};

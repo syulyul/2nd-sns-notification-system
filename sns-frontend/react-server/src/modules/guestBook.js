@@ -24,7 +24,11 @@ export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const post = createAction(POST,
     ({ mpno, title, content, writer, }) => ({ mpno, title, content, writer, }));
-export const list = createAction(LIST, (no) => (no));
+export const list = createAction(LIST, ({ no, limit, page }) => ({
+  no,
+  limit,
+  page,
+}));
 export const deleteGuestBook = createAction(DELETE, (guestBookNo) => guestBookNo);
 
 const postSaga = createRequestSaga(POST, guestBookAPI.post);
@@ -40,6 +44,7 @@ export function* guestBookSaga() {
 const initialState = {
   guestBookList: [],
   no: 0,
+  lastPage: 1,
   guestBookOwnerNick: '',
   title: '',
   content: '',
@@ -72,11 +77,11 @@ const guestBook = handleActions(
         ...state,
         guestBookError: error,
       }),
-
-      [LIST_SUCCESS]: (state, { payload: resultMap}) => ({
+      [LIST_SUCCESS]: (state, { payload: resultMap }) => ({
         ...state,
         guestBookList: resultMap.guestBookList,
         guestBookOwnerNick: resultMap.guestBookOwnerNick,
+        lastPage: resultMap.lastPage, // 추가된 부분
         guestBookError: null,
       }),
       [LIST_FAILURE]: (state, { payload: error }) => ({

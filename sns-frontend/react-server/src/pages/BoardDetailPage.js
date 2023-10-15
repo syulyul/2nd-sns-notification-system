@@ -1,7 +1,14 @@
 import BoardDetailContainer from '../containers/board/BoardDetailContainer';
+import HeaderContainer from '../containers/common/HeaderContainer';
+import BoardListContainer from '../containers/board/BoardListContainer';
 
 const BoardDetailPage = () => {
-  return <BoardDetailContainer />;
+  return (
+    <>
+      <HeaderContainer />
+      <BoardDetailContainer />
+    </>
+  );
 };
 
 export default BoardDetailPage;

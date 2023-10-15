@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import io from 'socket.io-client';
 import { useRef, useEffect } from 'react';
 // import { roomList } from '../../modules/rooms';
 
@@ -29,7 +30,7 @@ const SendChatBlock = styled.div`
   margin-top: 20px;
 `;
 
-const StyledInputContainer = styled.div`
+const StyledSubmitForm = styled.form`
   display: inline-flex;
   margin-bottom: 10px;
   align-items: center;
@@ -63,11 +64,13 @@ const StyledInput = styled.input`
     line-height: 130%;
     border: none;
     font-family: 'UhBeeKeongKeong', sans-serif;
+
     &:hover {
       background: rgb(77, 77, 77);
       color: #fff;
     }
   }
+
   &[type='text'] {
     font-size: 20px;
     width: 68%;
@@ -75,6 +78,7 @@ const StyledInput = styled.input`
     background: #ffffff;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
     /* 포커스 스타일 제거 */
+
     &:focus {
       outline: none;
     }
@@ -93,6 +97,7 @@ const ChatMessage = styled.div`
   // align-items: flex-start;
   margin: 10px auto;
   word-wrap: break-word;
+
   .StyledChatMine {
     position: relative;
     background: #426b1f;
@@ -179,16 +184,16 @@ const StyledChatBtn = styled.button`
   cursor: pointer;
   margin: 10px;
   align-self: flex-end; /* 맨 아래에 정렬 */
+
   &:hover {
     background: rgb(77, 77, 77);
     color: #fff;
   }
 `;
 
-const ChatItem = ({ chatlog, loginUser }) => {
-  const { _id, room, user, chat, files, createdAt } = chatlog;
+const ChatItem = ({ chatLog, loginUser }) => {
+  const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
-  console.log(loginUser, user);
   return (
     <ChatMessage
       className={
@@ -196,6 +201,11 @@ const ChatItem = ({ chatlog, loginUser }) => {
       }
     >
       {chat}
+      {translated.map((result) => (
+        <span>
+          {result.langCode}:{result.txt}
+        </span>
+      ))}
     </ChatMessage>
   );
 };
@@ -203,10 +213,14 @@ const ChatItem = ({ chatlog, loginUser }) => {
 const ChatComponent = ({
   room,
   chats,
+  newChat,
   user,
   onChange,
   chatTxt,
   onSendChat,
+  onTranslate,
+  targetLanguage,
+  setTargetLanguage,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   const messageEndRef = useRef(null);
@@ -214,7 +228,7 @@ const ChatComponent = ({
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'auto' });
     }
-  }, [chats]);
+  }, [newChat]);
 
   return (
     <ChatContainer>
@@ -222,6 +236,24 @@ const ChatComponent = ({
         <TitleStyle>{`🌱 ${room.users[0]}, ${room.users[1]} 🌱`}</TitleStyle>
       )}
 
+      <select
+        onChange={(e) => setTargetLanguage(e.target.value)}
+        value={targetLanguage}
+      >
+        <option value="ko">한국어</option>
+        <option value="en">영어</option>
+        <option value="ja">일본어</option>
+        <option value="zh-CN">중국어 간체</option>
+        <option value="zh-TW">중국어 번체</option>
+        <option value="vi">베트남어</option>
+        <option value="id">인도네시아어</option>
+        <option value="th">태국어</option>
+        <option value="de">독일어</option>
+        <option value="ru">러시아어</option>
+        <option value="es">스페인어</option>
+        <option value="it">이탈리아어</option>
+        <option value="fr">프랑스어</option>
+      </select>
       <StyledChatList>
         <ChatMessage>
           {/* <UserImage
@@ -238,7 +270,7 @@ const ChatComponent = ({
             </ChatMessage> */}
           {/* </div> */}
           {chats &&
-            chats.map((chatlog) => (
+            chats.map((chatLog) => (
               <div>
                 {user.no !== chatlog.user.mno && (
                   <div className={'UserName'}>{`${chatlog.user.nick}`}</div>
@@ -246,18 +278,21 @@ const ChatComponent = ({
                 {/* <UserImage src="" /> */}
                 {/* <Username>{`${chatlog.user.mno}`}</Username> */}
                 <ChatItem
-                  chatlog={chatlog}
-                  key={chatlog._id}
+                  chatLog={chatLog}
+                  key={chatLog._id}
                   loginUser={user}
                 />
-                <div ref={messageEndRef}></div> {/* Scroll to this div */}
+                {user.no !== chatLog.user.mno && (
+                  <button onClick={(e) => onTranslate(chatLog)}>번역</button>
+                )}
               </div>
             ))}
+          <div ref={messageEndRef}></div> {/* Scroll to this div */}
           {/* </div> */}
         </ChatMessage>
       </StyledChatList>
       <SendChatBlock>
-        <StyledInputContainer>
+        <StyledSubmitForm onSubmit={onSendChat}>
           <StyledInput
             type="text"
             onChange={onChange}
@@ -273,8 +308,8 @@ const ChatComponent = ({
             ref={inputFile}
             className="inputFile"
           /> */}
-          <StyledChatBtn onClick={onSendChat}>보내기</StyledChatBtn>
-        </StyledInputContainer>
+          <StyledChatBtn type="submit">보내기</StyledChatBtn>
+        </StyledSubmitForm>
       </SendChatBlock>
     </ChatContainer>
   );
