@@ -8,16 +8,18 @@ import {
   post
 } from '../../modules/guestBook';
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { guestBooklike, guestBookunlike } from '../../modules/auth';
+import qs from 'qs';
 
 const GuestBookContainer = () => {
   const dispatch = useDispatch();
+  const { search } = useLocation();
   const navigate = useNavigate();
   const{ no } = useParams();
   const guestBookNo = no;
 
-  const { guestBookList, error, mpno, guestBookOwnerNick, title, content, writer, guestBook, likeGuestBookSet } = useSelector(
+  const { guestBookList, error, mpno, guestBookOwnerNick, title, content, writer, guestBook, likeGuestBookSet, lastPage } = useSelector(
       ({ auth, guestBook }) => ({
         guestBookList: guestBook.guestBookList,
         error: guestBook.guestBookError,
@@ -28,14 +30,25 @@ const GuestBookContainer = () => {
         mpno: no,
         guestBook: guestBook.guestBook,
         likeGuestBookSet : auth.likeGuestBookList,
+        lastPage: guestBook.lastPage,
       }));
 
+  const { limit = 10, page = 1 } = qs.parse(search, {
+    ignoreQueryPrefix: true,
+  });
+  const query = qs.parse(search, {
+    ignoreQueryPrefix: true,
+  });
+
+  // 방명록 리스트를 불러오는 useEffect
   useEffect(() => {
-    if (no) {
-      dispatch(list(no)); // no가 유효한 경우에만 요청을 보냅니다.
-      navigate(`/guestBook/${no}`);
-    }
-  }, [dispatch, no, guestBook]);
+    dispatch(list({ no, limit, page }));
+  }, [dispatch, no, limit, page]);
+
+// URL의 no가 변경되었을 때 페이지 이동을 위한 useEffect
+  useEffect(() => {
+    navigate(`/guestBook/${no}`);
+  }, [no, navigate]);
 
   const onChange = (e) => {
     const { value, name } = e.target;
@@ -81,6 +94,9 @@ const GuestBookContainer = () => {
           handleLike={handleLike}
           handleUnlike={handleUnlike}
           likeGuestBookSet={likeGuestBookSet}
+          page={page}
+          query={query}
+          lastPage={lastPage}
       />
   );
 };
