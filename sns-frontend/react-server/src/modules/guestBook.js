@@ -51,6 +51,7 @@ const initialState = {
 
   guestBookError: null,
   guestBook: null,
+  user: null,
 };
 
 const guestBook = handleActions(

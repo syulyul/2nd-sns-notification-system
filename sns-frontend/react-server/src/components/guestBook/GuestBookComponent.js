@@ -277,6 +277,7 @@ const GuestBookComponent = ({
   lastPage,
   page,
   query,
+  user,
 }) => {
   return (
     <>
@@ -357,22 +358,29 @@ const GuestBookComponent = ({
                     <GuestBookTextarea readOnly>
                       {guestBook.content || '내용'}
                     </GuestBookTextarea>
-                    {likeGuestBookSet && likeGuestBookSet.includes(guestBook.no) ? (
+                    {likeGuestBookSet && likeGuestBookSet.includes(guestBook.no)
+                      ? (
                         <LikeButton onClick={() => handleUnlike(guestBook.no)}>
                           ❤️
                         </LikeButton>
-                    ) : (
+                      ) : (
                         <LikeButton onClick={() => handleLike(guestBook.no)}>
                           🤍
                         </LikeButton>
-                    )}
+                      )}
                   </ContentLikeCell>
                 </SecondRow>
               </tbody>
             </ContentTable>
           </ContentContainer>
           <DeleteButtonContainer>
-            <StyledButton onClick={(e) => onDelete(e, guestBook.no)} >삭제</StyledButton>
+            {// 작성자와 로그인 사용자 번호가 일치하는 경우와
+            // 본인 방명록에만 삭제 버튼 표시
+            }
+            {(user.no === guestBook.writer.no || guestBook.mpno === user.no) && (
+              <StyledButton
+                onClick={(e) => onDelete(e, guestBook.no)}>삭제</StyledButton>
+            )}
           </DeleteButtonContainer>
         </Container>
       ))}

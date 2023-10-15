@@ -18,7 +18,7 @@ const BoardListContainer = () => {
     board: board.board,
   }));
 
-  const { limit = 10, page = 1 } = qs.parse(search, {
+  const { limit = 5, page = 1 } = qs.parse(search, {
     ignoreQueryPrefix: true,
   });
   const query = qs.parse(search, {
@@ -36,6 +36,7 @@ const BoardListContainer = () => {
   }
 
   return <BoardListComponent
+      board={board}
       boardListData={boardList}
       page={page}
       query={query}

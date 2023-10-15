@@ -63,27 +63,30 @@ public class GuestBookController {
       @CookieValue(value = "sessionId", required = false) Cookie sessionCookie) throws Exception {
     GuestBook g = guestBookService.get(guestBookNo);
 
-    LoginUser loginUserObject = null;
-    try {
-      String sessionId = sessionCookie.getValue();
-      String temp = (String) redisService.getValueOps().get(sessionId);
-      if (temp != null) {
-        int loginUserNo = Integer.parseInt(temp);
-        loginUserObject = new LoginUser(memberService.get(loginUserNo));
-        if (g == null || g.getWriter().getNo() != loginUserObject.getNo()) {
-          return new ResponseEntity<>("해당하는 방명록이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        } else {
-          guestBookService.delete(g.getNo());
-          return new ResponseEntity<>(HttpStatus.OK);
-        }
-      } else { // 해당하는 유저가 없을 경우
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      // 예외 발생 시 처리
-      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
-    }
+//    LoginUser loginUserObject = null;
+//    try {
+//      String sessionId = sessionCookie.getValue();
+//      String temp = (String) redisService.getValueOps().get(sessionId);
+//      if (temp != null) {
+//        int loginUserNo = Integer.parseInt(temp);
+//        loginUserObject = new LoginUser(memberService.get(loginUserNo));
+//        if (g == null || g.getWriter().getNo() != loginUserObject.getNo()) {
+//          return new ResponseEntity<>("해당하는 방명록이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+//        } else {
+//          guestBookService.delete(g.getNo());
+//          return new ResponseEntity<>(HttpStatus.OK);
+//        }
+//      } else { // 해당하는 유저가 없을 경우
+//        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+//      }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      // 예외 발생 시 처리
+//      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+//    }
+
+    guestBookService.delete(g.getNo());
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @GetMapping("{no}")

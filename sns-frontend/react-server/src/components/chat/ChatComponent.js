@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import io from 'socket.io-client';
 import { useRef, useEffect } from 'react';
+import { useState } from 'react';
 // import { roomList } from '../../modules/rooms';
 
 const ChatContainer = styled.div`
@@ -221,12 +222,15 @@ const ChatComponent = ({
   onTranslate,
   targetLanguage,
   setTargetLanguage,
+  onLoadBeforeChats,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   const messageEndRef = useRef(null);
+  const [beforeScrollHeight, setBeforeScrollHeight] = useState(0);
+
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: 'auto' });
+      messageEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
     }
   }, [newChat]);
 
@@ -254,7 +258,24 @@ const ChatComponent = ({
         <option value="it">이탈리아어</option>
         <option value="fr">프랑스어</option>
       </select>
-      <StyledChatList>
+
+      {/* <button onClick={onLoadBeforeChats}>무한 스크롤 테스트용</button> */}
+      <StyledChatList
+        onScroll={async (e) => {
+          const element = e.target;
+          console.log(element.scrollHeight);
+          if (element.scrollTop === 0) {
+            setBeforeScrollHeight(element.scrollHeight);
+            await onLoadBeforeChats();
+            element.scrollTo({
+              top: element.scrollHeight - beforeScrollHeight,
+              left: 0,
+              behavior: 'instant',
+            });
+            console.log(element.scrollHeight - beforeScrollHeight);
+          }
+        }}
+      >
         <ChatMessage>
           {/* <UserImage
             src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"

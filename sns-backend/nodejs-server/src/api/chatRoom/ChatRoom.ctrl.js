@@ -18,6 +18,12 @@ export const roomList = async (req, res, next) => {
 
 export const enterRoom = async (req, res, next) => {
   try {
+    const userNo = await redisClient.get(req.cookies['sessionId']);
+    if (userNo != req.query.mno1 && userNo != req.query.mno2) {
+      res.status(403).end();
+      return;
+    }
+
     let room = await Room.findOne({
       users: { $all: [req.query.mno1, req.query.mno2] },
     });
@@ -29,12 +35,48 @@ export const enterRoom = async (req, res, next) => {
       const io = req.app.get('io');
       io.of('/room').emit('newRoom', room);
     }
-    let chats = await Chat.find({ room: room }).populate('user');
+    let chats = await Chat.find({ room: room })
+      .sort({ _id: -1 })
+      .limit(req.query.limit)
+      .skip((req.query.page - 1) * req.query.limit)
+      .populate('user');
 
     if (room && chats) {
-      const roomAndChats = { room, chats };
+      const roomAndChats = { room, chats: chats.reverse() };
       res.json(roomAndChats);
     }
+  } catch (error) {
+    res.status(403);
+    console.error(error);
+    return next(error);
+  }
+};
+
+export const loadBeforeChats = async (req, res, next) => {
+  try {
+    const userNo = await redisClient.get(req.cookies['sessionId']);
+    if (userNo != req.query.mno1 && userNo != req.query.mno2) {
+      res.status(403).end();
+      return;
+    }
+    let room = await Room.findOne({
+      users: { $all: [req.query.mno1, req.query.mno2] },
+    });
+    if (room._id != req.query.roomId) {
+      res.status(403).end();
+      return;
+    }
+
+    let chats = await Chat.find({ room: req.query.roomId })
+      .sort({ _id: -1 })
+      .limit(req.query.limit)
+      .skip((req.query.page - 1) * req.query.limit)
+      .populate('user');
+
+    res.json({
+      beforeChats: chats.reverse(),
+      nextPage: parseInt(req.query.page) + 1,
+    });
   } catch (error) {
     res.status(403);
     console.error(error);

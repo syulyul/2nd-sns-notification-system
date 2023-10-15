@@ -6,7 +6,6 @@ const BoardListPage = () => {
   return (
     <>
       <HeaderContainer />
-      <SearchBoardContainer/>
       <BoardListContainer />
     </>
   );
