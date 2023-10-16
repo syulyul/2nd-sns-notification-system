@@ -4,7 +4,7 @@ import qs from 'qs';
 import { useLocation, useParams } from 'react-router-dom';
 import NotificationListComponent from '../../components/notification/NotificationListComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import { notiList, readNoti } from '../../modules/notification';
+import { notiList, readAllNoti, readNoti } from '../../modules/notification';
 
 const NotificationListContainer = () => {
   const { search } = useLocation();
@@ -35,6 +35,9 @@ const NotificationListContainer = () => {
     const { name } = e.target;
     dispatch(readNoti({ _id: name }));
   };
+  const onReadAllNotiLog = () => {
+    dispatch(readAllNoti({ memberNo: user.no }));
+  };
 
   return (
     <NotificationListComponent
@@ -43,6 +46,7 @@ const NotificationListContainer = () => {
       query={query}
       lastPage={lastPage}
       onReadNotiLog={onReadNotiLog}
+      onReadAllNotiLog={onReadAllNotiLog}
     />
   );
 };

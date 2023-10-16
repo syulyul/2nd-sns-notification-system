@@ -70,6 +70,7 @@ const NotificationListComponent = ({
   page,
   query,
   onReadNotiLog,
+  onReadAllNotiLog,
 }) => {
   return (
     <>
@@ -79,7 +80,7 @@ const NotificationListComponent = ({
             <NotificationTitle>🌱 알림내용</NotificationTitle>
             <form>
               <input value="1" name="notiState" type="hidden" />
-              <StyledButton>모두 읽음</StyledButton>
+              <StyledButton onClick={onReadAllNotiLog}>모두 읽음</StyledButton>
             </form>
           </NotificationTitleContainer>
 
@@ -88,7 +89,7 @@ const NotificationListComponent = ({
               <NotificationLink
                 to={noti.url}
                 name={noti._id}
-                onClick={noti.noti_state == 0 ? null : onReadNotiLog}
+                onClick={noti.noti_state == 0 ? onReadNotiLog : null}
               >
                 {noti.content}
               </NotificationLink>

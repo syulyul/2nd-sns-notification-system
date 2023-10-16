@@ -13,4 +13,4 @@ export const updateNotiState = ({ _id, notiState }) =>
   nodeClient.post(`notification/updateState`, { _id, notiState });
 
 export const updateAllNotiState = ({ memberNo, notiState }) =>
-  nodeClient.post(`notification/updateState`, { memberNo, notiState });
+  nodeClient.post(`notification/updateAllState`, { memberNo, notiState });
