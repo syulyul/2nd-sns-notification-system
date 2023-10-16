@@ -41,8 +41,9 @@ export const enterRoom = async (req, res, next) => {
       room = await Room.create({
         users: [user1._id, user2._id],
       });
-      const io = req.app.get('io');
-      io.of('/room').emit('newRoom', room);
+      room.populate('users');
+      // const io = req.app.get('io');
+      // io.of('/room').emit('newRoom', room);
     }
     let chats = await Chat.find({ room: room })
       .sort({ _id: -1 })
