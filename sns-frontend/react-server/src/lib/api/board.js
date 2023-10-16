@@ -32,6 +32,10 @@ export const update = ({ updateData }) =>
 export const deleteBoard = ({ category, boardNo }) =>
     springClient.delete(`board/delete/${boardNo}`, { params: { category } });
 
+// 게시글 사진 삭제
+export const deletePhoto = ({ fileNo }) =>
+  springClient.delete(`board/fileDelete/${fileNo}`);
+
 // 댓글작성
 export const addComment = (commentData) =>
     springClient.post('board/addComment', commentData);

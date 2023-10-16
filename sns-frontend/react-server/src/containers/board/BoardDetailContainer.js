@@ -9,7 +9,7 @@ import {
   addComment,
   deleteBoard,
   deleteComment,
-  update
+  update, deletePhoto
 } from '../../modules/board';
 import { boardlike, boardunlike } from '../../modules/auth';
 
@@ -112,6 +112,11 @@ const BoardDetailContainer = () => {
     navigate(`/board/list?category=${category}`); // 삭제 후 리스트로 페이지 이동
   };
 
+  // 사진 삭제
+  const onPhotoDelete = (fileNo) => {
+    dispatch(deletePhoto({ fileNo }));
+  };
+
   //댓글
   //댓글작성
   const onSubmit = (e) => {
@@ -171,6 +176,8 @@ const BoardDetailContainer = () => {
       likeBoardSet={likeBoardSet}
       handleUpdateTitle={handleUpdateTitle}
       handleUpdateContent={handleUpdateContent}
+      onPhotoDelete={onPhotoDelete}
+      onChangeFile={onChangeFile}
     />
   );
 };
