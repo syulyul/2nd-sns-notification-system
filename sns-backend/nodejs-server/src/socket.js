@@ -21,7 +21,7 @@ export default (server, app) => {
 
     try {
       const cookies =
-        socket.handshake.headers.cookie.length > 0
+        socket && socket.handshake.headers.cookie
           ? socket.handshake.headers.cookie.split('; ')
           : [];
       const parsedCookies = {};
