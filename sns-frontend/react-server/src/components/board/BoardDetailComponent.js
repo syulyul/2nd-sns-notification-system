@@ -237,7 +237,9 @@ const BoardDetailComponent = ({
   onDeleteComment,
   onSubmit,
   onChange,
-  CommentChange
+  CommentChange,
+  handleUpdateTitle,
+  handleUpdateContent
 }) => {
 
   const [floatingHearts, setFloatingHearts] = useState([]);
@@ -332,12 +334,12 @@ const BoardDetailComponent = ({
                 <StyledInput
                     type="text"
                     defaultValue={board ? board.title : ''}
-                    onChange={e => onChange({ key: 'title', value: e.target.value })}
+                    onChange={handleUpdateTitle}
                 />
               </Title>
               <StyledTextArea
                   defaultValue={board ? board.content : ''}
-                  onChange={e => onChange({ key: 'content', value: e.target.value })}
+                  onChange={handleUpdateContent}
               ></StyledTextArea>
               <div>
                 {board && board.attachedFiles

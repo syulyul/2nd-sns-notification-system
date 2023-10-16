@@ -207,33 +207,31 @@ public class BoardController {
   }
 
   @PostMapping("update")
-  public String update(Board board, MultipartFile[] files, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
-
-    Board b = boardService.get(board.getNo());
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("게시글이 존재하지 않거나 변경 권한이 없습니다.");
-    }
-
-    ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
-    for (MultipartFile part : files) {
-      if (part.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_board/", part);
-        BoardPhoto attachedFile = new BoardPhoto();
-        attachedFile.setFilePath(uploadFileUrl);
-        attachedFiles.add(attachedFile);
+  public ResponseEntity update(@RequestPart("data") Board board,
+      @RequestPart(value = "files", required = false) MultipartFile[] files) throws Exception {
+    System.out.println(board);
+    try {
+      ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
+      if (files != null) {
+        for (MultipartFile part : files) {
+          if (part.getSize() > 0) {
+            String uploadFileUrl = ncpObjectStorageService.uploadFile(
+                "bitcamp-nc7-bucket-14", "sns_board/", part);
+            BoardPhoto attachedFile = new BoardPhoto();
+            attachedFile.setFilePath(uploadFileUrl);
+            attachedFiles.add(attachedFile);
+          }
+        }
       }
+      board.setAttachedFiles(attachedFiles);
+
+      boardService.update(board);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    board.setAttachedFiles(attachedFiles);
-
-    boardService.update(board);
-    return "redirect:/board/detail/" + board.getCategory() + "/" + board.getNo();
+    return new ResponseEntity<>(board, HttpStatus.OK);
   }
-
 
   @GetMapping("fileDelete/{attachedFile}") // 예) .../fileDelete/attachedfile;no=30
   public String fileDelete(@MatrixVariable("no") int no, HttpSession session) throws Exception {
