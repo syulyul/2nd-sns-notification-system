@@ -50,7 +50,9 @@ const ChatContainer = () => {
 
   useEffect(() => {
     if (room && !error) {
-      socket.connect();
+      if (!socket.connected) {
+        socket.connect();
+      }
 
       socket.emit('join', { roomId: room._id });
       // socket.on('join', function (data) {
