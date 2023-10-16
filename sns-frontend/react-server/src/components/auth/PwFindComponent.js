@@ -8,13 +8,6 @@ const FindForm = styled.div`
   justify-items: center;
   align-items: center;
   font-size: 1.2rem;
-
-  @font-face {
-    font-family: 'UhBeeKeongKeong';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeKeongKeong.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
 `;
 
 const StyledTable1 = styled.table`
@@ -48,7 +41,6 @@ const ResultText = styled.p`
 `;
 
 const NewPasswordForm = styled.div`
-  display: none;
   flex-direction: column;
   align-items: center;
   width: 100%;
@@ -70,10 +62,10 @@ const StyledInput = styled.input`
 `;
 
 const SubmitButton = styled(Button)`
-  margin-left:30px;
+  margin-left: 30px;
   width: 220px;
   padding: 10px 20px;
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -82,7 +74,7 @@ const SubmitButton = styled(Button)`
 
 const CommonButton = styled(Button)`
   padding: 10px 20px;
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -93,37 +85,69 @@ const CommonButton = styled(Button)`
   margin-top: 80px;
 `;
 
-const PwFindComponent = () => {
+const PwFindComponent = ({
+  phoneNumber,
+  password,
+  verificationCode,
+  verificationState,
+  authMessage,
+  onChange,
+  onAuthPhoneNumber,
+  onCheckPhoneNumber,
+}) => {
   return (
-      <AuthTemplate>
-        <StyledTable1>
-          <h1>비밀번호 찾기</h1>
-        </StyledTable1>
-        <FindForm>
-          <StyledTable2>
-            <FlexDiv>
-              <StyledLabel>🌱 전화번호</StyledLabel>
-              <StyledInput type="text" name="phoneNumber" placeholder="전화번호를 입력하세요"/>
-              <SubmitButton>인증번호 전송</SubmitButton>
-            </FlexDiv>
-            <ResultText id="sendresult" />
-            <FlexDiv>
-              <StyledLabel>🌱 인증번호</StyledLabel>
-              <StyledInput type="text" placeholder="인증번호를 입력하세요"/>
-              <SubmitButton id="verifyCode">인증번호 확인</SubmitButton>
-            </FlexDiv>
-            <ResultText id="verifyresult" />
-          </StyledTable2>
+    <AuthTemplate>
+      <StyledTable1>
+        <h1>비밀번호 찾기</h1>
+      </StyledTable1>
+      <FindForm>
+        <StyledTable2>
+          <FlexDiv>
+            <StyledLabel>🌱 전화번호</StyledLabel>
+            <StyledInput
+              type="text"
+              name="phoneNumber"
+              placeholder="전화번호를 입력하세요"
+              value={phoneNumber}
+              onChange={onChange}
+            />
+            <SubmitButton onClick={onAuthPhoneNumber}>
+              인증번호 전송
+            </SubmitButton>
+          </FlexDiv>
+          <FlexDiv>
+            <StyledLabel>🌱 인증번호</StyledLabel>
+            <StyledInput
+              type="text"
+              placeholder="인증번호를 입력하세요"
+              name="verificationCode"
+              value={verificationCode}
+              onChange={onChange}
+            />
+            <SubmitButton id="verifyCode" onClick={onCheckPhoneNumber}>
+              인증번호 확인
+            </SubmitButton>
+          </FlexDiv>
+          <ResultText id="verifyresult">{authMessage}</ResultText>
+        </StyledTable2>
+        {verificationState ? (
           <NewPasswordForm id="newPasswordForm">
             <FlexDiv>
               <StyledLabel>🌱 새 비밀번호</StyledLabel>
-              <StyledInput type="password" placeholder="새로운 비밀번호를 입력하세요"/>
+              <StyledInput
+                type="password"
+                name="password"
+                placeholder="새로운 비밀번호를 입력하세요"
+                value={password}
+                onChange={onChange}
+              />
               <SubmitButton id="changePassword">비밀번호 변경</SubmitButton>
             </FlexDiv>
           </NewPasswordForm>
-          <CommonButton>돌아가기</CommonButton>
-        </FindForm>
-      </AuthTemplate>
+        ) : null}
+        <CommonButton>돌아가기</CommonButton>
+      </FindForm>
+    </AuthTemplate>
   );
 };
 
