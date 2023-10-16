@@ -20,6 +20,13 @@ export const list = async ({ category, limit, page}) => {
 export const detail = ({ category, boardNo }) =>
   springClient.get(`board/detail?category=${category}&boardNo=${boardNo}`);
 
+// boardupdate
+export const update = ({ updateData }) =>
+  springClient.post('board/update', updateData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 
 // 게시글삭제
 export const deleteBoard = ({ category, boardNo }) =>
