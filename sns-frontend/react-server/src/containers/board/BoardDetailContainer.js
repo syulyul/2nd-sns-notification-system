@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate  } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
 import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment } from '../../modules/board';
-import { like, unlike } from '../../modules/auth';
+import { boardlike, boardunlike } from '../../modules/auth';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   const [content, setContent] = useState('');
-  const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
 
   const boardDefault = {
@@ -19,7 +18,6 @@ const BoardDetailContainer = () => {
     },
     attachedFiles: [],
     editable: false,
-    liked: false,
     viewCount: 0,
     createdAt: new Date().toISOString()
   };
@@ -61,6 +59,7 @@ const BoardDetailContainer = () => {
   const onDelete = (e) => {
     e.preventDefault();
     dispatch(deleteBoard({boardNo, category}));
+    navigate(`/board/list?category=${category}`); // 삭제 후 리스트로 페이지 이동
   };
 
   //댓글
@@ -73,12 +72,14 @@ const BoardDetailContainer = () => {
       writer: user,
     };
     dispatch(addComment(commentData));
+    dispatch(detail({ category, boardNo })); // 페이지 다시 불러서 새로고침 효과
     setContent('');  // 입력 필드 초기화
   };
 
   //댓글삭제
   const onDeleteComment = (commentNo) => {
     dispatch(deleteComment({commentNo, boardNo}));
+    dispatch(detail({ category, boardNo })); // 페이지 다시 불러서 새로고침 효과
   };
 
   const CommentChange = (e) => {
@@ -87,10 +88,10 @@ const BoardDetailContainer = () => {
 
 // 좋아요
   const handleLike = (boardNo) => {
-    dispatch(like(boardNo));
+    dispatch(boardlike(boardNo));
   };
   const handleUnlike = (boardNo) => {
-    dispatch(unlike(boardNo));
+    dispatch(boardunlike(boardNo));
   };
 
   useEffect(() => {
@@ -103,6 +104,7 @@ const BoardDetailContainer = () => {
 
   return (
         <BoardDetailComponent
+            user={user}
             board={board}
             comments={comments}
             content={content}

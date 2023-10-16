@@ -15,13 +15,13 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCtHIECu07b0AH3kKP0UkqK2qL7fmv2AMs",
-  authDomain: "test-365ca.firebaseapp.com",
-  projectId: "test-365ca",
-  storageBucket: "test-365ca.appspot.com",
-  messagingSenderId: "490760290246",
-  appId: "1:490760290246:web:c2709603f381600f66bcc7",
-  measurementId: "G-MQNZNNVJ7E"
+  apiKey: "AIzaSyC4qX3g0OF5SKoRQd4hJVIwfaWjrX69a4k",
+  authDomain: "snsp-778c0.firebaseapp.com",
+  projectId: "snsp-778c0",
+  storageBucket: "snsp-778c0.appspot.com",
+  messagingSenderId: "7999778564",
+  appId: "1:7999778564:web:8e578f288290f757be2a51",
+  measurementId: "G-WPS0KLZ5L6"
 };
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app); // Firebase 앱 초기화 후 messaging 인스턴스를 생성

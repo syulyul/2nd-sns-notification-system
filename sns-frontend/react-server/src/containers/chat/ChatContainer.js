@@ -4,29 +4,32 @@ import {
   enterRoom,
   concatChats,
   changeField,
-  sendChat, translateChat, translateChats
+  sendChat,
+  translateChat,
+  loadBeforeChats,
 } from '../../modules/chats';
 import qs from 'qs';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import { useLocation, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import io from 'socket.io-client';
-import axios from 'axios';
+import { socket } from '../../socket';
 
 const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
-  const { room, chats, chatTxt, error, user, translatedChat } = useSelector(
-    ({ chats, auth }) => ({
+  const [targetLanguage, setTargetLanguage] = useState('ko');
+  const { room, chats, newChat, chatTxt, error, user, translatedChat, page } =
+    useSelector(({ chats, auth }) => ({
       room: chats.room,
       chats: chats.chats,
       chatTxt: chats.chatTxt,
       error: chats.error,
       user: auth.user,
-      translatedChat: chats.translatedChat
-    })
-  );
+      translatedChat: chats.translatedChat,
+      newChat: chats.newChat,
+      page: chats.nextPage,
+    }));
 
   const { search } = useLocation();
   const { mno1, mno2 } = qs.parse(search, { ignoreQueryPrefix: true });
@@ -45,21 +48,11 @@ const ChatContainer = () => {
     );
   };
 
-  const onSendChat = () => {
-    dispatch(sendChat({ roomId: room._id, chatTxt, user }));
-  };
-
   useEffect(() => {
     if (room && !error) {
-      const socket = io.connect(
-        `${process.env.REACT_APP_NODE_SERVER_URL}/chat`,
-        {
-          path: '/socket.io',
-          transports: ['websocket'],
-        }
-      );
+      socket.connect();
 
-      socket.emit('join', { roomId: room._id, user: chats.users });
+      socket.emit('join', { roomId: room._id });
       // socket.on('join', function (data) {
       //   // 입장
       //   const newChat = data.chat;
@@ -74,44 +67,70 @@ const ChatContainer = () => {
         // 채팅
         const newChat = data.chat;
         dispatch(concatChats({ newChat }));
+        if (user.no !== newChat.user.mno) {
+          onTranslate(newChat);
+        }
       });
 
-      return () => {
-        socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
-      };
+      socket.on('translateChat', function (data) {
+        // 채팅
+        const translatedChatLog = data.translatedChatLog;
+        dispatch(translateChat({ translatedChatLog }));
+        console.log(translatedChatLog);
+      });
     }
+
+    return () => {
+      socket.disconnect();
+    };
   }, [room]);
 
   useEffect(() => {
-    const socket = io.connect(
-      `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
-      {
-        path: '/socket.io',
-        transports: ['websocket'],
+    if (socket) {
+    }
+  }, [socket]);
+
+  const onSendChat = (e) => {
+    e.preventDefault();
+
+    // dispatch(sendChat({ roomId: room._id, chatTxt, user }));
+    if (socket) {
+      if (chatTxt.length > 0) {
+        dispatch(sendChat({ roomId: room._id, chatTxt, user }));
+        socket.emit('sendChat', { roomId: room._id, chatTxt });
       }
-    );
+    }
+  };
 
-    socket.on('translateChat', function (data) {
-      // 채팅 번역
-      const translatedChat = data.translateChat;
-      dispatch(translateChats({ translatedChat }));
-    });
+  const onTranslate = (chatLog) => {
+    // console.log(chatLog);
+    const req = {};
+    req.targetLanguage = targetLanguage;
+    req.chatLog = chatLog;
+    if (socket) {
+      socket.emit('translateChat', req);
+    }
+  };
 
-    return () => {
-      socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
-    };
-  });
+  const onLoadBeforeChats = () => {
+    dispatch(loadBeforeChats({ roomId: room._id, mno1, mno2, page }));
+  };
 
   return (
     <ChatComponent
       room={room}
       chats={chats}
+      newChat={newChat}
       user={user}
       chatTxt={chatTxt}
       translatedChat={translatedChat}
       error={error}
       onChange={onChange}
       onSendChat={onSendChat}
+      onTranslate={onTranslate}
+      targetLanguage={targetLanguage}
+      setTargetLanguage={setTargetLanguage}
+      onLoadBeforeChats={onLoadBeforeChats}
     />
   );
 };

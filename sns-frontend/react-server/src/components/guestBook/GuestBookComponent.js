@@ -1,6 +1,8 @@
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import guestBook from '../../modules/guestBook';
+import Pagination from '../common/Pagination';
+import FloatingHeart from '../common/FloatingHeart';
 
 const GuestbookTitle = styled.div`
   text-align: center;
@@ -57,14 +59,20 @@ const StyledTextarea = styled.textarea`
 `;
 
 const StyledButton = styled.button`
+  align-items: center;
   padding: 5px 10px;
+  font-size: 16px;
   background-color: #426B1F;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   margin-top: 10px;
   float: inherit;
+  height: 50px;
 
   &.actions {
     margin: 5px;
@@ -73,8 +81,7 @@ const StyledButton = styled.button`
 
 const StyledDiv = styled.div`
   text-align: center;
-  margin-left: 37%;
-  margin-bottom: 2%;
+  margin-bottom: 7%;
 `;
 
 const ScrollableTable = styled.div`
@@ -161,12 +168,14 @@ const GuestBookTextarea = styled.textarea`
   min-height: 7em;
   border-color: transparent;
   resize: none;
+  font-size: 20px;
 `;
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  margin-bottom: 80px;
 `;
 
 const NoCell = styled.td`
@@ -174,11 +183,12 @@ const NoCell = styled.td`
 `;
 
 const TitleMetaCell = styled.td`
-  // 다른 TitleMetaCell 스타일 속성 추가
+  margin-left: 1000px;
 `;
 
 const FirstRow = styled.tr`
   background-color: #f2f2f2;
+  height: 50px;
 `;
 
 const SecondRow = styled.tr`
@@ -192,6 +202,7 @@ const WriterCell = styled.td`
   text-align: center;
   justify-content: center;
   align-items: center;
+  margin-top: 30px;
 `;
 
 const NickNameDiv = styled.div`
@@ -218,7 +229,6 @@ const LikeLabel = styled.label`
 `;
 
 const Table = styled.table`
-  // 필요한 스타일을 추가합니다.
 `;
 
 const ButtonContainer = styled.div`
@@ -226,7 +236,6 @@ const ButtonContainer = styled.div`
 
 const DeleteButton = styled.button`
   text-align: center;
-  margin-left: 37%;
   margin-bottom: 2%;
   padding: 5px 10px;
   background-color: #426B1F;
@@ -237,8 +246,24 @@ const DeleteButton = styled.button`
   margin-top: 10px;
 `;
 
+const ProfileLink = styled.a`
+  text-decoration-line: none;
+  color: black;
+`;
+
+const LikeButton = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 0;
+  font-size: 24px;
+`;
+
 const DeleteButtonContainer = styled.div`
-  text-align: center;
+  text-align: left;
   margin-top: 10px;
 `;
 
@@ -246,6 +271,23 @@ const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
+
+const TitleSpan = styled.span`
+  font-size: 20px;
+` ;
+
+const FloatingHeartsContainer = styled.div`
+  position: absolute;
+  top: 100px;
+  right: 0;
+`;
+
+
+const GuestBookList = styled.div`
+  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+  transform: translateY(${(props) => (props.isVisible ? 0 : '20px')});
+  transition: opacity 0.5s, transform 0.5s;
+`;
 
 const GuestBookComponent = ({
   content,
@@ -256,15 +298,55 @@ const GuestBookComponent = ({
   onSubmit,
   guestBookList,
   guestBookOwnerNick,
-  guestBook
+  guestBook,
+  guestBookNo,
+  handleUnlike,
+  handleLike,
+  likeGuestBookSet,
+  totalPages,
+  currentPage,
+  onPageChange,
+  lastPage,
+  page,
+  query,
+  user,
 }) => {
 
-  const [likes, setLikes] = useState(guestBookList.map(() => false));
+  const [floatingHearts, setFloatingHearts] = useState([]);
+  const [likedGuestBooks, setLikedGuestBooks] = useState({});
+  const [isListVisible, setListVisible] = useState(false);
 
-  const toggleLike = (index) => {
-    const newLikes = [...likes];
-    newLikes[index] = !newLikes[index];
-    setLikes(newLikes);
+  useEffect(() => {
+    // 페이지 로드 후 1초 뒤에 방명록 리스트를 표시합니다.
+    const timer = setTimeout(() => {
+      setListVisible(true);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const handleLikeButtonClick = async (no) => {
+    const isLiked = likedGuestBooks[no];
+
+    try {
+      if (isLiked) {
+        await handleUnlike(no);
+        setLikedGuestBooks((prev) => ({ ...prev, [no]: false }));
+      } else {
+        await handleLike(no);
+        setLikedGuestBooks((prev) => ({ ...prev, [no]: true }));
+        setFloatingHearts((prev) => [...prev, { id: Date.now(), guestBookNo: no }]);
+      }
+    } catch (error) {
+      console.error('좋아요 처리 중 오류 발생:', error);
+    }
+  };
+
+
+  const removeHeart = (id) => {
+    setFloatingHearts((prev) => prev.filter((heart) => heart.id !== id));
   };
 
   return (
@@ -308,12 +390,12 @@ const GuestBookComponent = ({
             <input type='hidden' name='mpno' value={mpno} />
           </StyledTable>
           <StyledDiv>
-            <StyledButton type='submit' onClick={onSubmit}>작성</StyledButton>
+            <StyledButton type='submit' onClick={onSubmit}>작성하기</StyledButton>
           </StyledDiv>
         </StyledForm>
       </AddGuestbookForm>
 
-
+      <GuestBookList isVisible={isListVisible}>
       {Array.isArray(guestBookList) && guestBookList.map((guestBook, index) => (
         <Container key={guestBook.no}>
           <ContentContainer>
@@ -325,7 +407,7 @@ const GuestBookComponent = ({
                   </NoCell>
                   <TitleMetaCell colSpan='3'>
                     <HorizontalLayout>
-                      <span>{guestBook.title}</span>
+                      <TitleSpan>{guestBook.title}</TitleSpan>
                       <MetaInfo>
                         <ClockIcon src='/images/clock.png' />
                         <span>{formatDate(guestBook.createdAt)}</span>
@@ -341,24 +423,42 @@ const GuestBookComponent = ({
                     </ProfilePicture>
                     <NickNameDiv>{guestBook.writer.nick
                       || '임시 닉네임'}</NickNameDiv>
+                    {// 작성자와 로그인 사용자 번호가 일치하는 경우와
+                      // 본인 방명록에만 삭제 버튼 표시
+                    }
+                    {(user.no === guestBook.writer.no || guestBook.mpno === user.no) && (
+                        <DeleteButton
+                            onClick={(e) => onDelete(e, guestBook.no)}>삭제</DeleteButton>
+                    )}
                   </WriterCell>
                   <ContentLikeCell colSpan='3'>
                     <GuestBookTextarea readOnly>
                       {guestBook.content || '내용'}
                     </GuestBookTextarea>
-                    <LikeButtonContainer onClick={() => toggleLike(index)}>
-                      {likes[index] ? '❤️' : '🤍'}
-                    </LikeButtonContainer>
+                    <LikeButton onClick={() => handleLikeButtonClick(guestBook.no)}>
+                      {likeGuestBookSet.includes(guestBook.no) ? '️❤️' : '🤍'}
+                    </LikeButton>
+                    <FloatingHeartsContainer>
+                      {floatingHearts
+                      .filter((heart) => heart.guestBookNo === guestBook.no)
+                      .map((heart) => (
+                          <FloatingHeart key={heart.id} onComplete={() => removeHeart(heart.id)} />
+                      ))}
+                    </FloatingHeartsContainer>
                   </ContentLikeCell>
                 </SecondRow>
               </tbody>
             </ContentTable>
           </ContentContainer>
           <DeleteButtonContainer>
-            <StyledButton onClick={(e) => onDelete(e, guestBook.no)} >삭제</StyledButton>
+
+
           </DeleteButtonContainer>
         </Container>
       ))}
+        </GuestBookList>
+
+      <Pagination page={page} query={query} lastPage={lastPage} />
     </>
   );
 };

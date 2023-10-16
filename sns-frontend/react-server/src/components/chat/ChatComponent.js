@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import io from 'socket.io-client';
 import { useRef, useEffect } from 'react';
+import { useState } from 'react';
 // import { roomList } from '../../modules/rooms';
 
 const ChatContainer = styled.div`
@@ -30,7 +31,7 @@ const SendChatBlock = styled.div`
   margin-top: 20px;
 `;
 
-const StyledInputContainer = styled.div`
+const StyledSubmitForm = styled.form`
   display: inline-flex;
   margin-bottom: 10px;
   align-items: center;
@@ -191,10 +192,9 @@ const StyledChatBtn = styled.button`
   }
 `;
 
-const ChatItem = ({ chatlog, loginUser }) => {
-  const { _id, room, user, chat, files, createdAt } = chatlog;
+const ChatItem = ({ chatLog, loginUser }) => {
+  const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
-  console.log(loginUser, user);
   return (
     <ChatMessage
       className={
@@ -202,6 +202,11 @@ const ChatItem = ({ chatlog, loginUser }) => {
       }
     >
       {chat}
+      {translated.map((result) => (
+        <span>
+          {result.langCode}:{result.txt}
+        </span>
+      ))}
     </ChatMessage>
   );
 };
@@ -209,79 +214,103 @@ const ChatItem = ({ chatlog, loginUser }) => {
 const ChatComponent = ({
   room,
   chats,
+  newChat,
   user,
   onChange,
   chatTxt,
   onSendChat,
+  onTranslate,
+  targetLanguage,
+  setTargetLanguage,
+  onLoadBeforeChats,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   const messageEndRef = useRef(null);
+  const [beforeScrollHeight, setBeforeScrollHeight] = useState(0);
+
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: 'auto' });
+      messageEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
     }
-  }, [chats]);
-
-  const socket = io.connect(
-    `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
-    {
-      path: '/socket.io',
-      transports: ['websocket'],
-    }
-  );
+  }, [newChat]);
 
   return (
     <ChatContainer>
       {room && (
-        <TitleStyle>{`🌱 ${room.users[0]}, ${room.users[1]} 🌱`}</TitleStyle>
+        <TitleStyle>{`🌱 ${room.users[0].nick}, ${room.users[1].nick} 🌱`}</TitleStyle>
       )}
 
-      <StyledChatList>
+      <select
+        onChange={(e) => setTargetLanguage(e.target.value)}
+        value={targetLanguage}
+      >
+        <option value="ko">한국어</option>
+        <option value="en">영어</option>
+        <option value="ja">일본어</option>
+        <option value="zh-CN">중국어 간체</option>
+        <option value="zh-TW">중국어 번체</option>
+        <option value="vi">베트남어</option>
+        <option value="id">인도네시아어</option>
+        <option value="th">태국어</option>
+        <option value="de">독일어</option>
+        <option value="ru">러시아어</option>
+        <option value="es">스페인어</option>
+        <option value="it">이탈리아어</option>
+        <option value="fr">프랑스어</option>
+      </select>
+
+      {/* <button onClick={onLoadBeforeChats}>무한 스크롤 테스트용</button> */}
+      <StyledChatList
+        onScroll={async (e) => {
+          const element = e.target;
+          if (element.scrollTop === 0) {
+            setBeforeScrollHeight(element.scrollHeight);
+            await onLoadBeforeChats();
+            element.scrollTo({
+              top: element.scrollHeight - beforeScrollHeight,
+              left: 0,
+              behavior: 'instant',
+            });
+            console.log(element.scrollHeight - beforeScrollHeight);
+          }
+        }}
+      >
         <ChatMessage>
           {/* <UserImage
             src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
             alt="User"
           /> */}
-          {/* <div> */}
-          {/* {room && <Username></Username>} */}
-          {/* <ChatMessage className="StyledChatOther">
-              남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
-            </ChatMessage>
-            <ChatMessage className="StyledChatMine">
-              내가 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
-            </ChatMessage> */}
-          {/* </div> */}
           {chats &&
-            chats.map((chatlog) => (
+            chats.map((chatLog) => (
               <div>
-                {user.no !== chatlog.user.mno && (
-                  <div className={'UserName'}>{`${chatlog.user.mno}`}</div>
+                {user.no !== chatLog.user.mno && (
+                  <div className={'UserName'}>{`${chatLog.user.nick}`}</div>
                 )}
                 {/* <UserImage src="" /> */}
                 {/* <Username>{`${chatlog.user.mno}`}</Username> */}
                 <ChatItem
-                  chatlog={chatlog}
-                  key={chatlog._id}
+                  chatLog={chatLog}
+                  key={chatLog._id}
                   loginUser={user}
                 />
-                {user.no !== chatlog.user.mno && (
-                  <button onClick={() => socket.emit("translateChat", chatlog.chat)}>번역</button>
+                {user.no !== chatLog.user.mno && (
+                  <button onClick={(e) => onTranslate(chatLog)}>번역</button>
                 )}
-                <div ref={messageEndRef}></div> {/* Scroll to this div */}
               </div>
             ))}
+          <div ref={messageEndRef}></div> {/* Scroll to this div */}
           {/* </div> */}
         </ChatMessage>
       </StyledChatList>
       <SendChatBlock>
-        <StyledInputContainer>
+        <StyledSubmitForm onSubmit={onSendChat}>
           <StyledInput
-            type='text'
+            type="text"
             onChange={onChange}
             value={chatTxt}
-            name='chatTxt'
-            className='inputChatTxt'
-            placeholder='메시지를 입력하세요'
+            name="chatTxt"
+            className="inputChatTxt"
+            placeholder="메시지를 입력하세요"
           />
           {/* <StyledInput
             type="file"
@@ -290,8 +319,8 @@ const ChatComponent = ({
             ref={inputFile}
             className="inputFile"
           /> */}
-          <StyledChatBtn onClick={onSendChat}>보내기</StyledChatBtn>
-        </StyledInputContainer>
+          <StyledChatBtn type="submit">보내기</StyledChatBtn>
+        </StyledSubmitForm>
       </SendChatBlock>
     </ChatContainer>
   );

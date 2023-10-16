@@ -1,5 +1,7 @@
 import SocketIO from 'socket.io';
-import Chat from './schemas/chat';
+import cookieParser from 'cookie-parser';
+import { sendChatBySocket } from './api/chatRoom/ChatRoom.ctrl';
+import { translateAndDetectLang } from './api/papago/papago.ctrl';
 // import Room from './schemas/room';
 
 export default (server, app) => {
@@ -17,16 +19,40 @@ export default (server, app) => {
   chat.on('connection', (socket) => {
     console.log('chat 네임스페이스에 접속');
 
-    socket.on('join', (data) => {
-      socket.join(data.roomId);
+    try {
+      const cookies =
+        socket.handshake.headers.cookie.length > 0
+          ? socket.handshake.headers.cookie.split('; ')
+          : [];
+      const parsedCookies = {};
+      for (let cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split('=');
+        parsedCookies[cookieName] = cookieValue;
+      }
 
-      // data는 브라우저에서 보낸 방 아이디
-      socket.join(data); // 네임스페이스 아래에 존재하는 방에 접속
-    });
+      socket.on('join', (data) => {
+        socket.join(data.roomId);
+      });
 
-    // socket.on('disconnect', async () => {
-    //   console.log('chat 네임스페이스 접속 해제');
-    //   console.log(socket.id, '연결 종료 시 소켓');
-    // });
+      socket.on('sendChat', (data) => {
+        const reqData = { body: data };
+        reqData.cookies = parsedCookies;
+        reqData.ioOfChat = chat;
+        sendChatBySocket(reqData);
+      });
+
+      socket.on('translateChat', (data) => {
+        const reqData = { body: data };
+        reqData.ioOfChat = chat;
+        translateAndDetectLang(reqData);
+      });
+
+      socket.on('disconnect', async () => {
+        console.log('chat 네임스페이스 접속 해제');
+        console.log(socket.id, '연결 종료 시 소켓');
+      });
+    } catch (error) {
+      console.log(error);
+    }
   });
 };
