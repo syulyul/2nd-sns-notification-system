@@ -133,6 +133,7 @@ const RegisterComponent = ({
   onChangeFile,
   onAuthPhoneNumber,
   onCheckPhoneNumber,
+  verificationState,
 }) => {
   return (
     <AuthTemplate>
@@ -214,9 +215,11 @@ const RegisterComponent = ({
             <StyledInput type="file" name="photo" onChange={onChangeFile} />
           </InputWrapper>
         </InputBlock>
-        <SubmitButton type="submit" onClick={onSubmit}>
-          가입하기
-        </SubmitButton>
+        {verificationState ? (
+          <SubmitButton type="submit" onClick={onSubmit}>
+            가입하기
+          </SubmitButton>
+        ) : null}
       </RegisterForm>
     </AuthTemplate>
   );

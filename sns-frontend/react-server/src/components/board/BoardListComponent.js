@@ -123,7 +123,7 @@ const BoardListComponent = ({
     delay: 0,
     reset: true,
     config: {
-      duration: 1000 // 애니메이션의 지속 시간을 1초로 설정
+     duration: 500 // 애니메이션의 지속 시간 설정
     }
   });
 

@@ -41,9 +41,12 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
           <ChatRoomItemContainer>
             <ChatRoomItem
               key={room._id}
-              onClick={(e) => onSelectRoom(room.users)}
+              onClick={(e) => {
+                console.log(room);
+                onSelectRoom(room.users);
+              }}
             >
-              {`${room.users[0]}, ${room.users[1]}`}
+              {`${room.users[0].nick}, ${room.users[1].nick}`}
             </ChatRoomItem>
           </ChatRoomItemContainer>
         ))}

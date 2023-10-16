@@ -19,33 +19,40 @@ export default (server, app) => {
   chat.on('connection', (socket) => {
     console.log('chat 네임스페이스에 접속');
 
-    const cookies = socket.handshake.headers.cookie.split('; ');
-    const parsedCookies = {};
-    for (let cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.split('=');
-      parsedCookies[cookieName] = cookieValue;
+    try {
+      const cookies =
+        socket && socket.handshake.headers.cookie
+          ? socket.handshake.headers.cookie.split('; ')
+          : [];
+      const parsedCookies = {};
+      for (let cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split('=');
+        parsedCookies[cookieName] = cookieValue;
+      }
+
+      socket.on('join', (data) => {
+        socket.join(data.roomId);
+      });
+
+      socket.on('sendChat', (data) => {
+        const reqData = { body: data };
+        reqData.cookies = parsedCookies;
+        reqData.ioOfChat = chat;
+        sendChatBySocket(reqData);
+      });
+
+      socket.on('translateChat', (data) => {
+        const reqData = { body: data };
+        reqData.ioOfChat = chat;
+        translateAndDetectLang(reqData);
+      });
+
+      socket.on('disconnect', async () => {
+        console.log('chat 네임스페이스 접속 해제');
+        console.log(socket.id, '연결 종료 시 소켓');
+      });
+    } catch (error) {
+      console.log(error);
     }
-
-    socket.on('join', (data) => {
-      socket.join(data.roomId);
-    });
-
-    socket.on('sendChat', (data) => {
-      const reqData = { body: data };
-      reqData.cookies = parsedCookies;
-      reqData.ioOfChat = chat;
-      sendChatBySocket(reqData);
-    });
-
-    socket.on('translateChat', (data) => {
-      const reqData = { body: data };
-      reqData.ioOfChat = chat;
-      translateAndDetectLang(reqData);
-    });
-
-    socket.on('disconnect', async () => {
-      console.log('chat 네임스페이스 접속 해제');
-      console.log(socket.id, '연결 종료 시 소켓');
-    });
   });
 };

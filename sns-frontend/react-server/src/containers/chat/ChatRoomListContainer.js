@@ -32,9 +32,13 @@ const ChatRoomListContainer = () => {
   useEffect(() => {
     dispatch(roomList(user.no));
   }, [dispatch, user.no]);
-
   const handleSelectRoom = (users) => {
-    navigate(`/room?mno1=${users[0]}&mno2=${users[1]}`);
+    console.log('sljflkadsjlkdflsajfldjlksjjf');
+    console.log(users);
+    console.log(users[0]);
+    console.log(users[1]);
+
+    navigate(`/room?mno1=${users[0].mno}&mno2=${users[1].mno}`);
   };
 
   return (

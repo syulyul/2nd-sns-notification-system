@@ -13,6 +13,16 @@ export const register = ({ formData }) =>
       'Content-Type': 'multipart/form-data',
     },
   });
+export const getPhoneAuthCode = ({ phoneNumber }) =>
+  springClient.post('auth/getPhoneAuthCode', {
+    phoneNumber,
+  });
+
+export const checkPhoneAuthCode = ({ phoneNumber, verificationCode }) =>
+  springClient.post('auth/checkPhoneAuthCode', {
+    phoneNumber,
+    verificationCode,
+  });
 
 export const check = () =>
   springClient.get('auth/check', { withCredentials: true });

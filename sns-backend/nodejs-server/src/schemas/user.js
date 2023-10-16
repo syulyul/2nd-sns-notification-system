@@ -1,21 +1,22 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
-// const { Types: { ObjectId } } = Schema;
-const userSchema = new Schema ({
-  mno: { // 사용자 고유 번호
+
+const userSchema = new Schema({
+  mno: {
+    // 사용자 고유 번호
     type: Number,
     required: true,
   },
-  nick: { // 사용자 닉네임
+  nick: {
+    // 사용자 닉네임
     type: String,
     required: true,
   },
-  // rooms: [{ // 사용자가 참여하고 있는 채팅방 전체
-  //   type: ObjectId,
-  //   ref: 'Room',
-  // }],
-
+  photo: {
+    // 사용자 사진
+    type: String,
+  },
 });
 
 const User = mongoose.model('User', userSchema);

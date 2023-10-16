@@ -131,8 +131,10 @@ const ChatMessage = styled.div`
   }
 `;
 
-const Username = styled.div`
+const UserName = styled.div`
   font-size: 17px;
+  display: flex;
+  align-items: center;
 `;
 
 const UserImage = styled.img`
@@ -140,7 +142,7 @@ const UserImage = styled.img`
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
-  margin-bottom: 20px;
+  // margin-bottom: 20px;
 `;
 
 // const StyledChatMine = styled.div`
@@ -237,7 +239,7 @@ const ChatComponent = ({
   return (
     <ChatContainer>
       {room && (
-        <TitleStyle>{`🌱 ${room.users[0]}, ${room.users[1]} 🌱`}</TitleStyle>
+        <TitleStyle>{`🌱 ${room.users[0].nick}, ${room.users[1].nick} 🌱`}</TitleStyle>
       )}
 
       <select
@@ -263,7 +265,6 @@ const ChatComponent = ({
       <StyledChatList
         onScroll={async (e) => {
           const element = e.target;
-          console.log(element.scrollHeight);
           if (element.scrollTop === 0) {
             setBeforeScrollHeight(element.scrollHeight);
             await onLoadBeforeChats();
@@ -277,27 +278,23 @@ const ChatComponent = ({
         }}
       >
         <ChatMessage>
-          {/* <UserImage
-            src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
-            alt="User"
-          /> */}
-          {/* <div> */}
-          {/* {room && <Username></Username>} */}
-          {/* <ChatMessage className="StyledChatOther">
-              남이 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
-            </ChatMessage>
-            <ChatMessage className="StyledChatMine">
-              내가 쓴 채팅 어떻게 받아오지 아아아아아ㅏ아아아아ㅏ아
-            </ChatMessage> */}
-          {/* </div> */}
           {chats &&
             chats.map((chatLog) => (
               <div>
-                {user.no !== chatLog.user.mno && (
-                  <div className={'UserName'}>{`${chatLog.user.mno}`}</div>
-                )}
-                {/* <UserImage src="" /> */}
-                {/* <Username>{`${chatlog.user.mno}`}</Username> */}
+                <div>
+                  {user.no !== chatLog.user.mno && (
+                    <UserName className={'UserName'}>
+                      <UserImage
+                        src={
+                          chatLog.user.photo
+                            ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
+                            : 'images/default.jpg'
+                        }
+                      />
+                      {`${chatLog.user.nick}`}
+                    </UserName>
+                  )}
+                </div>
                 <ChatItem
                   chatLog={chatLog}
                   key={chatLog._id}
