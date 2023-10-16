@@ -22,6 +22,9 @@ const [DETAIL, DETAIL_SUCCESS, DETAIL_FAILURE] =
 const [FORM, FORM_SUCCESS, FORM_FAILURE] =
   createRequestActionTypes('board/FORM');
 
+const [UPDATE, UPDATE_SUCCESS, UPDATE_FAILURE] =
+  createRequestActionTypes('board/UPDATE');
+
 const [DELETE, DELETE_SUCCESS, DELETE_FAILURE] = createRequestActionTypes('board/DELETE');
 
 
@@ -57,6 +60,9 @@ export const detail = createAction(DETAIL, ({ category, boardNo }) => ({
 }));
 
 export const form = createAction(FORM, ({ formData }) => ({ formData }));
+
+export const update = createAction(UPDATE, ({ updateData }) => ({ updateData }));
+
 export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
   boardNo, category
 }));
@@ -79,6 +85,7 @@ export const searchBoards = createAction(SEARCH_BOARDS, ({ category, searchTxt, 
 const listSaga = createRequestSaga(LIST, boardAPI.list);
 const detailSaga = createRequestSaga(DETAIL, boardAPI.detail);
 const formSaga = createRequestSaga(FORM, boardAPI.form);
+const updateSaga = createRequestSaga(UPDATE, boardAPI.update);
 const deleteBoardSaga  = createRequestSaga(DELETE, boardAPI.deleteBoard);
 
 //댓글
@@ -98,6 +105,7 @@ export function* boardSaga() {
   yield takeLatest(LIST, listSaga);
   yield takeLatest(DETAIL, detailSaga);
   yield takeLatest(FORM, formSaga);
+  yield takeLatest(UPDATE, updateSaga);
   yield takeLatest(DELETE, deleteBoardSaga);
   
   //댓글
@@ -162,6 +170,15 @@ const board = handleActions(
       board,
     }),
     [FORM_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
+    }),
+    [UPDATE_SUCCESS]: (state, { payload: board }) => ({
+      ...state,
+      boardError: null,
+      board,
+    }),
+    [UPDATE_FAILURE]: (state, { payload: error }) => ({
       ...state,
       boardError: error,
     }),
