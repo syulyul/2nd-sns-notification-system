@@ -2,7 +2,6 @@ package bitcamp.myapp.service;
 
 import bitcamp.myapp.dao.GuestBookDao;
 import bitcamp.myapp.vo.GuestBook;
-import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import bitcamp.myapp.vo.NotiLog;
 import bitcamp.myapp.vo.NotiType;
@@ -32,14 +31,13 @@ public class DefaultGuestBookService implements GuestBookService {
   @Override
   public int add(GuestBook guestBook) throws Exception {
     int count = guestBookDao.insert(guestBook);
-//    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
-//    if (!loginUser.equals(guestBook.getMpno())) {
-//      notificationService.add(new NotiLog(
-//          guestBook.getMpno(),
-//          NotiType.LIKE_TYPE,
-//          loginUser.getNick() + "님이 회원님의 방명록에 글을 작성했습니다.",
-//          "/guestBook/" + guestBook.getMpno()));
-//    }
+    if (guestBook.getWriter().getNo() != guestBook.getMpno()) {
+      notificationService.add(new NotiLog(
+          guestBook.getMpno(),
+          NotiType.LIKE_TYPE,
+          guestBook.getWriter().getNick() + "님이 회원님의 방명록에 글을 작성했습니다.",
+          "/guestBook/" + guestBook.getMpno()));
+    }
     return count;
   }
 
@@ -82,13 +80,14 @@ public class DefaultGuestBookService implements GuestBookService {
   public int like(Member member, GuestBook guestBook) throws Exception {
     int result = guestBookDao.insertLike(member.getNo(), guestBook.getNo());
     guestBookDao.updateLike(guestBook.getNo());
-    //if (!session.getAttribute("loginUser").equals(guestBook.getWriter())) {
-    //  notificationService.add(new NotiLog(
-    //      guestBook.getWriter().getNo(),
-    //      NotiType.FOLLOW_TYPE,
-    //      member.getNick() + "님이 회원의 방명록 글을 좋아합니다.",
-    //      "/guestBook/" + guestBook.getMpno()));
-    //}
+    System.out.println(guestBook);
+    if (member.getNo() != guestBook.getWriter().getNo()) {
+      notificationService.add(new NotiLog(
+          guestBook.getWriter().getNo(),
+          NotiType.FOLLOW_TYPE,
+          member.getNick() + "님이 회원의 방명록 글을 좋아합니다.",
+          "/guestBook/" + guestBook.getMpno()));
+    }
     return result;
   }
 

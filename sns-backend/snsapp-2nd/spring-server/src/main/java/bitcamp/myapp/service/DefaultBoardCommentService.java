@@ -32,15 +32,15 @@ public class DefaultBoardCommentService implements BoardCommentService {
   @Override
   public int add(BoardComment boardComment) throws Exception {
     int count = boardCommentDao.insert(boardComment);
-//    Board board = boardDao.findBy(boardComment.getBoardNo());
-//    if (!session.getAttribute("loginUser").equals(board.getWriter())) {
-//      notificationService.add(new NotiLog(
-//          board.getWriter().getNo(),
-//          NotiType.COMMENT_TYPE,
-//          boardComment.getWriter().getNick() + "님이 회원님의 게시글에 댓글을 달았습니다.",
-//          "/board/detail/" + board.getCategory() + "/" + boardComment.getBoardNo()));
-////        http://localhost/notification/updateState(memberNo=73,notiNo=409,notiState=1,url=/board/detail/1/66)
-//    }
+    Board board = boardDao.findBy(boardComment.getBoardNo());
+    if (boardComment.getWriter().getNo() != board.getWriter().getNo()) {
+      notificationService.add(new NotiLog(
+          board.getWriter().getNo(),
+          NotiType.COMMENT_TYPE,
+          boardComment.getWriter().getNick() + "님이 회원님의 게시글에 댓글을 달았습니다.",
+          "/board/detail/" + board.getCategory() + "/" + boardComment.getBoardNo()));
+//        http://localhost/notification/updateState(memberNo=73,notiNo=409,notiState=1,url=/board/detail/1/66)
+    }
     return count;
   }
 

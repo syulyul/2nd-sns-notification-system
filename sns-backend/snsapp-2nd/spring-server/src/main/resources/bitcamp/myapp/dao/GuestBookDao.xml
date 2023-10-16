@@ -60,6 +60,7 @@
     g.content,
     g.created_at,
     g.likes,
+    g.mpno,
     m.mno,
     m.nick
     from
