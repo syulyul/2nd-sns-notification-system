@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
+const { Types: { ObjectId } } = Schema;
 const notiSchema = new Schema({
   mno: {
     type: Number,

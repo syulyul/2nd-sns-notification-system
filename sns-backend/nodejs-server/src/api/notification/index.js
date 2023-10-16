@@ -1,5 +1,6 @@
 import express from 'express';
 import * as notiCtrl from './notification.ctrl';
+import {addFollowingLog} from "./notification.ctrl";
 
 const notification = express.Router();
 
