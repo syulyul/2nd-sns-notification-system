@@ -131,8 +131,10 @@ const ChatMessage = styled.div`
   }
 `;
 
-const Username = styled.div`
+const UserName = styled.div`
   font-size: 17px;
+  display: flex;
+  align-items: center;
 `;
 
 const UserImage = styled.img`
@@ -140,7 +142,7 @@ const UserImage = styled.img`
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
-  margin-bottom: 20px;
+  // margin-bottom: 20px;
 `;
 
 // const StyledChatMine = styled.div`
@@ -276,18 +278,23 @@ const ChatComponent = ({
         }}
       >
         <ChatMessage>
-          {/* <UserImage
-            src="https://i.namu.wiki/i/Pt5YVNhD6kySJXOhxFVDDTG3m1xeJcGzHz3gDQhqBfxqWHDRaj5moJsqB4GT3voAIBDlUyvDozVRDn7C3Hg6eEC2EXJjEOSzTX9HoTGfKZ5H53V7GwrYQjJwgL58PjhL2cUTgSMg9K0u6Cb9dPqk9w.webp"
-            alt="User"
-          /> */}
           {chats &&
             chats.map((chatLog) => (
               <div>
-                {user.no !== chatLog.user.mno && (
-                  <div className={'UserName'}>{`${chatLog.user.nick}`}</div>
-                )}
-                {/* <UserImage src="" /> */}
-                {/* <Username>{`${chatlog.user.mno}`}</Username> */}
+                <div>
+                  {user.no !== chatLog.user.mno && (
+                    <UserName className={'UserName'}>
+                      <UserImage
+                        src={
+                          chatLog.user.photo
+                            ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
+                            : 'images/default.jpg'
+                        }
+                      />
+                      {`${chatLog.user.nick}`}
+                    </UserName>
+                  )}
+                </div>
                 <ChatItem
                   chatLog={chatLog}
                   key={chatLog._id}
