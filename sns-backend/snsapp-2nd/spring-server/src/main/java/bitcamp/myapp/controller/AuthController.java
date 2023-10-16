@@ -128,7 +128,7 @@ public class AuthController {
         loginUser.setFcmToken(fcmToken);
 
       } else { // 해당하는 유저가 없을 경우
-        return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
       }
     } catch (Exception e) {
       e.printStackTrace();

@@ -138,6 +138,7 @@ const initialState = {
   photo: '',
   fcmToken: '',
 
+  authMessage: null,
   verificationCode: '',
   verificationState: null,
 
@@ -208,13 +209,17 @@ const auth = handleActions(
       authMessage: error,
     }),
 
-    [LOGIN_SUCCESS]: (state, { payload: user }) => ({
+    [LOGIN_SUCCESS]: (state, { payload: user, meta: response }) => ({
       ...state,
       authError: null,
       user,
-      followList: user.followMemberSet,
-      likeBoardList: user.likeBoardSet,
-      likeGuestBookList: user.likeGuestBookSet,
+      followList: user ? [] : user.followMemberSet,
+      likeBoardList: user ? [] : user.likeBoardSet,
+      likeGuestBookList: user ? [] : user.likeGuestBookSet,
+      authMessage:
+        response.status == 200
+          ? null
+          : '존재하지 않는 번호이거나 비밀번호가 일치하지 않습니다',
     }),
     [LOGIN_FAILURE]: (state, { payload: error }) => ({
       ...state,
