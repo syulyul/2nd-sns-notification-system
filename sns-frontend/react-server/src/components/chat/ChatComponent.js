@@ -143,6 +143,46 @@ const UserImage = styled.img`
   margin-bottom: 20px;
 `;
 
+const LanguageSelectContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  margin-top: 10px;
+`;
+
+const FlagIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 10px;
+  border: ${(props) => (props.selected ? '2px solid #007bff' : 'none')};
+`;
+
+const LanguageAbbreviation = styled.span`
+  font-size: 12px;
+`;
+
+const StyledChatBtn = styled.button`
+  width: 100px;
+  height: 41px;
+  background: #426b1f;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 130%;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+  align-self: flex-end; /* 맨 아래에 정렬 */
+
+  &:hover {
+    background: rgb(77, 77, 77);
+    color: #fff;
+  }
+`;
+
 // const StyledChatMine = styled.div`
 //     position: relative;
 //     background: #426B1F;
@@ -172,27 +212,8 @@ const UserImage = styled.img`
 //   word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
 // `;
 
-const StyledChatBtn = styled.button`
-  width: 100px;
-  height: 41px;
-  background: #426b1f;
-  border-radius: 8px;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 130%;
-  border: none;
-  cursor: pointer;
-  margin: 10px;
-  align-self: flex-end; /* 맨 아래에 정렬 */
 
-  &:hover {
-    background: rgb(77, 77, 77);
-    color: #fff;
-  }
-`;
-
-const ChatItem = ({ chatLog, loginUser }) => {
+const ChatItem = ({ chatLog, loginUser, targetLanguage}) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
   return (
@@ -202,14 +223,36 @@ const ChatItem = ({ chatLog, loginUser }) => {
       }
     >
       {chat}
-      {translated.map((result) => (
-        <span>
-          {result.langCode}:{result.txt}
-        </span>
-      ))}
-    </ChatMessage>
-  );
-};
+      {translated.map((result) => {
+        if (result.langCode === targetLanguage) {
+          return (
+              <span key={result.langCode}>
+        {result.langCode}:{result.txt}
+      </span>
+          );
+        }
+        return null; // 조건을 만족하지 않으면 null 반환
+      })}
+        </ChatMessage>
+        );
+      };
+
+const LanguageOptions = [
+  { value: 'ko', label: '한국어', flag: '/images/ko.png', abbreviation: 'KO' },
+  { value: 'en', label: '영어', flag: '/images/en.png', abbreviation: 'EN' },
+  { value: 'ja', label: '일본어', flag: '/images/ja.png', abbreviation: 'JA' },
+  { value: 'zh-CN', label: '중국어 간체', flag: '/images/zh-CN.png', abbreviation: 'CN' },
+  { value: 'zh-TW', label: '중국어 번체', flag: '/images/zh-TW.png', abbreviation: 'TW' },
+  { value: 'vi', label: '베트남어', flag: '/images/vi.png', abbreviation: 'VI' },
+  { value: 'id', label: '인도네시아어', flag: '/images/id.png', abbreviation: 'ID' },
+  { value: 'th', label: '태국어', flag: '/images/th.png', abbreviation: 'TH' },
+  { value: 'de', label: '독일어', flag: '/images/de.png', abbreviation: 'DE' },
+  { value: 'ru', label: '러시아어', flag: '/images/ru.png', abbreviation: 'RU' },
+  { value: 'es', label: '스페인어', flag: '/images/es.png', abbreviation: 'ES' },
+  { value: 'it', label: '이탈리아어', flag: '/images/it.png', abbreviation: 'IT' },
+  { value: 'fr', label: '프랑스어', flag: '/images/fr.png', abbreviation: 'FR' },
+];
+
 
 const ChatComponent = ({
   room,
@@ -239,27 +282,20 @@ const ChatComponent = ({
       {room && (
         <TitleStyle>{`🌱 ${room.users[0].nick}, ${room.users[1].nick} 🌱`}</TitleStyle>
       )}
+      <LanguageSelectContainer>
+        {LanguageOptions.map((option) => (
+        <div key={option.value}> {/* 각 요소를 div 등의 요소로 감싸기 */}
+          <LanguageAbbreviation>{option.abbreviation}</LanguageAbbreviation>
+          <FlagIcon
+              src={option.flag}
+              alt={option.label}
+              selected={option.value === targetLanguage}
+              onClick={() => setTargetLanguage(option.value)}
+          />
+        </div>
+        ))}
+      </LanguageSelectContainer>
 
-      <select
-        onChange={(e) => setTargetLanguage(e.target.value)}
-        value={targetLanguage}
-      >
-        <option value="ko">한국어</option>
-        <option value="en">영어</option>
-        <option value="ja">일본어</option>
-        <option value="zh-CN">중국어 간체</option>
-        <option value="zh-TW">중국어 번체</option>
-        <option value="vi">베트남어</option>
-        <option value="id">인도네시아어</option>
-        <option value="th">태국어</option>
-        <option value="de">독일어</option>
-        <option value="ru">러시아어</option>
-        <option value="es">스페인어</option>
-        <option value="it">이탈리아어</option>
-        <option value="fr">프랑스어</option>
-      </select>
-
-      {/* <button onClick={onLoadBeforeChats}>무한 스크롤 테스트용</button> */}
       <StyledChatList
         onScroll={async (e) => {
           const element = e.target;
@@ -292,6 +328,7 @@ const ChatComponent = ({
                   chatLog={chatLog}
                   key={chatLog._id}
                   loginUser={user}
+                  targetLanguage={targetLanguage}
                 />
                 {user.no !== chatLog.user.mno && (
                   <button onClick={(e) => onTranslate(chatLog)}>번역</button>
