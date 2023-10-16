@@ -29,7 +29,7 @@ const NotificationListContainer = () => {
     if (user) {
       dispatch(notiList({ memberNo: user.no, limit, page }));
     }
-  }, [user, dispatch]);
+  }, [user, limit, page, dispatch]);
 
   const onReadNotiLog = (e) => {
     const { name } = e.target;
