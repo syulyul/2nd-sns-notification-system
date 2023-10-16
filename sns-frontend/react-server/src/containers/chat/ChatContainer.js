@@ -4,7 +4,7 @@ import {
   enterRoom,
   concatChats,
   changeField,
-  sendChat,
+  sendChat, translateChat, translateChats
 } from '../../modules/chats';
 import qs from 'qs';
 import { useEffect, useRef, useState } from 'react';
@@ -12,17 +12,19 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { useLocation, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
+import axios from 'axios';
 
 const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
-  const { room, chats, chatTxt, error, user } = useSelector(
+  const { room, chats, chatTxt, error, user, translatedChat } = useSelector(
     ({ chats, auth }) => ({
       room: chats.room,
       chats: chats.chats,
       chatTxt: chats.chatTxt,
       error: chats.error,
       user: auth.user,
+      translatedChat: chats.translatedChat
     })
   );
 
@@ -44,7 +46,7 @@ const ChatContainer = () => {
   };
 
   const onSendChat = () => {
-    dispatch(sendChat({ roomId: room._id, chatTxt }));
+    dispatch(sendChat({ roomId: room._id, chatTxt, user }));
   };
 
   useEffect(() => {
@@ -57,7 +59,7 @@ const ChatContainer = () => {
         }
       );
 
-      socket.emit('join', { roomId: room._id, User: user });
+      socket.emit('join', { roomId: room._id, user: chats.users });
       // socket.on('join', function (data) {
       //   // 입장
       //   const newChat = data.chat;
@@ -80,12 +82,33 @@ const ChatContainer = () => {
     }
   }, [room]);
 
+  useEffect(() => {
+    const socket = io.connect(
+      `${process.env.REACT_APP_NODE_SERVER_URL}/papago/translateAndDetectLang`,
+      {
+        path: '/socket.io',
+        transports: ['websocket'],
+      }
+    );
+
+    socket.on('translateChat', function (data) {
+      // 채팅 번역
+      const translatedChat = data.translateChat;
+      dispatch(translateChats({ translatedChat }));
+    });
+
+    return () => {
+      socket.disconnect(); // 언마운트 시 chat 네임스페이스 접속 해제
+    };
+  });
+
   return (
     <ChatComponent
       room={room}
       chats={chats}
       user={user}
       chatTxt={chatTxt}
+      translatedChat={translatedChat}
       error={error}
       onChange={onChange}
       onSendChat={onSendChat}

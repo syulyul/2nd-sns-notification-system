@@ -10,7 +10,29 @@ export const addLog = async (req, res, next) => {
       content: req.body.content,
       url: req.body.url,
       noti_state: req.body.notiState,
+      fcmToken: req.body.fcmToken
     });
+    const admin = require('firebase-admin');
+
+    // Firebase 알림 메시지 전송
+    const user = await User.findOne({ mno: req.body.memberNo });
+    if (user) {
+      const fcmToken = req.body.fcmToken; // 이 토큰은 이미 클라이언트에서 전달되어야 함
+
+      const message = {
+        data: {
+          type: 'following',
+          message: '팔로잉하였습니다.',
+        },
+        token: fcmToken,
+      };
+
+      const response = await admin.messaging().send(message);
+      console.log('Successfully sent following notification:', response);
+    } else {
+      console.error('User not found for the specified memberNo.');
+    }
+
     return res.json(notiLog);
   } catch (err) {
     console.error(err);
