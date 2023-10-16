@@ -79,9 +79,11 @@ const RegisterContainer = () => {
   }, [user, authError, dispatch]);
 
   const onAuthPhoneNumber = (e) => {
+    e.preventDefault();
     dispatch(getAuthCode({ phoneNumber }));
   };
   const onCheckPhoneNumber = (e) => {
+    e.preventDefault();
     dispatch(checkAuthCode({ phoneNumber, verificationCode }));
   };
 

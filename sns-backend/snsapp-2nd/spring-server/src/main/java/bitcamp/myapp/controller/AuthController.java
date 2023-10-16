@@ -11,6 +11,7 @@ import bitcamp.myapp.service.SmsService;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import bitcamp.myapp.vo.MyPage;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -212,6 +213,9 @@ public class AuthController {
       HttpServletResponse response) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
+
+    String rand = (String) redisService.getValueOps().get(member.getPhoneNumber());
+
     try {
       if (files != null) {
         if (files[0].getSize() > 0) {
@@ -263,8 +267,8 @@ public class AuthController {
 
   @PostMapping("getPhoneAuthCode")
   @ResponseBody
-  public ResponseEntity phoneAuth(@RequestBody String phoneNumber) {
-    System.out.println(phoneNumber);
+  public ResponseEntity phoneAuth(@RequestBody HashMap<String, String> bodyMap) {
+    String phoneNumber = bodyMap.get("phoneNumber");
     phoneNumber = phoneNumber.replaceAll("\\D+", "");
     try { // 이미 가입된 전화번호가 있으면
       if (smsService.memberTelCount(phoneNumber) > 0) {
@@ -280,18 +284,20 @@ public class AuthController {
       e.printStackTrace();
     }
 
-    return new ResponseEntity<>("60초 안에 인증해주세요", HttpStatus.OK);
+    return new ResponseEntity<>("3분 안에 인증해주세요", HttpStatus.OK);
   }
 
   @PostMapping("checkPhoneAuthCode")
   @ResponseBody
-  public ResponseEntity phoneAuthOk(@RequestBody String phoneNumber, HttpServletRequest request) {
+  public ResponseEntity phoneAuthOk(
+      @RequestBody HashMap<String, String> bodyMap) {
+    String phoneNumber = bodyMap.get("phoneNumber");
     String rand = (String) redisService.getValueOps().get(phoneNumber);
-    String code = request.getParameter("code");
+    String code = bodyMap.get("verificationCode");
 
     System.out.println(rand + " : " + code);
 
-    if (rand != null && rand.equals(code)) {
+    if (rand == null || !rand.equals(code)) {
       return new ResponseEntity<>("코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
     }
 

@@ -17,7 +17,7 @@ const [REGISTER, REGISTER_SUCCESS, REGISTER_FAILURE] =
 const [GET_AUTH_CODE, GET_AUTH_CODE_SUCCESS, GET_AUTH_CODE_FAILURE] =
   createRequestActionTypes('auth/GET_AUTH_CODE');
 const [CHECK_AUTH_CODE, CHECK_AUTH_CODE_SUCCESS, CHECK_AUTH_CODE_FAILURE] =
-  createRequestActionTypes('auth/REGISTER');
+  createRequestActionTypes('auth/CHECK_AUTH_CODE');
 
 const [LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE] =
   createRequestActionTypes('auth/LOGIN');
@@ -161,6 +161,9 @@ const auth = handleActions(
       email: '',
       photo: '',
       fcmToken: '',
+
+      verificationState: null,
+      verificationCode: '',
 
       followList: [],
       likeBoardList: [],
