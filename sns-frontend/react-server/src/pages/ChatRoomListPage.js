@@ -1,8 +1,12 @@
 import ChatRoomListContainer from "../containers/chat/ChatRoomListContainer";
+import HeaderContainer from "../containers/common/HeaderContainer";
 
 const ChatRoomListPage = () => {
   return (
-      <ChatRoomListContainer />
+      <>
+        <HeaderContainer />
+        <ChatRoomListContainer />
+      </>
   );
 };
 
