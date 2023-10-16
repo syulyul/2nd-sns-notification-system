@@ -7,43 +7,39 @@ import { useEffect } from 'react';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { initializeApp } from 'firebase/app';
 
-
 const LoginContainer = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
-  const { phoneNumber, password, authError, user, fcmToken } = useSelector(
-      ({ auth }) => ({
-        phoneNumber: auth.phoneNumber,
-        password: auth.password,
-        authError: auth.authError,
-        user: auth.user,
-        fcmToken: auth.fcmToken
-      })
-  );
+  const { phoneNumber, password, authError, user, fcmToken, authMessage } =
+    useSelector(({ auth }) => ({
+      phoneNumber: auth.phoneNumber,
+      password: auth.password,
+      authError: auth.authError,
+      user: auth.user,
+      fcmToken: auth.fcmToken,
+      authMessage: auth.authMessage,
+    }));
   const firebaseConfig = {
-    apiKey: "AIzaSyC4qX3g0OF5SKoRQd4hJVIwfaWjrX69a4k",
-    authDomain: "snsp-778c0.firebaseapp.com",
-    projectId: "snsp-778c0",
-    storageBucket: "snsp-778c0.appspot.com",
-    messagingSenderId: "7999778564",
-    appId: "1:7999778564:web:8e578f288290f757be2a51",
-    measurementId: "G-WPS0KLZ5L6"
+    apiKey: 'AIzaSyC4qX3g0OF5SKoRQd4hJVIwfaWjrX69a4k',
+    authDomain: 'snsp-778c0.firebaseapp.com',
+    projectId: 'snsp-778c0',
+    storageBucket: 'snsp-778c0.appspot.com',
+    messagingSenderId: '7999778564',
+    appId: '1:7999778564:web:8e578f288290f757be2a51',
+    measurementId: 'G-WPS0KLZ5L6',
   };
   const app = initializeApp(firebaseConfig);
 
   const onChange = (e) => {
     const { value, name } = e.target;
     dispatch(
-        changeField({
-          key: name,
-          value,
-        })
+      changeField({
+        key: name,
+        value,
+      })
     );
   };
-
-
 
   //컴포넌트 초기 렌터링 때 form 초기화
   useEffect(() => {
@@ -87,7 +83,6 @@ const LoginContainer = () => {
     dispatch(login({ phoneNumber, password, fcmToken }));
     dispatch(initializeForm());
     console.log('FCM Token:', fcmToken);
-
   };
 
   const onSubmit = (e) => {
@@ -95,15 +90,15 @@ const LoginContainer = () => {
     getFCMToken();
   };
 
-
   return (
-      <LoginComponent
-          phoneNumber={phoneNumber}
-          password={password}
-          fcmToken={fcmToken}
-          onChange={onChange}
-          onSubmit={onSubmit}
-      />
+    <LoginComponent
+      phoneNumber={phoneNumber}
+      password={password}
+      fcmToken={fcmToken}
+      authMessage={authMessage}
+      onChange={onChange}
+      onSubmit={onSubmit}
+    />
   );
 };
 

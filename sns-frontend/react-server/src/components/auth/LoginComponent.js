@@ -75,15 +75,18 @@ const SubmitButton = styled(Button)`
   outline: none;
 `;
 
-const LoginComponent = ({ phoneNumber, password, onChange, onSubmit }) => {
+const LoginComponent = ({
+  phoneNumber,
+  password,
+  onChange,
+  onSubmit,
+  authMessage,
+}) => {
   return (
     <AuthTemplate>
       <img src="/images/logo.png" alt="로고" className="logo" />
       <div id="login-error-msg-holder">
-        <p id="login-error-msg">
-          Invalid username{' '}
-          <span id="error-msg-second-line">and/or password</span>
-        </p>
+        <p id="login-error-msg">{authMessage}</p>
       </div>
       <LoginForm onSubmit={onSubmit}>
         <StyledInput

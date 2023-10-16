@@ -134,6 +134,7 @@ const RegisterComponent = ({
   onAuthPhoneNumber,
   onCheckPhoneNumber,
   verificationState,
+  authMessage,
 }) => {
   return (
     <AuthTemplate>
@@ -163,6 +164,7 @@ const RegisterComponent = ({
             />
           </InputWrapper>
         </InputBlock>
+        <div>{authMessage}</div>
         <InputBlock>
           <Label>🌱 전화번호</Label>
           <PhoneNumberWrapper>

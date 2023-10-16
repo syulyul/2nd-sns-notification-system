@@ -21,6 +21,7 @@ const RegisterContainer = () => {
     verificationCode,
     verificationState,
     authError,
+    authMessage,
     user,
   } = useSelector(({ auth }) => ({
     nick: auth.nick,
@@ -31,6 +32,7 @@ const RegisterContainer = () => {
     verificationCode: auth.verificationCode,
     verificationState: auth.verificationState,
     authError: auth.authError,
+    authMessage: auth.authMessage,
     user: auth.user,
   }));
 
@@ -57,6 +59,12 @@ const RegisterContainer = () => {
     formData.append(
       'data',
       new Blob([JSON.stringify({ nick, name, phoneNumber, password })], {
+        type: 'application/json',
+      })
+    );
+    formData.append(
+      'verificationCode',
+      new Blob([verificationCode], {
         type: 'application/json',
       })
     );
@@ -95,6 +103,7 @@ const RegisterContainer = () => {
       password={password}
       verificationCode={verificationCode}
       verificationState={verificationState}
+      authMessage={authMessage}
       onChange={onChange}
       onChangeFile={onChangeFile}
       onAuthPhoneNumber={onAuthPhoneNumber}

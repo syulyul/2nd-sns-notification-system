@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -128,7 +127,7 @@ public class AuthController {
         loginUser.setFcmToken(fcmToken);
 
       } else { // 해당하는 유저가 없을 경우
-        return new ResponseEntity<>(loginUser, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -209,12 +208,16 @@ public class AuthController {
   @PostMapping("add")
   public ResponseEntity add(
       @RequestPart("data") Member member,
+      @RequestPart("verificationCode") String verificationCode,
       @RequestPart(value = "files", required = false) MultipartFile[] files,
       HttpServletResponse response) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
 
     String rand = (String) redisService.getValueOps().get(member.getPhoneNumber());
+    if (!verificationCode.equals(rand)) {
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
+    }
 
     try {
       if (files != null) {
@@ -272,13 +275,12 @@ public class AuthController {
     phoneNumber = phoneNumber.replaceAll("\\D+", "");
     try { // 이미 가입된 전화번호가 있으면
       if (smsService.memberTelCount(phoneNumber) > 0) {
-        return new ResponseEntity<>("이미 가입된 회원", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("이미 가입된 회원입니다", HttpStatus.OK);
       } else {
         String code = smsService.sendRandomMessage(phoneNumber);
         redisService.getValueOps()
             .set(phoneNumber, code, 3, TimeUnit.MINUTES);
         // 전화 번호에 인증 코드 저장
-        // 회원 가입 요청 에도 인증을 추가 시 필요(아직 추가 X)
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -298,11 +300,12 @@ public class AuthController {
     System.out.println(rand + " : " + code);
 
     if (rand == null || !rand.equals(code)) {
-      return new ResponseEntity<>("코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 
     redisService.getValueOps()
         .set(phoneNumber, code, 15, TimeUnit.MINUTES);
+    // 회원 가입 요청 에도 인증을 추가 시 필요
     return new ResponseEntity<>("인증 성공", HttpStatus.OK);
   }
 
@@ -331,13 +334,20 @@ public class AuthController {
   @PostMapping("/resetPassword")
   @ResponseBody
   public ResponseEntity<String> resetPassword(
-      @RequestParam String phoneNumber,
-      @RequestParam String newPassword) {
-    phoneNumber = phoneNumber.replaceAll("\\D+", "");
+      @RequestBody HashMap<String, String> bodyMap) {
+    String phoneNumber = bodyMap.get("phoneNumber").replaceAll("\\D+", "");
+    String rand = (String) redisService.getValueOps().get(phoneNumber);
+    String code = bodyMap.get("verificationCode");
+
+    System.out.println(rand + " : " + code);
+
+    if (rand == null || !rand.equals(code)) {
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
 
     try {
       // 새로운 비밀번호로 업데이트
-      smsService.updatePasswordByPhoneNumber(phoneNumber, newPassword);
+      smsService.updatePasswordByPhoneNumber(phoneNumber, bodyMap.get("password"));
 
       return new ResponseEntity<>("비밀번호 재설정이 완료되었습니다.", HttpStatus.OK);
     } catch (Exception e) {

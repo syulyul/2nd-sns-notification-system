@@ -18,6 +18,8 @@ const [GET_AUTH_CODE, GET_AUTH_CODE_SUCCESS, GET_AUTH_CODE_FAILURE] =
   createRequestActionTypes('auth/GET_AUTH_CODE');
 const [CHECK_AUTH_CODE, CHECK_AUTH_CODE_SUCCESS, CHECK_AUTH_CODE_FAILURE] =
   createRequestActionTypes('auth/CHECK_AUTH_CODE');
+const [RESET_PASSWORD, RESET_PASSWORD_SUCCESS, RESET_PASSWORD_FAILURE] =
+  createRequestActionTypes('auth/RESET_PASSWORD');
 
 const [LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE] =
   createRequestActionTypes('auth/LOGIN');
@@ -67,6 +69,15 @@ export const checkAuthCode = createAction(
   })
 );
 
+export const resetPassword = createAction(
+  RESET_PASSWORD,
+  ({ phoneNumber, password, verificationCode }) => ({
+    phoneNumber,
+    password,
+    verificationCode,
+  })
+);
+
 export const login = createAction(
   LOGIN,
   ({ phoneNumber, password, fcmToken }) => ({
@@ -100,6 +111,10 @@ const checkAuthCodeSaga = createRequestSaga(
   CHECK_AUTH_CODE,
   authAPI.checkPhoneAuthCode
 );
+const resetPasswordSaga = createRequestSaga(
+  RESET_PASSWORD,
+  authAPI.resetPassword
+);
 const loginSaga = createRequestSaga(LOGIN, authAPI.login);
 const checkSaga = createRequestSaga(CHECK, authAPI.check);
 const logoutSaga = createRequestSaga(LOGOUT, authAPI.logout);
@@ -117,6 +132,7 @@ export function* authSaga() {
   yield takeLatest(REGISTER, registerSaga);
   yield takeLatest(GET_AUTH_CODE, getAuthCodeSaga);
   yield takeLatest(CHECK_AUTH_CODE, checkAuthCodeSaga);
+  yield takeLatest(RESET_PASSWORD, resetPasswordSaga);
   yield takeLatest(LOGIN, loginSaga);
   yield takeLatest(CHECK, checkSaga);
   yield takeLatest(LOGOUT, logoutSaga);
@@ -138,6 +154,7 @@ const initialState = {
   photo: '',
   fcmToken: '',
 
+  authMessage: null,
   verificationCode: '',
   verificationState: null,
 
@@ -168,6 +185,9 @@ const auth = handleActions(
       followList: [],
       likeBoardList: [],
       likeGuestBookList: [],
+
+      authError: null,
+      authMessage: null,
     }),
 
     [REGISTER_SUCCESS]: (state, { payload: user }) => ({
@@ -183,27 +203,48 @@ const auth = handleActions(
       authError: error,
     }),
 
+    [GET_AUTH_CODE_SUCCESS]: (state, { payload: data }) => ({
+      ...state,
+      authMessage: data,
+    }),
     [GET_AUTH_CODE_FAILURE]: (state, { payload: error }) => ({
       ...state,
       authError: error,
     }),
-    [CHECK_AUTH_CODE_SUCCESS]: (state, { payload: user }) => ({
+    [CHECK_AUTH_CODE_SUCCESS]: (
+      state,
+      { payload: message, meta: response }
+    ) => ({
       ...state,
-      verificationState: true,
+      authMessage: message,
+      verificationState: response.status == 200 ? true : null,
     }),
     [CHECK_AUTH_CODE_FAILURE]: (state, { payload: error }) => ({
       ...state,
       verificationState: null,
+      authMessage: error,
+    }),
+
+    [RESET_PASSWORD_SUCCESS]: (state, { payload: data }) => ({
+      ...state,
+      authMessage: data,
+    }),
+    [RESET_PASSWORD_FAILURE]: (state, { payload: error }) => ({
+      ...state,
       authError: error,
     }),
 
-    [LOGIN_SUCCESS]: (state, { payload: user }) => ({
+    [LOGIN_SUCCESS]: (state, { payload: user, meta: response }) => ({
       ...state,
       authError: null,
       user,
-      followList: user.followMemberSet,
-      likeBoardList: user.likeBoardSet,
-      likeGuestBookList: user.likeGuestBookSet,
+      followList: user ? [] : user.followMemberSet,
+      likeBoardList: user ? [] : user.likeBoardSet,
+      likeGuestBookList: user ? [] : user.likeGuestBookSet,
+      authMessage:
+        response.status == 200
+          ? null
+          : '존재하지 않는 번호이거나 비밀번호가 일치하지 않습니다',
     }),
     [LOGIN_FAILURE]: (state, { payload: error }) => ({
       ...state,
