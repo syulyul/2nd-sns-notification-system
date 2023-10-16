@@ -1,7 +1,6 @@
 import Noti from '../../schemas/noti';
 import { redisClient } from '../../redis';
 import User from "../../schemas/user";
-import Chat from "../../schemas/chat";
 
 export const addLog = async (req, res, next) => {
   try {

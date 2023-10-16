@@ -9,6 +9,5 @@ notification.get('/notReadNotiCount/:memberNo', notiCtrl.notReadNotiCount);
 notification.get('/list/:memberNo', notiCtrl.listNotiLog);
 notification.post('/updateState', notiCtrl.updateNotiState);
 notification.post('/updateAllState', notiCtrl.updateAllNotiState);
-notification.post('/addFollowingLog', notiCtrl.addFollowingLog);
 
 export default notification;
