@@ -14,6 +14,11 @@ const INITIALIZE_FORM = 'auth/INITIALIZE_FORM';
 
 const [REGISTER, REGISTER_SUCCESS, REGISTER_FAILURE] =
   createRequestActionTypes('auth/REGISTER');
+const [GET_AUTH_CODE, GET_AUTH_CODE_SUCCESS, GET_AUTH_CODE_FAILURE] =
+  createRequestActionTypes('auth/GET_AUTH_CODE');
+const [CHECK_AUTH_CODE, CHECK_AUTH_CODE_SUCCESS, CHECK_AUTH_CODE_FAILURE] =
+  createRequestActionTypes('auth/REGISTER');
+
 const [LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE] =
   createRequestActionTypes('auth/LOGIN');
 
@@ -30,16 +35,16 @@ const [UNFOLLOW, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE] =
   createRequestActionTypes('myPage/UNFOLLOW');
 
 const [BOARD_LIKE, BOARD_LIKE_SUCCESS, BOARD_LIKE_FAILURE] =
-    createRequestActionTypes('board/LIKE');
+  createRequestActionTypes('board/LIKE');
 
 const [BOARD_UNLIKE, BOARD_UNLIKE_SUCCESS, BOARD_UNLIKE_FAILURE] =
-    createRequestActionTypes('board/UNLIKE');
+  createRequestActionTypes('board/UNLIKE');
 
 const [GUESTBOOK_LIKE, GUESTBOOK_LIKE_SUCCESS, GUESTBOOK_LIKE_FAILURE] =
-    createRequestActionTypes('guestBook/LIKE');
+  createRequestActionTypes('guestBook/LIKE');
 
 const [GUESTBOOK_UNLIKE, GUESTBOOK_UNLIKE_SUCCESS, GUESTBOOK_UNLIKE_FAILURE] =
-    createRequestActionTypes('guestBook/UNLIKE');
+  createRequestActionTypes('guestBook/UNLIKE');
 
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
@@ -51,11 +56,25 @@ export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 export const register = createAction(REGISTER, ({ formData }) => ({
   formData,
 }));
-export const login = createAction(LOGIN, ({ phoneNumber, password, fcmToken }) => ({
+export const getAuthCode = createAction(GET_AUTH_CODE, ({ phoneNumber }) => ({
   phoneNumber,
-  password,
-  fcmToken,
 }));
+export const checkAuthCode = createAction(
+  CHECK_AUTH_CODE,
+  ({ phoneNumber, verificationCode }) => ({
+    phoneNumber,
+    verificationCode,
+  })
+);
+
+export const login = createAction(
+  LOGIN,
+  ({ phoneNumber, password, fcmToken }) => ({
+    phoneNumber,
+    password,
+    fcmToken,
+  })
+);
 export const check = createAction(CHECK);
 export const logout = createAction(LOGOUT);
 export const follow = createAction(FOLLOW, (followingNo) => followingNo);
@@ -63,11 +82,24 @@ export const unfollow = createAction(UNFOLLOW, (followingNo) => followingNo);
 export const boardlike = createAction(BOARD_LIKE, (boardNo) => boardNo);
 export const boardunlike = createAction(BOARD_UNLIKE, (boardNo) => boardNo);
 
-export const guestBooklike = createAction(GUESTBOOK_LIKE, (guestBookNo) => guestBookNo);
-export const guestBookunlike = createAction(GUESTBOOK_UNLIKE, (guestBookNo) => guestBookNo);
-
+export const guestBooklike = createAction(
+  GUESTBOOK_LIKE,
+  (guestBookNo) => guestBookNo
+);
+export const guestBookunlike = createAction(
+  GUESTBOOK_UNLIKE,
+  (guestBookNo) => guestBookNo
+);
 
 const registerSaga = createRequestSaga(REGISTER, authAPI.register);
+const getAuthCodeSaga = createRequestSaga(
+  GET_AUTH_CODE,
+  authAPI.getPhoneAuthCode
+);
+const checkAuthCodeSaga = createRequestSaga(
+  CHECK_AUTH_CODE,
+  authAPI.checkPhoneAuthCode
+);
 const loginSaga = createRequestSaga(LOGIN, authAPI.login);
 const checkSaga = createRequestSaga(CHECK, authAPI.check);
 const logoutSaga = createRequestSaga(LOGOUT, authAPI.logout);
@@ -76,10 +108,15 @@ const unfollowSaga = createRequestSaga(UNFOLLOW, myPageAPI.unfollow);
 const boardlikeSaga = createRequestSaga(BOARD_LIKE, boardAPI.like);
 const boardunlikeSaga = createRequestSaga(BOARD_UNLIKE, boardAPI.unlike);
 const guestBooklikeSaga = createRequestSaga(GUESTBOOK_LIKE, guestBookAPI.like);
-const guestBookunlikeSaga = createRequestSaga(GUESTBOOK_UNLIKE, guestBookAPI.unlike);
+const guestBookunlikeSaga = createRequestSaga(
+  GUESTBOOK_UNLIKE,
+  guestBookAPI.unlike
+);
 
 export function* authSaga() {
   yield takeLatest(REGISTER, registerSaga);
+  yield takeLatest(GET_AUTH_CODE, getAuthCodeSaga);
+  yield takeLatest(CHECK_AUTH_CODE, checkAuthCodeSaga);
   yield takeLatest(LOGIN, loginSaga);
   yield takeLatest(CHECK, checkSaga);
   yield takeLatest(LOGOUT, logoutSaga);
@@ -102,6 +139,7 @@ const initialState = {
   fcmToken: '',
 
   verificationCode: '',
+  verificationState: null,
 
   user: null, // 변경 금지
 };
@@ -139,6 +177,20 @@ const auth = handleActions(
     }),
     [REGISTER_FAILURE]: (state, { payload: error }) => ({
       ...state,
+      authError: error,
+    }),
+
+    [GET_AUTH_CODE_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      authError: error,
+    }),
+    [CHECK_AUTH_CODE_SUCCESS]: (state, { payload: user }) => ({
+      ...state,
+      verificationState: true,
+    }),
+    [CHECK_AUTH_CODE_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      verificationState: null,
       authError: error,
     }),
 
@@ -221,7 +273,9 @@ const auth = handleActions(
 
     [GUESTBOOK_UNLIKE_SUCCESS]: (state, { payload: guestBookNo }) => ({
       ...state,
-      likeGuestBookList: state.likeGuestBookList.filter((no) => no != guestBookNo),
+      likeGuestBookList: state.likeGuestBookList.filter(
+        (no) => no != guestBookNo
+      ),
     }),
     [GUESTBOOK_UNLIKE_FAILURE]: (state, { payload: error }) => ({
       ...state,

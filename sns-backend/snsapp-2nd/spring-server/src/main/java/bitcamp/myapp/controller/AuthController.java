@@ -103,7 +103,7 @@ public class AuthController {
 //        cookie.setHttpOnly(true);
         response.addCookie(cookie);
         redisService.getValueOps()
-            .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.HOURS);
+            .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.DAYS);
         // 세션에 로그인 사용자 정보 저장
 
         loginUserObject = new LoginUser(loginUser);
@@ -231,7 +231,7 @@ public class AuthController {
       cookie.setHttpOnly(true);
       response.addCookie(cookie);
       redisService.getValueOps()
-          .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.HOURS);
+          .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.DAYS);
 
       RestTemplate restTemplate = new RestTemplate();
 
@@ -261,26 +261,43 @@ public class AuthController {
     return "auth/loginfind";
   }
 
-  @PostMapping("phoneAuth")
+  @PostMapping("getPhoneAuthCode")
   @ResponseBody
-  public Boolean phoneAuth(
-      String phoneNumber,
-      HttpSession session) {
+  public ResponseEntity phoneAuth(@RequestBody String phoneNumber) {
+    System.out.println(phoneNumber);
     phoneNumber = phoneNumber.replaceAll("\\D+", "");
     try { // 이미 가입된 전화번호가 있으면
       if (smsService.memberTelCount(phoneNumber) > 0) {
-        return true;
+        return new ResponseEntity<>("이미 가입된 회원", HttpStatus.BAD_REQUEST);
+      } else {
+        String code = smsService.sendRandomMessage(phoneNumber);
+        redisService.getValueOps()
+            .set(phoneNumber, code, 3, TimeUnit.MINUTES);
+        // 전화 번호에 인증 코드 저장
+        // 회원 가입 요청 에도 인증을 추가 시 필요(아직 추가 X)
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    JSONObject toJson = new JSONObject();
+    return new ResponseEntity<>("60초 안에 인증해주세요", HttpStatus.OK);
+  }
 
-    String code = smsService.sendRandomMessage(phoneNumber);
-    session.setAttribute("rand", code);
+  @PostMapping("checkPhoneAuthCode")
+  @ResponseBody
+  public ResponseEntity phoneAuthOk(@RequestBody String phoneNumber, HttpServletRequest request) {
+    String rand = (String) redisService.getValueOps().get(phoneNumber);
+    String code = request.getParameter("code");
 
-    return false;
+    System.out.println(rand + " : " + code);
+
+    if (rand != null && rand.equals(code)) {
+      return new ResponseEntity<>("코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
+    }
+
+    redisService.getValueOps()
+        .set(phoneNumber, code, 15, TimeUnit.MINUTES);
+    return new ResponseEntity<>("인증 성공", HttpStatus.OK);
   }
 
   @PostMapping("phoneFind")
@@ -304,21 +321,6 @@ public class AuthController {
     return true;
   }
 
-  @PostMapping("phoneAuthOk")
-  @ResponseBody
-  public Boolean phoneAuthOk(HttpSession session, HttpServletRequest request) {
-    String rand = (String) session.getAttribute("rand");
-    String code = request.getParameter("code");
-
-    System.out.println(rand + " : " + code);
-
-    if (rand != null && rand.equals(code)) {
-      session.removeAttribute("rand");
-      return false;
-    }
-
-    return true;
-  }
 
   @PostMapping("/resetPassword")
   @ResponseBody

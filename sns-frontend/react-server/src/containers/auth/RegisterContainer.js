@@ -1,7 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import RegisterComponent from '../../components/auth/RegisterComponent';
-import { changeField, initializeForm, register } from '../../modules/auth';
+import {
+  changeField,
+  checkAuthCode,
+  getAuthCode,
+  initializeForm,
+  register,
+} from '../../modules/auth';
 import { useEffect } from 'react';
 
 const RegisterContainer = () => {
@@ -13,6 +19,7 @@ const RegisterContainer = () => {
     phoneNumber,
     password,
     verificationCode,
+    verificationState,
     authError,
     user,
   } = useSelector(({ auth }) => ({
@@ -22,6 +29,7 @@ const RegisterContainer = () => {
     password: auth.password,
     photo: auth.photo,
     verificationCode: auth.verificationCode,
+    verificationState: auth.verificationState,
     authError: auth.authError,
     user: auth.user,
   }));
@@ -71,10 +79,10 @@ const RegisterContainer = () => {
   }, [user, authError, dispatch]);
 
   const onAuthPhoneNumber = (e) => {
-    dispatch();
+    dispatch(getAuthCode({ phoneNumber }));
   };
   const onCheckPhoneNumber = (e) => {
-    dispatch();
+    dispatch(checkAuthCode({ phoneNumber, verificationCode }));
   };
 
   return (
@@ -84,6 +92,7 @@ const RegisterContainer = () => {
       phoneNumber={phoneNumber}
       password={password}
       verificationCode={verificationCode}
+      verificationState={verificationState}
       onChange={onChange}
       onChangeFile={onChangeFile}
       onAuthPhoneNumber={onAuthPhoneNumber}
