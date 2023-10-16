@@ -27,6 +27,9 @@ const [UPDATE, UPDATE_SUCCESS, UPDATE_FAILURE] =
 
 const [DELETE, DELETE_SUCCESS, DELETE_FAILURE] = createRequestActionTypes('board/DELETE');
 
+// 사진 삭제
+const [DELETE_PHOTO, DELETE_PHOTO_SUCCESS, DELETE_PHOTO_FAILURE]
+  = createRequestActionTypes('board/DELETE_PHOTO');
 
 //댓글
 const [ADD_COMMENT, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE] =
@@ -67,6 +70,9 @@ export const deleteBoard = createAction(DELETE, ({boardNo, category}) => ({
   boardNo, category
 }));
 
+// 사진 삭제
+export const deletePhoto = createAction(DELETE_PHOTO, ({ fileNo }) => ({ fileNo }));
+
 //댓글
 export const addComment = createAction(ADD_COMMENT, ({ content, boardNo, writer }) => ({ content, boardNo, writer }));
 export const deleteComment = createAction(DELETE_COMMENT, ({ commentNo, boardNo }) => ({ commentNo, boardNo }));
@@ -88,6 +94,9 @@ const formSaga = createRequestSaga(FORM, boardAPI.form);
 const updateSaga = createRequestSaga(UPDATE, boardAPI.update);
 const deleteBoardSaga  = createRequestSaga(DELETE, boardAPI.deleteBoard);
 
+// 사진 삭제
+const deletePhotoSaga = createRequestSaga(DELETE_PHOTO, boardAPI.deletePhoto);
+
 //댓글
 const addCommentSaga = createRequestSaga(ADD_COMMENT, boardAPI.addComment);
 const deleteCommentSaga = createRequestSaga(DELETE_COMMENT, boardAPI.deleteComment);
@@ -98,8 +107,6 @@ const searchBoardsSaga = createRequestSaga(
     boardAPI.searchBoards
 );
 
-
-
 export function* boardSaga() {
   //게시글
   yield takeLatest(LIST, listSaga);
@@ -107,6 +114,7 @@ export function* boardSaga() {
   yield takeLatest(FORM, formSaga);
   yield takeLatest(UPDATE, updateSaga);
   yield takeLatest(DELETE, deleteBoardSaga);
+  yield takeLatest(DELETE_PHOTO, deletePhotoSaga);
   
   //댓글
   yield takeLatest(ADD_COMMENT, addCommentSaga);
@@ -155,7 +163,6 @@ const board = handleActions(
       boardError: error,
     }),
     [DETAIL_SUCCESS]: (state, { payload: response }) => ({
-      ///
       ...state,
       boardError: null,
       ...response,
@@ -188,6 +195,15 @@ const board = handleActions(
       board: initialState.board,
     }),
     [DELETE_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      boardError: error,
+    }),
+    [DELETE_PHOTO_SUCCESS]: (state) => ({
+      ...state,
+      boardError: null,
+      board: state.board,
+    }),
+    [DELETE_PHOTO_FAILURE]: (state, { payload: error }) => ({
       ...state,
       boardError: error,
     }),

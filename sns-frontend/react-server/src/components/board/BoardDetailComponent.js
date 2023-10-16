@@ -110,7 +110,7 @@ const CommentContainer = styled.div`
   border-top: 1px solid #eee;
   padding: 10px 0;
   margin-top: 50px;
-  margin-bottom: 50px; 
+  margin-bottom: 50px;
 `;
 
 const CommentMeta = styled.div`
@@ -218,7 +218,7 @@ const ArrowIcon = styled.span`
 `;
 
 const CommentDate = styled.span`
-  font-size: 10px; 
+  font-size: 10px;
 `;
 
 const BoardDetailComponent = ({
@@ -239,7 +239,9 @@ const BoardDetailComponent = ({
   onChange,
   CommentChange,
   handleUpdateTitle,
-  handleUpdateContent
+  handleUpdateContent,
+  onPhotoDelete,
+  onChangeFile
 }) => {
 
   const [floatingHearts, setFloatingHearts] = useState([]);
@@ -276,7 +278,8 @@ const BoardDetailComponent = ({
 
     if (contentBox) {
       // 스크롤 가능한 높이에서 현재 스크롤 위치를 빼서, 아래로 남은 공간을 계산
-      const remainingSpace = contentBox.scrollHeight - (contentBox.scrollTop + contentBox.clientHeight);
+      const remainingSpace = contentBox.scrollHeight - (contentBox.scrollTop
+        + contentBox.clientHeight);
 
       // 아래로 스크롤할 때 추가 댓글을 로드하려면, 남은 공간이 어느 정도 이하로 남았을 때 로드를 시작할 것인지 설정
       if (remainingSpace < 200) {
@@ -302,137 +305,143 @@ const BoardDetailComponent = ({
   }, [handleScroll]);
 
   return (
-      <Container>
-        <ContentBox ref={contentBoxRef}>
-          <BoardDetail>
-            <form>
-              <ButtonContainer>
-                <Link to={`/board/list?category=1`}>
-                  <StyledButton onClick={onNavigateToList}>⬅️목록</StyledButton>
-                </Link>
-                {board?.writer?.no === user?.no && (
-                    <EditDeleteButtonContainer>
-                      <StyledButton onClick={onEdit}>📝수정</StyledButton>
-                      <StyledButton onClick={onDelete}>❌️삭제</StyledButton>
-                    </EditDeleteButtonContainer>
-                )}
-              </ButtonContainer>
-              <MetaInfo>
-            <span className="nickname">
+    <Container>
+      <ContentBox ref={contentBoxRef}>
+        <BoardDetail>
+          <form>
+            <ButtonContainer>
+              <Link to={`/board/list?category=1`}>
+                <StyledButton onClick={onNavigateToList}>⬅️목록</StyledButton>
+              </Link>
+              {board?.writer?.no === user?.no && (
+                <EditDeleteButtonContainer>
+                  <StyledButton onClick={onEdit}>📝수정</StyledButton>
+                  <StyledButton onClick={onDelete}>❌️삭제</StyledButton>
+                </EditDeleteButtonContainer>
+              )}
+            </ButtonContainer>
+            <MetaInfo>
+            <span className='nickname'>
               {board && board.writer ? board.writer.nick : 'Unknown'}
             </span>
-                <ClockIcon src="/images/clock.png" alt="clock-icon" />
-                <span>
+              <ClockIcon src='/images/clock.png' alt='clock-icon' />
+              <span>
               {board && board.createdAt
-                  ? new Date(board.createdAt).toLocaleDateString()
-                  : 'Unknown date'}
+                ? new Date(board.createdAt).toLocaleDateString()
+                : 'Unknown date'}
             </span>
-                <ClockIcon src="/images/eye.png" alt="views-icon" />
-                <span>{board ? board.viewCount : 0}</span>
-              </MetaInfo>
-              <Title>
-                <StyledInput
-                    type="text"
-                    defaultValue={board ? board.title : ''}
-                    onChange={handleUpdateTitle}
-                />
-              </Title>
-              <StyledTextArea
-                  defaultValue={board ? board.content : ''}
-                  onChange={handleUpdateContent}
-              ></StyledTextArea>
-              <div>
-                {board && board.attachedFiles
-                    ? board.attachedFiles.map((file, index) => (
-                        <div key={index}>
-                          <StyledImage
-                              src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
-                              alt="Attached file"
-                          />
-                          <a href={`https://yourImageServer.com/${file.filePath}`}>
-                            Download
-                          </a>
-                          {board && board.editable ? (
-                              <a href="#" onClick={() => onDelete(file.no)}>
-                                X
-                              </a>
-                          ) : null}
-                        </div>
-                    ))
-                    : null}
-              </div>
-
-            </form>
-            <BoardDetailWrapper>
-              <LikeButton onClick={() => handleLikeButtonClick(boardNo)}>
-                {likeBoardSet && likeBoardSet.includes(parseInt(boardNo)) ? '️❤️' : '🤍'}
-              </LikeButton>
-              <FloatingHeartsContainer>
-                {floatingHearts.map(heart => (
-                    <FloatingHeart key={heart.id} onComplete={() => removeHeart(heart.id)} />
-                ))}
-              </FloatingHeartsContainer>
-            </BoardDetailWrapper>
-          </BoardDetail>
-
-          <CommentsSection>
-            <CommentInputContainer>
-              <InputWithButtonContainer>
-                <CommentTextArea
-                    name="content"
-                    placeholder="댓글을 입력하세요."
-                    value={content}
-                    onChange={CommentChange}
-                />
-                <SubmitButton type="submit" onClick={onSubmit}>등록하기</SubmitButton>
-              </InputWithButtonContainer>
-            </CommentInputContainer>
-
-
-            {comments && comments.length > 0
-                ? comments.slice(0, visibleComments).map((boardComment) => (
-                    <CommentContainer key={boardComment.id}>
-                      <CommentMeta>
-                        <div style={{display: 'flex'}}>
-                          <ProfileImage
-                              src={
-                                boardComment && boardComment.writer.photo
-                                    ? `https://yourImageServer.com/${boardComment.writer.photo}`
-                                    : '/images/default.png'
-                              }
-                          />
-                          <span>
-                      {boardComment && boardComment.writer
-                          ? boardComment.writer.nick : 'Unknown'}
-                    </span>
-                        </div>
-                        <DateDeleteButtonContainer>
-                          {boardComment.writer.no === user.no && (
-                              <DeleteText onClick={() => onDeleteComment(boardComment.no)}>삭제</DeleteText>
-                          )}
-                             <CommentDate>
-                      {boardComment && boardComment.createdAt
-                          ? new Date(boardComment.createdAt).toLocaleDateString()
-                          : 'Unknown date'}
-                    </CommentDate>
-                        </DateDeleteButtonContainer>
-                      </CommentMeta>
-                      <CommentContent>
-                        {boardComment ? boardComment.content : ''}
-                      </CommentContent>
-                    </CommentContainer>
+              <ClockIcon src='/images/eye.png' alt='views-icon' />
+              <span>{board ? board.viewCount : 0}</span>
+            </MetaInfo>
+            <Title>
+              <StyledInput
+                type='text'
+                defaultValue={board ? board.title : ''}
+                onChange={handleUpdateTitle}
+              />
+            </Title>
+            <StyledTextArea
+              defaultValue={board ? board.content : ''}
+              onChange={handleUpdateContent}
+            ></StyledTextArea>
+            <div>
+              {board && board.attachedFiles
+                ? board.attachedFiles.map((file, index) => (
+                  <div key={index}>
+                    <StyledImage
+                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                      alt='Attached file'
+                    />
+                    <a
+                      href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}>
+                      Download
+                    </a>
+                    {user.no === board.writer.no ? (
+                      <div>
+                        <a href='#' onClick={() => onPhotoDelete(file.no)}>
+                          X
+                        </a>
+                      </div>
+                    ) : null}
+                  </div>
                 ))
                 : null}
+              <input type='file' onChange={onChangeFile} />
+            </div>
+          </form>
+          <BoardDetailWrapper>
+            <LikeButton onClick={() => handleLikeButtonClick(boardNo)}>
+              {likeBoardSet && likeBoardSet.includes(parseInt(boardNo)) ? '️❤️'
+                : '🤍'}
+            </LikeButton>
+            <FloatingHeartsContainer>
+              {floatingHearts.map(heart => (
+                <FloatingHeart key={heart.id}
+                               onComplete={() => removeHeart(heart.id)} />
+              ))}
+            </FloatingHeartsContainer>
+          </BoardDetailWrapper>
+        </BoardDetail>
 
-            {comments && comments.length > visibleComments && (
-                <LoadMoreCommentsContainer onClick={loadMoreComments}>
-                  <ArrowIcon>&darr;</ArrowIcon>
-                  댓글 더보기
-                </LoadMoreCommentsContainer>
-            )}
-          </CommentsSection>
-        </ContentBox>
-      </Container>
+        <CommentsSection>
+          <CommentInputContainer>
+            <InputWithButtonContainer>
+              <CommentTextArea
+                name='content'
+                placeholder='댓글을 입력하세요.'
+                value={content}
+                onChange={CommentChange}
+              />
+              <SubmitButton type='submit' onClick={onSubmit}>등록하기</SubmitButton>
+            </InputWithButtonContainer>
+          </CommentInputContainer>
+
+
+          {comments && comments.length > 0
+            ? comments.slice(0, visibleComments).map((boardComment) => (
+              <CommentContainer key={boardComment.id}>
+                <CommentMeta>
+                  <div style={{ display: 'flex' }}>
+                    <ProfileImage
+                      src={
+                        boardComment && boardComment.writer.photo
+                          ? `https://yourImageServer.com/${boardComment.writer.photo}`
+                          : '/images/default.png'
+                      }
+                    />
+                    <span>
+                      {boardComment && boardComment.writer
+                        ? boardComment.writer.nick : 'Unknown'}
+                    </span>
+                  </div>
+                  <DateDeleteButtonContainer>
+                    {boardComment.writer.no === user.no && (
+                      <DeleteText onClick={() => onDeleteComment(
+                        boardComment.no)}>삭제</DeleteText>
+                    )}
+                    <CommentDate>
+                      {boardComment && boardComment.createdAt
+                        ? new Date(boardComment.createdAt).toLocaleDateString()
+                        : 'Unknown date'}
+                    </CommentDate>
+                  </DateDeleteButtonContainer>
+                </CommentMeta>
+                <CommentContent>
+                  {boardComment ? boardComment.content : ''}
+                </CommentContent>
+              </CommentContainer>
+            ))
+            : null}
+
+          {comments && comments.length > visibleComments && (
+            <LoadMoreCommentsContainer onClick={loadMoreComments}>
+              <ArrowIcon>&darr;</ArrowIcon>
+              댓글 더보기
+            </LoadMoreCommentsContainer>
+          )}
+        </CommentsSection>
+      </ContentBox>
+    </Container>
   );
 };
 

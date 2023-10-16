@@ -233,24 +233,17 @@ public class BoardController {
     return new ResponseEntity<>(board, HttpStatus.OK);
   }
 
-  @GetMapping("fileDelete/{attachedFile}") // 예) .../fileDelete/attachedfile;no=30
-  public String fileDelete(@MatrixVariable("no") int no, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
-
+  @DeleteMapping("fileDelete/{fileNo}") // 예) .../fileDelete/attachedfile;no=30
+  public ResponseEntity fileDelete(@PathVariable int fileNo) throws Exception {
     Board board = null;
-    BoardPhoto attachedFile = boardService.getAttachedFile(no);
+    BoardPhoto attachedFile = boardService.getAttachedFile(fileNo);
     board = boardService.get(attachedFile.getBoardNo());
-    if (board.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("게시글 변경 권한이 없습니다!");
-    }
 
-    if (boardService.deleteAttachedFile(no) == 0) {
-      throw new Exception("해당 번호의 첨부파일이 없습니다.");
+    if (boardService.deleteAttachedFile(fileNo) == 0) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     } else {
-      return "redirect:/board/detail/" + board.getCategory() + "/" + board.getNo();
+      boardService.deleteAttachedFile(fileNo);
+      return new ResponseEntity<>(HttpStatus.OK);
     }
   }
 
