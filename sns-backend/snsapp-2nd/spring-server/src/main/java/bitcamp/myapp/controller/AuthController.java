@@ -276,7 +276,7 @@ public class AuthController {
     phoneNumber = phoneNumber.replaceAll("\\D+", "");
     try { // 이미 가입된 전화번호가 있으면
       if (smsService.memberTelCount(phoneNumber) > 0) {
-        return new ResponseEntity<>("이미 가입된 회원", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("이미 가입된 회원입니다", HttpStatus.OK);
       } else {
         String code = smsService.sendRandomMessage(phoneNumber);
         redisService.getValueOps()
@@ -301,7 +301,7 @@ public class AuthController {
     System.out.println(rand + " : " + code);
 
     if (rand == null || !rand.equals(code)) {
-      return new ResponseEntity<>("코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 
     redisService.getValueOps()

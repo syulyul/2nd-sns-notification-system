@@ -168,6 +168,9 @@ const auth = handleActions(
       followList: [],
       likeBoardList: [],
       likeGuestBookList: [],
+
+      authError: null,
+      authMessage: null,
     }),
 
     [REGISTER_SUCCESS]: (state, { payload: user }) => ({
@@ -183,18 +186,26 @@ const auth = handleActions(
       authError: error,
     }),
 
+    [GET_AUTH_CODE_SUCCESS]: (state, { payload: data }) => ({
+      ...state,
+      authMessage: data,
+    }),
     [GET_AUTH_CODE_FAILURE]: (state, { payload: error }) => ({
       ...state,
       authError: error,
     }),
-    [CHECK_AUTH_CODE_SUCCESS]: (state, { payload: user }) => ({
+    [CHECK_AUTH_CODE_SUCCESS]: (
+      state,
+      { payload: message, meta: response }
+    ) => ({
       ...state,
-      verificationState: true,
+      authMessage: message,
+      verificationState: response.status == 200 ? true : null,
     }),
     [CHECK_AUTH_CODE_FAILURE]: (state, { payload: error }) => ({
       ...state,
       verificationState: null,
-      authError: error,
+      authMessage: error,
     }),
 
     [LOGIN_SUCCESS]: (state, { payload: user }) => ({
