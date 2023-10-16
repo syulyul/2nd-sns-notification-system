@@ -82,6 +82,7 @@ const LoginContainer = () => {
   const onSubmitWithFCMToken = (fcmToken) => {
     dispatch(login({ phoneNumber, password, fcmToken }));
     dispatch(initializeForm());
+    console.log('FCM Token:', fcmToken);
   };
 
   const onSubmit = (e) => {

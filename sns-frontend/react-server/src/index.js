@@ -48,7 +48,9 @@ function loadUser() {
 }
 async function getFCMToken() {
   try {
-    const token = await getToken(messaging);
+    const token = await getToken(messaging, {
+      vapidKey: process.env.REACT_APP_VAPID_KEY,
+    });
     console.log("FCM Token:", token);
   } catch (error) {
     console.error("Error getting FCM token:", error);

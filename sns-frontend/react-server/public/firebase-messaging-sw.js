@@ -11,16 +11,20 @@ self.addEventListener("push", function (e) {
   console.log("push: ", e.data.json());
   if (!e.data.json()) return;
 
-  const resultData = e.data.json().notification;
-  const notificationTitle = resultData.title;
+  const resultData = e.data.json();
+
+  // 변경: 푸시 알림의 데이터에서 제목과 내용 가져오기
+  const notificationTitle = resultData.data.title;
+  const notificationBody = resultData.data.body;
+
   const notificationOptions = {
-    body: resultData.body,
-    icon: resultData.image,
-    tag: resultData.tag,
-    ...resultData,
+    body: notificationBody,
+    // 변경: 제목과 아이콘을 설정
+    icon: "/path/to/icon.png", // 여기에 알림 아이콘 이미지 경로를 설정하세요.
   };
   console.log("push: ", { resultData, notificationTitle, notificationOptions });
 
+  // 변경: 알림을 표시할 때 "resultData" 대신 "notificationTitle"과 "notificationOptions" 사용
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
