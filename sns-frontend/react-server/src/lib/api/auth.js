@@ -24,6 +24,13 @@ export const checkPhoneAuthCode = ({ phoneNumber, verificationCode }) =>
     verificationCode,
   });
 
+export const resetPassword = ({ phoneNumber, password, verificationCode }) =>
+  springClient.post('auth/resetPassword', {
+    phoneNumber,
+    password,
+    verificationCode,
+  });
+
 export const check = () =>
   springClient.get('auth/check', { withCredentials: true });
 

@@ -1,6 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import PwFindComponent from '../../components/auth/PwFindComponent';
-import { changeField, checkAuthCode, getAuthCode } from '../../modules/auth';
+import {
+  changeField,
+  checkAuthCode,
+  getAuthCode,
+  resetPassword,
+} from '../../modules/auth';
 
 const PwFindContainer = () => {
   const dispatch = useDispatch();
@@ -40,6 +45,10 @@ const PwFindContainer = () => {
     dispatch(checkAuthCode({ phoneNumber, verificationCode }));
   };
 
+  const onResetPassword = () => {
+    dispatch(resetPassword({ phoneNumber, password, verificationCode }));
+  };
+
   return (
     <PwFindComponent
       phoneNumber={phoneNumber}
@@ -50,6 +59,7 @@ const PwFindContainer = () => {
       onChange={onChange}
       onAuthPhoneNumber={onAuthPhoneNumber}
       onCheckPhoneNumber={onCheckPhoneNumber}
+      onResetPassword={onResetPassword}
     />
   );
 };

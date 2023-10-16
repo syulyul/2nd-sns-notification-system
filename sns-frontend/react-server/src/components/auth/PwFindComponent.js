@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Button from '../common/Button';
 import AuthTemplate from './AuthTemplate';
+import { Link } from 'react-router-dom';
 
 const FindForm = styled.div`
   align-self: flex-start;
@@ -94,6 +95,7 @@ const PwFindComponent = ({
   onChange,
   onAuthPhoneNumber,
   onCheckPhoneNumber,
+  onResetPassword,
 }) => {
   return (
     <AuthTemplate>
@@ -141,11 +143,16 @@ const PwFindComponent = ({
                 value={password}
                 onChange={onChange}
               />
-              <SubmitButton id="changePassword">비밀번호 변경</SubmitButton>
+              <SubmitButton id="changePassword" onClick={onResetPassword}>
+                비밀번호 변경
+              </SubmitButton>
             </FlexDiv>
           </NewPasswordForm>
         ) : null}
-        <CommonButton>돌아가기</CommonButton>
+
+        <Link to="/auth/login">
+          <CommonButton>돌아가기</CommonButton>
+        </Link>
       </FindForm>
     </AuthTemplate>
   );

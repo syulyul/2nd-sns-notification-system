@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -335,13 +334,20 @@ public class AuthController {
   @PostMapping("/resetPassword")
   @ResponseBody
   public ResponseEntity<String> resetPassword(
-      @RequestParam String phoneNumber,
-      @RequestParam String newPassword) {
-    phoneNumber = phoneNumber.replaceAll("\\D+", "");
+      @RequestBody HashMap<String, String> bodyMap) {
+    String phoneNumber = bodyMap.get("phoneNumber").replaceAll("\\D+", "");
+    String rand = (String) redisService.getValueOps().get(phoneNumber);
+    String code = bodyMap.get("verificationCode");
+
+    System.out.println(rand + " : " + code);
+
+    if (rand == null || !rand.equals(code)) {
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
 
     try {
       // 새로운 비밀번호로 업데이트
-      smsService.updatePasswordByPhoneNumber(phoneNumber, newPassword);
+      smsService.updatePasswordByPhoneNumber(phoneNumber, bodyMap.get("password"));
 
       return new ResponseEntity<>("비밀번호 재설정이 완료되었습니다.", HttpStatus.OK);
     } catch (Exception e) {
