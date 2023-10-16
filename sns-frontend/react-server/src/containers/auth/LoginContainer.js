@@ -14,13 +14,13 @@ const LoginContainer = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const { phoneNumber, password, authError, user, fcmToken } = useSelector(
-    ({ auth }) => ({
-      phoneNumber: auth.phoneNumber,
-      password: auth.password,
-      authError: auth.authError,
-      user: auth.user,
-      fcmToken: auth.fcmToken
-    })
+      ({ auth }) => ({
+        phoneNumber: auth.phoneNumber,
+        password: auth.password,
+        authError: auth.authError,
+        user: auth.user,
+        fcmToken: auth.fcmToken
+      })
   );
   const firebaseConfig = {
     apiKey: "AIzaSyC4qX3g0OF5SKoRQd4hJVIwfaWjrX69a4k",
@@ -36,10 +36,10 @@ const LoginContainer = () => {
   const onChange = (e) => {
     const { value, name } = e.target;
     dispatch(
-      changeField({
-        key: name,
-        value,
-      })
+        changeField({
+          key: name,
+          value,
+        })
     );
   };
 
@@ -67,7 +67,7 @@ const LoginContainer = () => {
         const fcmToken = await getToken(messaging, {
           vapidKey: process.env.REACT_APP_VAPID_KEY,
         });
-          console.log('FCM Token:', fcmToken);
+        console.log('FCM Token:', fcmToken);
       };
 
       getFCMToken(); // 토큰 생성 및 전송 함수 호출
@@ -97,13 +97,13 @@ const LoginContainer = () => {
 
 
   return (
-    <LoginComponent
-      phoneNumber={phoneNumber}
-      password={password}
-      fcmToken={fcmToken}
-      onChange={onChange}
-      onSubmit={onSubmit}
-    />
+      <LoginComponent
+          phoneNumber={phoneNumber}
+          password={password}
+          fcmToken={fcmToken}
+          onChange={onChange}
+          onSubmit={onSubmit}
+      />
   );
 };
 
