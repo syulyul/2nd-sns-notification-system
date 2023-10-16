@@ -1,6 +1,6 @@
 import Noti from '../../schemas/noti';
 import { redisClient } from '../../redis';
-import User from "../../schemas/user";
+import User from '../../schemas/user';
 import admin from 'firebase-admin'; // Firebase Admin SDK 모듈을 import
 
 // Firebase 애플리케이션 초기화
@@ -12,7 +12,7 @@ admin.initializeApp({
 export const addLog = async (req, res, next) => {
   const admin = require('firebase-admin');
   try {
-    const fcmToken = await redisClient.get("FcmToken:" + req.body.memberNo);
+    const fcmToken = await redisClient.get('FcmToken:' + req.body.memberNo);
     const notiLog = await Noti.create({
       mno: req.body.memberNo,
       ntno: req.body.notiTypeNo,
@@ -21,13 +21,25 @@ export const addLog = async (req, res, next) => {
       noti_state: req.body.notiState,
     });
 
+    let title = '';
+    switch (req.body.notiTypeNo) {
+      case 1:
+        title = 'follow';
+        break;
+      case 2:
+        title = 'like';
+        break;
+      case 3:
+        title = 'comment';
+        break;
+    }
+
     // Firebase 알림 메시지 전송
     if (fcmToken) {
-
       const message = {
         data: {
-          title: 'following',
-          body: '팔로잉하였습니다.',
+          title: title,
+          body: req.body.content,
         },
         token: fcmToken,
       };
@@ -111,15 +123,14 @@ export const updateAllNotiState = async (req, res, next) => {
 
 export const addFollowingLog = async (req, res) => {
   try {
-
     const userNo = await redisClient.get(req.cookies['sessionId']);
     const userToken = await redisClient.get(req.fcmToken);
     const sendUser = await User.findOne({ mno: userNo });
     console.log(userToken);
     console.log(sendUser);
     const findToken = await Noti.create({
-    fcmToken: userToken.fcmToken,
-    user: sendUser._id,
+      fcmToken: userToken.fcmToken,
+      user: sendUser._id,
     });
 
     if (findToken) {
