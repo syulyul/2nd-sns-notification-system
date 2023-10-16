@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate  } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import BoardDetailComponent from '../../components/board/BoardDetailComponent';
-import { changeField, initializeForm, detail, addComment, deleteBoard, deleteComment } from '../../modules/board';
+import {
+  changeField,
+  initializeForm,
+  detail,
+  addComment,
+  deleteBoard,
+  deleteComment,
+  update
+} from '../../modules/board';
 import { boardlike, boardunlike } from '../../modules/auth';
 
 const BoardDetailContainer = () => {
   const dispatch = useDispatch();
   const [content, setContent] = useState('');
   const navigate = useNavigate();
+  const [updateTitle, setUpdateTitle] = useState('');
+  const [updateContent, setUpdateContent] = useState('');
 
   const boardDefault = {
     title: 'Loading...',
@@ -30,12 +40,20 @@ const BoardDetailContainer = () => {
     createdAt: new Date().toISOString()
   };
 
-  const { board = boardDefault, comments = Array(5).fill(commentDefault), boardError, user, likeBoardSet}  = useSelector(state => ({
+  const {
+    board = boardDefault,
+    comments = Array(5).fill(commentDefault),
+    boardError,
+    user,
+    likeBoardSet,
+    files
+  } = useSelector(state => ({
     board: state.board.board,
     comments: state.board.comments,
     boardError: state.board.boardError,
     user: state.auth.user,
-    likeBoardSet : state.auth.likeBoardList,
+    likeBoardSet: state.auth.likeBoardList,
+    files: state.board.attachedFiles
   }));
 
   const { boardNo, category } = useParams();
@@ -44,9 +62,41 @@ const BoardDetailContainer = () => {
     dispatch(changeField({ key, value }));
   };
 
-  const onEdit = () => {
-    const updatedBoard = { ...board, editable: true };
+  const handleUpdateTitle = (e) => setUpdateTitle(e.target.value);
 
+  const handleUpdateContent = (e) => setUpdateContent(e.target.value);
+
+  let updateData = new FormData();
+  updateData.append('files', null);
+  const onChangeFile = (e) => {
+    const { files } = e.target;
+    updateData = new FormData();
+    for (let i = 0; files[i] != null; i++) {
+      updateData.append('files', files[i]);
+    }
+  };
+
+  const onEdit = (e) => {
+    e.preventDefault();
+    updateData.append(
+      'data',
+      new Blob(
+        [
+          JSON.stringify({
+            no: boardNo,
+            title: updateTitle,
+            content: updateContent,
+            attachFiles: files,
+            writer: user,
+          })
+        ],
+        {
+          type: 'application/json'
+        }
+      )
+    );
+    dispatch(update({ updateData }));
+    dispatch(detail({ category, boardNo }));  // 다시 상세 정보를 불러옴
   };
 
   //게시글초기화
@@ -58,7 +108,7 @@ const BoardDetailContainer = () => {
   //게시글삭제
   const onDelete = (e) => {
     e.preventDefault();
-    dispatch(deleteBoard({boardNo, category}));
+    dispatch(deleteBoard({ boardNo, category }));
     navigate(`/board/list?category=${category}`); // 삭제 후 리스트로 페이지 이동
   };
 
@@ -69,7 +119,7 @@ const BoardDetailContainer = () => {
     const commentData = {
       boardNo: parseInt(boardNo, 10),
       content,
-      writer: user,
+      writer: user
     };
     dispatch(addComment(commentData));
     dispatch(detail({ category, boardNo })); // 페이지 다시 불러서 새로고침 효과
@@ -78,7 +128,7 @@ const BoardDetailContainer = () => {
 
   //댓글삭제
   const onDeleteComment = (commentNo) => {
-    dispatch(deleteComment({commentNo, boardNo}));
+    dispatch(deleteComment({ commentNo, boardNo }));
     dispatch(detail({ category, boardNo })); // 페이지 다시 불러서 새로고침 효과
   };
 
@@ -103,23 +153,25 @@ const BoardDetailContainer = () => {
   }
 
   return (
-        <BoardDetailComponent
-            user={user}
-            board={board}
-            comments={comments}
-            content={content}
-            onSubmit={onSubmit}
-            onChange={onChange}
-            onEdit={onEdit}
-            onReset={onReset}
-            onDelete={onDelete}
-            onDeleteComment={onDeleteComment}
-            CommentChange={CommentChange}
-            boardNo={boardNo}
-            handleLike={handleLike}
-            handleUnlike={handleUnlike}
-            likeBoardSet={likeBoardSet}
-        />
+    <BoardDetailComponent
+      user={user}
+      board={board}
+      comments={comments}
+      content={content}
+      onSubmit={onSubmit}
+      onChange={onChange}
+      onEdit={onEdit}
+      onReset={onReset}
+      onDelete={onDelete}
+      onDeleteComment={onDeleteComment}
+      CommentChange={CommentChange}
+      boardNo={boardNo}
+      handleLike={handleLike}
+      handleUnlike={handleUnlike}
+      likeBoardSet={likeBoardSet}
+      handleUpdateTitle={handleUpdateTitle}
+      handleUpdateContent={handleUpdateContent}
+    />
   );
 };
 

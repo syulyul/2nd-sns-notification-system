@@ -127,7 +127,9 @@ const BoardDetailComponent = ({
   onDeleteComment,
   onSubmit,
   onChange,
-  CommentChange
+  CommentChange,
+  handleUpdateTitle,
+  handleUpdateContent
 }) => {
   return (
     <Container>
@@ -137,7 +139,7 @@ const BoardDetailComponent = ({
             <input
               type="text"
               defaultValue={board ? board.title : ''}
-              onChange={e => onChange({ key: 'title', value: e.target.value })}
+              onChange={handleUpdateTitle}
             />
           </Title>
           <MetaInfo>
@@ -155,7 +157,7 @@ const BoardDetailComponent = ({
           </MetaInfo>
           <textarea
             defaultValue={board ? board.content : ''}
-            onChange={e => onChange({ key: 'content', value: e.target.value })}
+            onChange={handleUpdateContent}
           ></textarea>
           <div>
             {board && board.attachedFiles
@@ -168,15 +170,16 @@ const BoardDetailComponent = ({
                     <a href={`https://yourImageServer.com/${file.filePath}`}>
                       Download
                     </a>
-                    {board && board.editable ? (
+                    {/*{board && board.editable ? (*/}
                       <a href="#" onClick={() => onDelete(file.no)}>
                         X
                       </a>
-                    ) : null}
+                    {/*) : null}*/}
                   </div>
                 ))
               : null}
           </div>
+          <input type='hidden' name='boardNo' value={board.no} />
           <ButtonContainer>
             {board?.writer?.no === user?.no && (
                 <>
