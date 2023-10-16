@@ -1,28 +1,33 @@
 import Noti from '../../schemas/noti';
 import { redisClient } from '../../redis';
 import User from "../../schemas/user";
+import admin from 'firebase-admin'; // Firebase Admin SDK 모듈을 import
 
+// Firebase 애플리케이션 초기화
+const serviceAccount = require('./snsp-778c0-firebase-adminsdk-v8fz8-f8923eb6ed.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  // 기타 설정...
+});
 export const addLog = async (req, res, next) => {
+  const admin = require('firebase-admin');
   try {
+    const fcmToken = await redisClient.get("FcmToken:" + req.body.memberNo);
     const notiLog = await Noti.create({
       mno: req.body.memberNo,
       ntno: req.body.notiTypeNo,
       content: req.body.content,
       url: req.body.url,
       noti_state: req.body.notiState,
-      fcmToken: req.body.fcmToken
     });
-    const admin = require('firebase-admin');
 
     // Firebase 알림 메시지 전송
-    const user = await User.findOne({ mno: req.body.memberNo });
-    if (user) {
-      const fcmToken = req.body.fcmToken; // 이 토큰은 이미 클라이언트에서 전달되어야 함
+    if (fcmToken) {
 
       const message = {
         data: {
-          type: 'following',
-          message: '팔로잉하였습니다.',
+          title: 'following',
+          body: '팔로잉하였습니다.',
         },
         token: fcmToken,
       };
