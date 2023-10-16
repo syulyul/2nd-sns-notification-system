@@ -209,12 +209,16 @@ public class AuthController {
   @PostMapping("add")
   public ResponseEntity add(
       @RequestPart("data") Member member,
+      @RequestPart("verificationCode") String verificationCode,
       @RequestPart(value = "files", required = false) MultipartFile[] files,
       HttpServletResponse response) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
 
     String rand = (String) redisService.getValueOps().get(member.getPhoneNumber());
+    if (!verificationCode.equals(rand)) {
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
+    }
 
     try {
       if (files != null) {
@@ -278,7 +282,6 @@ public class AuthController {
         redisService.getValueOps()
             .set(phoneNumber, code, 3, TimeUnit.MINUTES);
         // 전화 번호에 인증 코드 저장
-        // 회원 가입 요청 에도 인증을 추가 시 필요(아직 추가 X)
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -303,6 +306,7 @@ public class AuthController {
 
     redisService.getValueOps()
         .set(phoneNumber, code, 15, TimeUnit.MINUTES);
+    // 회원 가입 요청 에도 인증을 추가 시 필요
     return new ResponseEntity<>("인증 성공", HttpStatus.OK);
   }
 

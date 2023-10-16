@@ -60,6 +60,12 @@ const RegisterContainer = () => {
         type: 'application/json',
       })
     );
+    formData.append(
+      'verificationCode',
+      new Blob([verificationCode], {
+        type: 'application/json',
+      })
+    );
     dispatch(register({ formData }));
     dispatch(initializeForm());
   };
