@@ -97,6 +97,7 @@ const ChatMessage = styled.div`
   flex-direction: column;
   // align-items: flex-start;
   margin: 10px auto;
+  margin-bottom: 0px;
   word-wrap: break-word;
 
   .StyledChatMine {
@@ -109,7 +110,7 @@ const ChatMessage = styled.div`
     // max-width: 70%;
     float: right;
     margin: 10px auto;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     margin-right: 20px;
     padding-right: 10px;
     align-self: flex-end;
@@ -126,6 +127,7 @@ const ChatMessage = styled.div`
     // max-width: 70%;
     float: left;
     margin: 10px auto;
+    margin-bottom: 5px;
     align-self: flex-start;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
   }
@@ -143,6 +145,21 @@ const UserImage = styled.img`
   border-radius: 50%;
   margin-right: 10px;
   // margin-bottom: 20px;
+`;
+
+const TimeStampMine = styled.div`
+  font-size: 10px;
+  float: right;
+  clear: both; /* Clear any floats to prevent layout issues */
+  margin-right: 20px;
+  margin-bottom: 5px;
+`;
+
+const TimeStampOther = styled.div`
+  font-size: 10px;
+  float: left;
+  clear: both; /* Clear any floats to prevent layout issues */
+  margin-bottom: 10px;
 `;
 
 // const StyledChatMine = styled.div`
@@ -194,6 +211,26 @@ const StyledChatBtn = styled.button`
   }
 `;
 
+const DateLine = styled.div`
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  margin: 8px 0px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.15);
+    height: 1px;
+    font-size: 0px;
+    line-height: 0px;
+    margin: 0px 16px;
+  }
+`;
+
 const ChatItem = ({ chatLog, loginUser }) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
@@ -235,6 +272,9 @@ const ChatComponent = ({
       messageEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
     }
   }, [newChat]);
+
+  // 날짜를 표시할 변수 초기화
+  let currentDate = null;
 
   return (
     <ChatContainer>
@@ -279,34 +319,78 @@ const ChatComponent = ({
       >
         <ChatMessage>
           {chats &&
-            chats.map((chatLog) => (
-              <div>
-                <div>
-                  {user.no !== chatLog.user.mno && (
-                    <UserName className={'UserName'}>
-                      <UserImage
-                        src={
-                          chatLog.user.photo
-                            ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
-                            : 'images/default.jpg'
-                        }
-                      />
-                      {`${chatLog.user.nick}`}
-                    </UserName>
+            chats.map((chatLog, index) => {
+              // 현재 메시지 날짜
+              const messageDate = new Date(
+                chatLog.createdAt
+              ).toLocaleDateString();
+
+              // 날짜 변화 체크
+              const isDateChanged = currentDate !== messageDate;
+
+              // 현재 날짜 업데이트
+              currentDate = messageDate;
+
+              return (
+                <div key={chatLog._id}>
+                  {isDateChanged && (
+                    <div>
+                      {/* 날짜가 바뀌었을 때 구분선과 날짜를 표시 */}
+                      <br />
+                      <DateLine>{messageDate}</DateLine>
+                      <br />
+                    </div>
                   )}
+
+                  {/* 나머지 채팅 메시지 표시 */}
+                  <div>
+                    <div>
+                      {user.no !== chatLog.user.mno && (
+                        <UserName className={'UserName'}>
+                          <UserImage
+                            src={
+                              chatLog.user.photo
+                                ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
+                                : 'images/default.jpg'
+                            }
+                          />
+                          {`${chatLog.user.nick}`}
+                        </UserName>
+                      )}
+                    </div>
+                    <div>
+                      <ChatItem chatLog={chatLog} loginUser={user} />
+                      {user.no !== chatLog.user.mno && (
+                        <TimeStampOther>{`${new Date(
+                          chatLog.createdAt
+                        ).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}`}</TimeStampOther>
+                      )}
+                      {user.no === chatLog.user.mno && (
+                        <TimeStampMine>{`${new Date(
+                          chatLog.createdAt
+                        ).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}`}</TimeStampMine>
+                      )}
+                    </div>
+                    <div>
+                      {user.no !== chatLog.user.mno && (
+                        <div>
+                          <button onClick={(e) => onTranslate(chatLog)}>
+                            번역
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <ChatItem
-                  chatLog={chatLog}
-                  key={chatLog._id}
-                  loginUser={user}
-                />
-                {user.no !== chatLog.user.mno && (
-                  <button onClick={(e) => onTranslate(chatLog)}>번역</button>
-                )}
-              </div>
-            ))}
+              );
+            })}
           <div ref={messageEndRef}></div> {/* Scroll to this div */}
-          {/* </div> */}
         </ChatMessage>
       </StyledChatList>
       <SendChatBlock>
