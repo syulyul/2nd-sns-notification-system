@@ -81,6 +81,8 @@ const LoginComponent = ({
   onChange,
   onSubmit,
   authMessage,
+  isChecked,
+  setIsChecked,
 }) => {
   return (
     <AuthTemplate>
@@ -105,7 +107,15 @@ const LoginComponent = ({
         />
         <SubmitButton type="submit">로그인</SubmitButton>
         <label className="left-align">
-          <input type="checkbox" name="savePhoneNumber" id="savePhoneNumber" />
+          <input
+            type="checkbox"
+            name="savePhoneNumber"
+            id="savePhoneNumber"
+            checked={isChecked}
+            onClick={(e) => {
+              setIsChecked(e.target.checked);
+            }}
+          />
           전화번호 저장
         </label>
 

@@ -105,7 +105,18 @@ const StyledH1 = styled.h1`
   text-align: center;
 `;
 
-const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
+const MemberInfoUpdateComponent = ({
+  myPageData,
+  onSubmit,
+  onReset,
+  onChange,
+  onChangeFile,
+  handleUpdateNick,
+  handleUpdateBirthday,
+  handleUpdateEmail,
+  handleUpdatePhoneNumber,
+  handleUpdatePassword,
+  handleUpdateGender}) => {
   const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   if (myPageData == null) {
     return <div>loading...</div>;
@@ -118,11 +129,8 @@ const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
         <FormLabel>🌱 사진</FormLabel>
         <FormFileInput
           type="file"
-          id="photofile"
-          name="photofile"
-          onChange={() => {
-            /* 이미지 프리뷰 함수 */
-          }}
+          name="photo"
+          onChange={onChangeFile}
         />
         {myPageData.photo ? (
           <UserPhoto src={profileUrl} alt="User Profile" />
@@ -143,9 +151,8 @@ const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
         <FormLabel>🌱 닉네임</FormLabel>
         <FormInput
           type="text"
-          name="nick"
-          value={myPageData.nick}
-          onChange={onChange}
+          defaultValue={myPageData.nick}
+          onChange={handleUpdateNick}
         />
       </FormGroup>
 
@@ -154,8 +161,8 @@ const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
         <FormInput
           type="date"
           name="birthday"
-          value={myPageData.birthday}
-          onChange={onChange}
+          defaultValue={myPageData.birthday}
+          onChange={handleUpdateBirthday}
         />
       </FormGroup>
 
@@ -164,8 +171,8 @@ const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
         <FormInput
           type="email"
           name="email"
-          value={myPageData.email}
-          onChange={onChange}
+          defaultValue={myPageData.email}
+          onChange={handleUpdateEmail}
         />
       </FormGroup>
 
@@ -174,14 +181,14 @@ const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
         <FormInput
           type="tel"
           name="phoneNumber"
-          value={myPageData.phoneNumber}
-          onChange={onChange}
+          defaultValue={myPageData.phoneNumber}
+          onChange={handleUpdatePhoneNumber}
         />
       </FormGroup>
 
       <FormGroup>
         <FormLabel htmlFor="password">🌱 암호</FormLabel>
-        <FormInput type="password" name="password" onChange={onChange} />
+        <FormInput type="password" name="password" onChange={handleUpdatePassword} />
       </FormGroup>
 
       <FormGroup>
@@ -189,19 +196,19 @@ const MemberInfoUpdateComponent = ({ myPageData, onSubmit, onChange }) => {
         <FormSelect
           id="gender"
           name="gender"
-          value={myPageData.gender}
-          onChange={onChange}
+          defaultValue={myPageData.gender}
+          onChange={handleUpdateGender}
         >
           <option value="1">남자</option>
           <option value="2">여자</option>
         </FormSelect>
       </FormGroup>
-
+      <input type='hidden' name='no' value={myPageData.no} />
       <ButtonContainer>
         <CustomButton type="submit" onClick={onSubmit}>
           수정
         </CustomButton>
-        <CustomButton type="reset" onClick={onSubmit}>
+        <CustomButton type="reset" onClick={onReset}>
           초기화
         </CustomButton>
       </ButtonContainer>
