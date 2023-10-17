@@ -348,14 +348,10 @@ const BoardDetailComponent = ({
               {board && board.attachedFiles
                 ? board.attachedFiles.map((file, index) => (
                   <div key={index}>
-                    <StyledImage
-                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
-                      alt='Attached file'
-                    />
-                    <a
-                      href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}>
-                      Download
+                    <a href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}>
+                      <img src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`} alt="Attached file" />
                     </a>
+
                     {user.no === board.writer.no ? (
                       <div>
                         <a href='#' onClick={() => onPhotoDelete(file.no)}>
