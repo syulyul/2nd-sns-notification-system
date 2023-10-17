@@ -402,11 +402,12 @@ const BoardDetailComponent = ({
                 <CommentMeta>
                   <div style={{ display: 'flex' }}>
                     <ProfileImage
-                      src={
-                        boardComment && boardComment.writer.photo
-                          ? `https://yourImageServer.com/${boardComment.writer.photo}`
-                          : '/images/default.png'
-                      }
+                        src={
+                          boardComment.writer.photo
+                              ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${boardComment.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
+                              : '/images/avatar.png'
+                        }
+                        alt="profile"
                     />
                     <span>
                       {boardComment && boardComment.writer

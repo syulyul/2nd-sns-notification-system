@@ -158,17 +158,14 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
                               <TableCell>
                                 <ProfileAuthor>
                                   <ProfilePicture>
-                                    {board.writer.photo ? (
-                                        <ProfilePictureImg src="/images/avatar.png" alt="기본 프로필 사진" />
-                                    ) : (
-                                        <a href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${board.writer.photo}`}>
-                                          <ProfilePictureImg
-                                              className="profile-image"
-                                              alt="프로필 사진"
-                                              src={`http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${board.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`}
-                                          />
-                                        </a>
-                                    )}
+                                    <img
+                                        src={
+                                          board.writer.photo
+                                              ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${board.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
+                                              : '/images/avatar.png'
+                                        }
+                                        alt="profile"
+                                    />
                                   </ProfilePicture>
                                   <span>{board.writer.nick}</span>
                                 </ProfileAuthor>
@@ -210,22 +207,14 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
                               <CommentTableCell>
                                 <ProfileAuthor>
                                   <ProfilePicture>
-                                    {boardComment.writer.photo ? (
-                                        <img
-                                            alt="기본 프로필 사진"
-                                            src="/images/avatar.png"
-                                        />
-                                    ) : (
-                                        <a
-                                            href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${boardComment.writer.photo}`}
-                                        >
-                                          <img
-                                              className="profile-image"
-                                              alt="프로필 사진"
-                                              src={`http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${boardComment.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`}
-                                          />
-                                        </a>
-                                    )}
+                                    <img
+                                        src={
+                                          boardComment.writer.photo
+                                              ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${boardComment.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
+                                              : '/images/avatar.png'
+                                        }
+                                        alt="profile"
+                                    />
                                   </ProfilePicture>
                                   <span>{boardComment.writer.nick}</span>
                                 </ProfileAuthor>
