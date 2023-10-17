@@ -4,9 +4,9 @@ import { Link, useLocation } from 'react-router-dom';
 import FollowButton from './FollowButton';
 
 const MemberListBox = styled.div`
-  margin-left: 18px;
-  width: 80%;
-  padding: 20px;
+  margin-left: 700px;
+  width: 30%;
+  padding: 0px;
   background-color: #fff;
   border-radius: 5px;
 `;
@@ -37,6 +37,12 @@ const ToggleLabel = styled.label`
   background-color: transparent;
 `;
 
+const StyledChatButton = styled.button`
+  margin-top: 25px;
+  color: #426b1f; 
+  background-color: transparent; 
+  border: 1px solid transparent;
+`;
 const FollowComponent = ({
   user,
   followListData,
@@ -63,15 +69,18 @@ const FollowComponent = ({
             <MemberLink href={`/myPage/${followItem.no}`}>
               {followItem.nick}
             </MemberLink>
-            <Link to={`/room?mno1=${followItem.no}&mno2=${user.no}`}>
-              채팅하기
-            </Link>
+
             <FollowButton
               followMemberSet={followMemberSet}
               memberNo={followItem.no}
               handleUnfollow={handleUnfollow}
               handleFollow={handleFollow}
             />
+            <Link to={`/room?mno1=${followItem.no}&mno2=${user.no}`}>
+              <StyledChatButton>
+                <img src="/images/dm.png" alt="채팅하기" />
+              </StyledChatButton>
+            </Link>
           </MemberItem>
         ))}
     </MemberListBox>

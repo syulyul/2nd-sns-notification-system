@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 const StyledFollowButton = styled.button`
-  margin-top: 25px;
   color: #426b1f;
   background-color: transparent;
+  border: 1px solid transparent;
 `;
 
 const FollowButton = ({
