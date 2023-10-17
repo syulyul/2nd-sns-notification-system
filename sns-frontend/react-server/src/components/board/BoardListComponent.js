@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate  } from 'react-router-dom';
 import { useSpring, animated } from 'react-spring';
 import Pagination from '../common/Pagination';
 import SearchBoardContainer from '../../containers/board/SearchBoardContainer';
+import board from '../../modules/board';
 
 const Container = styled.div`
   width: 100%;
@@ -144,6 +145,7 @@ const BoardListComponent = ({
                       ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${board.attachedFiles[0].filePath}`
                       : '/images/mangom.png'}
                   />
+                  {board.attachedFiles[0].filePath}
                   <CardContent>
                     <BoardLink href={`/board/detail/${board.category}/${board.no}`}>{board.title || '제목없음'}</BoardLink>
                     <p>{board.content}</p>
@@ -151,7 +153,14 @@ const BoardListComponent = ({
                   <CardFooter>
                     <AuthorText>
                       <ProfilePicture>
-                        <img src={board.writer.photo || '/images/avatar.png'} alt="profile"/>
+                        <img
+                          src={
+                            board.writer.photo
+                              ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${board.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
+                              : '/images/avatar.png'
+                          }
+                          alt="profile"
+                        />
                       </ProfilePicture>
                       {board.writer.nick}
                     </AuthorText>
