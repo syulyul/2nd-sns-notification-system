@@ -80,7 +80,7 @@ export const resetPassword = createAction(
 
 export const login = createAction(
   LOGIN,
-  ({ phoneNumber, password, fcmToken }) => ({
+  ({ phoneNumber = '', password = '', fcmToken = '' }) => ({
     phoneNumber,
     password,
     fcmToken,
