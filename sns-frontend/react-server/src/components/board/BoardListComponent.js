@@ -158,7 +158,11 @@ const BoardListComponent = ({ boardListData, lastPage, page, query }) => {
                   <AuthorText>
                     <ProfilePicture>
                       <img
-                        src={board.writer.photo || '/images/avatar.png'}
+                        src={
+                          board.writer.photo
+                            ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${board.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
+                            : '/images/avatar.png'
+                        }
                         alt="profile"
                       />
                     </ProfilePicture>
