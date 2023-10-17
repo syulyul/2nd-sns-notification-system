@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -126,7 +125,7 @@ public class MyPageController {
       @RequestPart(value = "files", required = false) MultipartFile[] files,
       @CookieValue(value = "sessionId", required = false) Cookie sessionCookie)
       throws Exception {
-    Member member = (Member) myPage;
+    Member member = myPage;
 
     LoginUser loginUser = null;
     try {
@@ -154,23 +153,6 @@ public class MyPageController {
       }
     }
 
-    myPage.setGender(myPage.getGender());
-    myPage.setStateMessage(myPage.getStateMessage());
-    myPage.setEmail(myPage.getEmail());
-    myPage.setBirthday(myPage.getBirthday());
-//        if (birthday.isEmpty()) {
-//          birthday = null;
-//        } else {
-//          // 생일 값을 문자열에서 Timestamp로 변환
-//          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//          Date parsedDate = dateFormat.parse(birthday);
-//          Timestamp timestamp = new Timestamp(parsedDate.getTime());
-//
-//          myPage.setBirthday(timestamp);
-//
-//        }
-//
-
     if (member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
       member.setEmail(" ");
     }
@@ -184,7 +166,7 @@ public class MyPageController {
       loginUser.setNick(member.getNick()); // 사용자 닉네임 업데이트
       loginUser.setPhoto(member.getPhoto()); // 사용자 사진 업데이트
 
-      return new ResponseEntity<>(myPage, HttpStatus.OK);
+      return new ResponseEntity<>(myPageService.get(myPage.getNo()), HttpStatus.OK);
     }
   }
 

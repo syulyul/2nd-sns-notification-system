@@ -230,7 +230,7 @@ public class BoardController {
       e.printStackTrace();
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<>(board, HttpStatus.OK);
+    return new ResponseEntity<>(boardService.get(board.getNo()), HttpStatus.OK);
   }
 
   @DeleteMapping("fileDelete/{fileNo}") // 예) .../fileDelete/attachedfile;no=30

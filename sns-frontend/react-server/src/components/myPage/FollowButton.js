@@ -14,7 +14,7 @@ const FollowButton = ({
 }) => {
   return (
     <>
-      {followMemberSet.includes(memberNo) ? (
+      {followMemberSet?.includes(memberNo) ? (
         <StyledFollowButton onClick={() => handleUnfollow(memberNo)}>
           팔로잉 취소
         </StyledFollowButton>
