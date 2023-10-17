@@ -47,27 +47,27 @@
 
   <select id="findAll" resultMap="boardMap">
     select
-    b.bno,
-    b.title,
-    b.content,
-    b.view_count,
-    b.created_at,
-    b.category,
-    b.likes,
-    m.mno,
-    m.nick,
-    m.filepath as member_filepath,
-    f.bpno,
-    f.filepath,
-    f.bno
+      b.bno,
+      b.title,
+      b.content,
+      b.view_count,
+      b.created_at,
+      b.category,
+      b.likes,
+      m.mno,
+      m.nick,
+      m.filepath as member_filepath,
+      f.bpno,
+      f.filepath,
+      f.bno
     from
-    sns_board b inner join sns_member m on b.mno=m.mno
-    left outer join sns_board_photo f on b.bno=f.bno
+      sns_board b inner join sns_member m on b.mno=m.mno
+      left outer join sns_board_photo f on b.bno=f.bno
     where
-    category=#{category}
-    order by
-    b.bno desc
-    limit #{limit} offset #{offset}
+      category=#{category}
+      order by
+      b.bno desc
+      limit #{limit} offset #{offset}
   </select>
 
   <select id="getTotalCount" parameterType="int" resultType="int">
@@ -78,44 +78,44 @@
 
   <select id="findBy" resultMap="boardMap" parameterType="int">
     select
-    b.bno,
-    b.title,
-    b.content,
-    b.view_count,
-    b.created_at,
-    b.category,
-    b.likes,
-    m.mno,
-    m.nick,
-    f.bpno,
-    f.filepath,
-    f.bno
+      b.bno,
+      b.title,
+      b.content,
+      b.view_count,
+      b.created_at,
+      b.category,
+      b.likes,
+      m.mno,
+      m.nick,
+      f.bpno,
+      f.filepath,
+      f.bno
     from
-    sns_board b inner join sns_member m on b.mno=m.mno
-    left outer join sns_board_photo f on b.bno=f.bno
+      sns_board b inner join sns_member m on b.mno=m.mno
+      left outer join sns_board_photo f on b.bno=f.bno
     where
-    b.bno=#{boardNo}
+      b.bno=#{boardNo}
   </select>
 
   <update id="update" parameterType="board">
     update sns_board set
-    title=#{title},
-    content=#{content}
+      title=#{title},
+      content=#{content}
     where
-    bno=#{no}
+      bno=#{no}
   </update>
 
   <update id="updateCount" parameterType="int">
     update sns_board set
-    view_count=view_count + 1
+      view_count=view_count + 1
     where
-    bno=#{no}
+      bno=#{no}
   </update>
 
   <delete id="delete" parameterType="int">
     delete from sns_board
     where
-    bno=#{no}
+      bno=#{no}
   </delete>
 
   <insert id="insertFiles" parameterType="board">
@@ -127,49 +127,49 @@
 
   <select id="findPhotoBy" parameterType="int" resultMap="boardPhotoMap">
     select
-    bpno,
-    filepath,
-    bno
-    from
-    sns_board_photo
+      bpno,
+      filepath,
+      bno
+      from
+      sns_board_photo
     where
-    bpno=#{no}
+      bpno=#{no}
   </select>
 
   <delete id="deleteFile" parameterType="int">
     delete from sns_board_photo
     where
-    bpno=#{no}
+      bpno=#{no}
   </delete>
 
   <delete id="deleteFiles" parameterType="int">
     delete from sns_board_photo
-    where
-    bno=#{no}
+      where
+      bno=#{no}
   </delete>
 
   <select id="findLikeBy" parameterType="int" resultMap="boardLikeMap">
     select
-    mno,
-    bno
-    from
-    sns_board_like
+      mno,
+      bno
+      from
+      sns_board_like
     where
-    mno=#{memberNo} and bno=#{boardNo}
+      mno=#{memberNo} and bno=#{boardNo}
   </select>
 
   <update id="updateLike" parameterType="int">
     update sns_board set
-    likes=likes + 1
+      likes=likes + 1
     where
-    bno=#{no}
+      bno=#{no}
   </update>
 
   <update id="cancelLike" parameterType="int">
     update sns_board set
-    likes=likes - 1
+      likes=likes - 1
     where
-    bno=#{no}
+      bno=#{no}
   </update>
 
   <insert id="insertLike" parameterType="int">
@@ -180,99 +180,95 @@
   <delete id="deleteLike" parameterType="int">
     delete from sns_board_like
     where
-    mno=#{memberNo} and bno=#{boardNo}
+      mno=#{memberNo} and bno=#{boardNo}
   </delete>
 
   <delete id="deleteLikes" parameterType="int">
     delete from sns_board_like
     where
-    bno=#{boardNo}
+      bno=#{boardNo}
   </delete>
 
   <select id="findLikeByMno" parameterType="int">
     select
-    bno
+      bno
     from
-    sns_board_like
+      sns_board_like
     where
-    mno=#{memberNo}
+      mno=#{memberNo}
   </select>
 
   <select id="findLikeByBno" parameterType="int">
     select
-    m.nick
+      m.nick
     from
-    sns_board_like b inner join sns_member m on b.mno=m.mno
+      sns_board_like b inner join sns_member m on b.mno=m.mno
     where
-    b.bno=#{boardNo}
+      b.bno=#{boardNo}
   </select>
 
   <select id="findAllByMno" resultMap="boardMap">
     select
-    b.bno,
-    b.title,
-    b.content,
-    b.view_count,
-    b.created_at,
-    b.category,
-    b.likes,
-    m.mno,
-    m.nick,
-    m.filepath as member_filepath,
-    f.bpno,
-    f.filepath,
-    f.bno
+      b.bno,
+      b.title,
+      b.content,
+      b.view_count,
+      b.created_at,
+      b.category,
+      b.likes,
+      m.mno,
+      m.nick,
+      m.filepath as member_filepath
     from
-    sns_board b inner join sns_member m on b.mno=m.mno
-    left outer join sns_board_photo f on b.bno=f.bno
+      sns_board b inner join sns_member m on b.mno=m.mno
     where
-    m.mno=#{writerNo} and category=#{category}
+      m.mno=#{writerNo} and category=#{category}
     order by
-    b.bno desc
+      b.bno desc
     limit #{limit} offset #{offset}
   </select>
 
   <select id="searchBoards" resultMap="boardMap">
     select
-    b.bno,
-    b.title,
-    b.content,
-    b.view_count,
-    b.created_at,
-    b.category,
-    b.likes,
-    m.mno,
-    m.nick,
-    m.filepath as member_filepath,
-    f.bpno,
-    f.filepath,
-    f.bno
+      b.bno,
+      b.title,
+      b.content,
+      b.view_count,
+      b.created_at,
+      b.category,
+      b.likes,
+      m.mno,
+      m.nick,
+      m.filepath as member_filepath,
+      f.bpno,
+      f.filepath,
+      f.bno
     from
-    sns_board b inner join sns_member m on b.mno=m.mno
-    left outer join sns_board_photo f on b.bno=f.bno
+      sns_board b inner join sns_member m on b.mno=m.mno
+      left outer join sns_board_photo f on b.bno=f.bno
     where
-    category=#{category}
-    AND (
-    b.title LIKE CONCAT('%', #{keyword}, '%') OR
-    b.content LIKE CONCAT('%', #{keyword}, '%') OR
-    m.nick LIKE CONCAT('%', #{keyword}, '%')
-    )
+      category=#{category}
+      AND (
+      b.title LIKE CONCAT('%', #{keyword}, '%') OR
+      b.content LIKE CONCAT('%', #{keyword}, '%') OR
+      m.nick LIKE CONCAT('%', #{keyword}, '%')
+      )
     order by
-    b.bno desc
-    limit #{limit} offset #{offset}
+      b.bno desc
+      limit #{limit} offset #{offset}
   </select>
 
   <select id="getSearchBoardsCount" parameterType="string" resultType="int">
     select count(b.bno)
     from
-    sns_board as b
-    inner join sns_member m on b.mno = m.mno
+      sns_board as b
+      inner join sns_member m on b.mno = m.mno
     where
-    category=#{category}
-    AND (
-    b.title LIKE CONCAT('%', #{keyword}, '%') OR
-    b.content LIKE CONCAT('%', #{keyword}, '%') OR
-    m.nick LIKE CONCAT('%', #{keyword}, '%')
-    )
+      category=#{category}
+      AND (
+      b.title LIKE CONCAT('%', #{keyword}, '%') OR
+      b.content LIKE CONCAT('%', #{keyword}, '%') OR
+      m.nick LIKE CONCAT('%', #{keyword}, '%')
+      )
   </select>
 </mapper>
