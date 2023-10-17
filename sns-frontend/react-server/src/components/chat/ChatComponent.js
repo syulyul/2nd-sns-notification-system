@@ -337,7 +337,7 @@ const ChatComponent = ({
   return (
     <ChatContainer>
       {room && (
-        <TitleStyle>{`🌱 ${room.users[0].nick}, ${room.users[1].nick} 🌱`}</TitleStyle>
+        <TitleStyle>{` ${room.users[0].nick}, ${room.users[1].nick}`}</TitleStyle>
       )}
       <LanguageSelectContainer>
         {LanguageOptions.map((option) => (
