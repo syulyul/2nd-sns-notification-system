@@ -153,8 +153,8 @@ public class MyPageController {
       }
     }
 
-    if (member.getEmail() == null || member.getEmail().isEmpty() ) {
-      member.setEmail("");
+    if (member.getEmail() == null || member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
+      member.setEmail(null);
     }
 
     if (memberService.update(member) == 0 || myPageService.update(myPage) == 0) {
