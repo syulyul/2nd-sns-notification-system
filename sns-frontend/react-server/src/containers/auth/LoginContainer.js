@@ -14,25 +14,27 @@ const LoginContainer = () => {
   let cookies = new Cookies();
   const [isChecked, setIsChecked] = useState(false);
 
-  const { phoneNumber, password, authError, user, fcmToken, authMessage } =
+  const { phoneNumber, password, authError, user,
+    // fcmToken,
+    authMessage } =
     useSelector(({ auth }) => ({
       phoneNumber: auth.phoneNumber,
       password: auth.password,
       authError: auth.authError,
       user: auth.user,
-      fcmToken: auth.fcmToken,
+      // fcmToken: auth.fcmToken,
       authMessage: auth.authMessage,
     }));
-  const firebaseConfig = {
-    apiKey: 'AIzaSyC4qX3g0OF5SKoRQd4hJVIwfaWjrX69a4k',
-    authDomain: 'snsp-778c0.firebaseapp.com',
-    projectId: 'snsp-778c0',
-    storageBucket: 'snsp-778c0.appspot.com',
-    messagingSenderId: '7999778564',
-    appId: '1:7999778564:web:8e578f288290f757be2a51',
-    measurementId: 'G-WPS0KLZ5L6',
-  };
-  const app = initializeApp(firebaseConfig);
+  // const firebaseConfig = {
+  //   apiKey: 'AIzaSyC4qX3g0OF5SKoRQd4hJVIwfaWjrX69a4k',
+  //   authDomain: 'snsp-778c0.firebaseapp.com',
+  //   projectId: 'snsp-778c0',
+  //   storageBucket: 'snsp-778c0.appspot.com',
+  //   messagingSenderId: '7999778564',
+  //   appId: '1:7999778564:web:8e578f288290f757be2a51',
+  //   measurementId: 'G-WPS0KLZ5L6',
+  // };
+  // const app = initializeApp(firebaseConfig);
 
   const onChange = (e) => {
     const { value, name } = e.target;
@@ -69,29 +71,31 @@ const LoginContainer = () => {
       console.log(user);
       // navigate(`/`);
       navigate(`/myPage/${user.no}`);
-      const getFCMToken = async () => {
-        const messaging = getMessaging();
-        const fcmToken = await getToken(messaging, {
-          vapidKey: process.env.REACT_APP_VAPID_KEY,
-        });
-        console.log('FCM Token:', fcmToken);
-      };
+      // const getFCMToken = async () => {
+      //   const messaging = getMessaging();
+      //   const fcmToken = await getToken(messaging, {
+      //     vapidKey: process.env.REACT_APP_VAPID_KEY,
+      //   });
+        // console.log('FCM Token:', fcmToken);
+      // };
 
-      getFCMToken(); // 토큰 생성 및 전송 함수 호출
+      // getFCMToken(); // 토큰 생성 및 전송 함수 호출
     }
   }, [user, authError, dispatch]);
 
-  const getFCMToken = async () => {
-    const messaging = getMessaging();
-    const fcmToken = await getToken(messaging, {
-      vapidKey: process.env.REACT_APP_VAPID_KEY,
-    });
-
-    onSubmitWithFCMToken(fcmToken);
-  };
+  // const getFCMToken = async () => {
+  //   const messaging = getMessaging();
+  //   const fcmToken = await getToken(messaging, {
+  //     vapidKey: process.env.REACT_APP_VAPID_KEY,
+  //   });
+  //
+  //   onSubmitWithFCMToken(fcmToken);
+  // };
 
   const onSubmitWithFCMToken = (fcmToken) => {
-    dispatch(login({ phoneNumber, password, fcmToken }));
+    dispatch(login({ phoneNumber, password,
+      // fcmToken
+    }));
     dispatch(initializeForm());
     if (cookies.get('phoneNumber')) {
       dispatch(
@@ -101,12 +105,12 @@ const LoginContainer = () => {
         })
       );
     }
-    console.log('FCM Token:', fcmToken);
+    // console.log('FCM Token:', fcmToken);
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    getFCMToken();
+    // getFCMToken();
     if (isChecked) {
       cookies.set('phoneNumber', phoneNumber);
     } else {
@@ -118,7 +122,7 @@ const LoginContainer = () => {
     <LoginComponent
       phoneNumber={phoneNumber}
       password={password}
-      fcmToken={fcmToken}
+      // fcmToken={fcmToken}
       authMessage={authMessage}
       onChange={onChange}
       onSubmit={onSubmit}

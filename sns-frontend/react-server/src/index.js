@@ -33,21 +33,21 @@ function loadUser() {
   }
 }
 
-function requestPermission() {
-  console.log('권한 요청 중...');
-  Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
-      console.log('알림 권한이 허용됨');
-      // FCM 메세지 처리
-    } else {
-      console.log('알림 권한 허용 안됨');
-    }
-  });
-}
+// function requestPermission() {
+//   console.log('권한 요청 중...');
+//   Notification.requestPermission().then((permission) => {
+//     if (permission === 'granted') {
+//       console.log('알림 권한이 허용됨');
+//       // FCM 메세지 처리
+//     } else {
+//       console.log('알림 권한 허용 안됨');
+//     }
+//   });
+// }
 
 sagaMiddleware.run(rootSaga);
 loadUser();
-requestPermission(); // 앱 시작 시 권한 요청
+// requestPermission(); // 앱 시작 시 권한 요청
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
