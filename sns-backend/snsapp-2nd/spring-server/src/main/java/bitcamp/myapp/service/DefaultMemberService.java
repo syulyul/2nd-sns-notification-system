@@ -29,6 +29,7 @@ public class DefaultMemberService implements MemberService {
   @Override
   public int add(Member member) throws Exception {
 
+    int result = memberDao.insert(member);
     RestTemplate restTemplate = new RestTemplate();
 
     // Header set
@@ -43,7 +44,7 @@ public class DefaultMemberService implements MemberService {
     ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
         String.class);
 
-    return memberDao.insert(member);
+    return result;
   }
 
   @Override
