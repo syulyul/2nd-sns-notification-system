@@ -110,6 +110,7 @@ const BoardListComponent = ({ boardListData, lastPage, page, query }) => {
   // Card 아무곳이나 클릭 시 detail 페이지로 이동하는 함수
   const handleCardClick = (category, no) => {
     navigate(`/board/detail/${category}/${no}`); // navigate 함수로 페이지 이동
+    window.location.reload();
   };
 
   const fadeIn = useSpring({
