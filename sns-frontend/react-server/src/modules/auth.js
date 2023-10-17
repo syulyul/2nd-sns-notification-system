@@ -194,9 +194,6 @@ const auth = handleActions(
       ...state,
       authError: null,
       user,
-      followList: user.followMemberSet,
-      likeBoardList: user.likeBoardSet,
-      likeGuestBookList: user.likeGuestBookSet,
     }),
     [REGISTER_FAILURE]: (state, { payload: error }) => ({
       ...state,

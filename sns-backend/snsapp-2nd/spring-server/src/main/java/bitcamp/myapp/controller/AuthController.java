@@ -1,6 +1,5 @@
 package bitcamp.myapp.controller;
 
-import bitcamp.myapp.App;
 import bitcamp.myapp.service.BoardService;
 import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MemberService;
@@ -21,10 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -35,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -239,20 +234,6 @@ public class AuthController {
       response.addCookie(cookie);
       redisService.getValueOps()
           .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.DAYS);
-
-      RestTemplate restTemplate = new RestTemplate();
-
-      // Header set
-      HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-      // Message
-      HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
-
-      // Request
-      String url = App.NODE_SERVER_URL + "/node/user/add";
-      ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
-          String.class);
 
       return new ResponseEntity<>(member, HttpStatus.OK);
 
