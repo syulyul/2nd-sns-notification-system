@@ -103,9 +103,9 @@ public class AuthController {
 
         loginUserObject = new LoginUser(loginUser);
 
-        String fcmToken = member.getFcmToken();
-        redisService.getValueOps()
-            .set("FcmToken:" + loginUser.getNo(), fcmToken, 1, TimeUnit.HOURS);
+//        String fcmToken = member.getFcmToken();
+//        redisService.getValueOps()
+//            .set("FcmToken:" + loginUser.getNo(), fcmToken, 1, TimeUnit.HOURS);
 
         HashSet<Member> followMemberSet = new HashSet<>(
             myPageService.followingList(loginUser.getNo()));
@@ -119,7 +119,7 @@ public class AuthController {
             new HashSet<>(boardService.likelist(loginUser.getNo())));
         loginUserObject.setLikeGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUser.getNo())));
-        loginUser.setFcmToken(fcmToken);
+//        loginUser.setFcmToken(fcmToken);
 
       } else { // 해당하는 유저가 없을 경우
         return new ResponseEntity<>(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);

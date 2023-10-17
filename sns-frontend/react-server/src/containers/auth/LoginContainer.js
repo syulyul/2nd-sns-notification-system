@@ -116,6 +116,18 @@ const LoginContainer = () => {
     } else {
       cookies.remove('phoneNumber');
     }
+    dispatch(login({ phoneNumber, password,
+      // fcmToken
+    }));
+    dispatch(initializeForm());
+    if (cookies.get('phoneNumber')) {
+      dispatch(
+          changeField({
+            key: 'phoneNumber',
+            value: cookies.get('phoneNumber'),
+          })
+      );
+    }
   };
 
   return (
