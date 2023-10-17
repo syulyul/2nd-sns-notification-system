@@ -116,8 +116,10 @@ const BoardDetailContainer = () => {
   };
 
   // 사진 삭제
-  const onPhotoDelete = (fileNo) => {
-    dispatch(deletePhoto({ fileNo }));
+  const onPhotoDelete = async (fileNo) => {
+    await dispatch(deletePhoto({ fileNo }));
+    // 삭제 작업이 완료되면 페이지를 새로 고침
+    window.location.reload();
   };
 
   //댓글
