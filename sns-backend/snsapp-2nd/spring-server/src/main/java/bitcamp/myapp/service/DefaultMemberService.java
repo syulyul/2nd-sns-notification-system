@@ -1,19 +1,25 @@
 package bitcamp.myapp.service;
 
+import bitcamp.myapp.App;
 import bitcamp.myapp.dao.MemberDao;
 import bitcamp.myapp.vo.Member;
+import java.util.List;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class DefaultMemberService implements MemberService {
 
+  MemberDao memberDao;
+
   {
     System.out.println("DefaultMemberService 생성됨!");
   }
-  MemberDao memberDao;
 
   public DefaultMemberService(MemberDao memberDao) {
     this.memberDao = memberDao;
@@ -22,6 +28,21 @@ public class DefaultMemberService implements MemberService {
   @Transactional
   @Override
   public int add(Member member) throws Exception {
+
+    RestTemplate restTemplate = new RestTemplate();
+
+    // Header set
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+    // Message
+    HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
+
+    // Request
+    String url = App.NODE_SERVER_URL + "/node/user/add";
+    ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
+        String.class);
+
     return memberDao.insert(member);
   }
 
@@ -43,6 +64,21 @@ public class DefaultMemberService implements MemberService {
   @Transactional
   @Override
   public int update(Member member) throws Exception {
+
+    RestTemplate restTemplate = new RestTemplate();
+
+    // Header set
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+    // Message
+    HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
+
+    // Request
+    String url = App.NODE_SERVER_URL + "/node/user/update";
+    ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
+        String.class);
+
     return memberDao.update(member);
   }
 
