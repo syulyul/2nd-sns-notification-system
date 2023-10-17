@@ -5,7 +5,6 @@ import createRequestSaga, {
 } from '../lib/createRequestSaga';
 import * as myPageAPI from '../lib/api/myPage';
 
-const CHANGE_MYPAGE_FIELD = 'myPage/CHANGE_MYPAGE_FIELD';
 const CHANGE_FIELD = 'myPage/CHANGE_FIELD';
 const INITIALIZE_FORM = 'myPage/INITIALIZE_FORM';
 
@@ -27,13 +26,6 @@ const [FOLLOWER, FOLLOWER_SUCCESS, FOLLOWER_FAILURE] =
 const [SEARCH_MEMBERS, SEARCH_MEMBERS_SUCCESS, SEARCH_MEMBERS_FAILURE] =
   createRequestActionTypes('myPage/SEARCH_MEMBERS');
 
-export const changeMyPageField = createAction(
-  CHANGE_MYPAGE_FIELD,
-  ({ key, value }) => ({
-    key,
-    value,
-  })
-);
 export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
   key,
   value,
@@ -42,18 +34,7 @@ export const changeField = createAction(CHANGE_FIELD, ({ key, value }) => ({
 export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const update = createAction(
-  UPDATE,
-  ({ photo, name, nick, birthDay, email, phoneNumber, password, gender }) => ({
-    photo,
-    name,
-    nick,
-    birthDay,
-    email,
-    phoneNumber,
-    password,
-    gender,
-  })
-);
+  UPDATE,({ updateData, userNo }) => ({ updateData, userNo }));
 
 export const list = createAction(LIST, (userNo) => userNo);
 export const info = createAction(INFO, (userNo) => userNo);
@@ -93,11 +74,6 @@ const initialState = {
 
 const myPage = handleActions(
   {
-    [CHANGE_MYPAGE_FIELD]: (state, { payload: { key, value } }) => ({
-      ...state,
-      myPage: { ...state.myPage, [key]: value },
-    }),
-
     [CHANGE_FIELD]: (state, { payload: { key, value } }) => ({
       ...state,
       [key]: value,

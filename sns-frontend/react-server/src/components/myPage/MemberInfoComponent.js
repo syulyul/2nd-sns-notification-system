@@ -120,7 +120,7 @@ const MemberInfoComponent = ({
       )}
       <h2>{myPageData.nick}</h2>
       <StateMessageLabel>상태메시지</StateMessageLabel>
-      {user.no === myPageData.no ? (
+      {user && user.no === myPageData.no ? (
         <EditInfoLink to={`/myPage/${myPageData.no}/info`}>
           내 정보 수정
         </EditInfoLink>
