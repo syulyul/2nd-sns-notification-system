@@ -78,14 +78,17 @@ const BoardDetailContainer = () => {
 
   const onEdit = (e) => {
     e.preventDefault();
+    const updatedTitle = updateTitle || board.title;
+    const updatedContent = updateContent || board.content;
+
     updateData.append(
       'data',
       new Blob(
         [
           JSON.stringify({
             no: boardNo,
-            title: updateTitle,
-            content: updateContent,
+            title: updatedTitle,
+            content: updatedContent,
             attachFiles: files,
             writer: user,
           })
