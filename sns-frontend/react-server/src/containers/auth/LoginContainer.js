@@ -6,11 +6,14 @@ import { changeField, initializeForm, login } from '../../modules/auth';
 import { useEffect } from 'react';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { initializeApp } from 'firebase/app';
+import { Cookies } from 'react-cookie';
 
 const LoginContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
+  let cookies = new Cookies();
+  const [isChecked, setIsChecked] = useState(false);
+
   const { phoneNumber, password, authError, user, fcmToken, authMessage } =
     useSelector(({ auth }) => ({
       phoneNumber: auth.phoneNumber,
@@ -44,13 +47,21 @@ const LoginContainer = () => {
   //컴포넌트 초기 렌터링 때 form 초기화
   useEffect(() => {
     dispatch(initializeForm());
+    if (cookies.get('phoneNumber')) {
+      dispatch(
+        changeField({
+          key: 'phoneNumber',
+          value: cookies.get('phoneNumber'),
+        })
+      );
+      setIsChecked(true);
+    }
   }, [dispatch]);
 
   useEffect(() => {
     if (authError) {
       console.log('오류 발생');
       console.log(authError);
-      setError('로그인 실패');
       return;
     }
     if (user) {
@@ -82,12 +93,25 @@ const LoginContainer = () => {
   const onSubmitWithFCMToken = (fcmToken) => {
     dispatch(login({ phoneNumber, password, fcmToken }));
     dispatch(initializeForm());
+    if (cookies.get('phoneNumber')) {
+      dispatch(
+        changeField({
+          key: 'phoneNumber',
+          value: cookies.get('phoneNumber'),
+        })
+      );
+    }
     console.log('FCM Token:', fcmToken);
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
     getFCMToken();
+    if (isChecked) {
+      cookies.set('phoneNumber', phoneNumber);
+    } else {
+      cookies.remove('phoneNumber');
+    }
   };
 
   return (
@@ -98,6 +122,8 @@ const LoginContainer = () => {
       authMessage={authMessage}
       onChange={onChange}
       onSubmit={onSubmit}
+      isChecked={isChecked}
+      setIsChecked={setIsChecked}
     />
   );
 };
