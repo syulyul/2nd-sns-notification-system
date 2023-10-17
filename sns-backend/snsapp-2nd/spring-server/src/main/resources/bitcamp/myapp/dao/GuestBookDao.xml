@@ -28,21 +28,21 @@
 
   <select id="findAll" parameterType="int" resultMap="guestBookMap">
     select
-    g.gbno,
-    g.title,
-    g.content,
-    g.created_at,
-    g.likes,
-    g.mpno,
-    m.mno,
-    m.nick,
-    m.filepath
+      g.gbno,
+      g.title,
+      g.content,
+      g.created_at,
+      g.likes,
+      g.mpno,
+      m.mno,
+      m.nick,
+      m.filepath
     from
-    sns_guestbook g inner join sns_member m on g.mno=m.mno
+      sns_guestbook g inner join sns_member m on g.mno=m.mno
     where
-    g.mpno=#{no}
+      g.mpno=#{no}
     order by
-    g.gbno desc
+      g.gbno desc
     limit #{limit} offset #{offset}
   </select>
 
@@ -50,43 +50,43 @@
     select count(*)
     from sns_guestbook
     where
-    mpno=#{mpno}
+      mpno=#{mpno}
   </select>
 
   <select id="findBy" resultMap="guestBookMap" parameterType="int">
     select
-    g.gbno,
-    g.title,
-    g.content,
-    g.created_at,
-    g.likes,
-    g.mpno,
-    m.mno,
-    m.nick
+      g.gbno,
+      g.title,
+      g.content,
+      g.created_at,
+      g.likes,
+      g.mpno,
+      m.mno,
+      m.nick
     from
-    sns_guestbook g inner join sns_member m on g.mno=m.mno
+      sns_guestbook g inner join sns_member m on g.mno=m.mno
     where
-    g.gbno=#{no}
+      g.gbno=#{no}
   </select>
 
   <delete id="delete" parameterType="int">
     delete from sns_guestbook
     where
-    gbno=#{no}
+      gbno=#{no}
   </delete>
 
   <update id="updateLike" parameterType="int">
     update sns_guestbook set
-    likes=likes + 1
+      likes=likes + 1
     where
-    gbno=#{no}
+      gbno=#{no}
   </update>
 
   <update id="cancelLike" parameterType="int">
     update sns_guestbook set
-    likes=likes - 1
+      likes=likes - 1
     where
-    gbno=#{no}
+      gbno=#{no}
   </update>
 
   <insert id="insertLike" parameterType="int">
@@ -97,31 +97,31 @@
   <delete id="deleteLike" parameterType="int">
     delete from sns_guestbook_like
     where
-    mno=#{memberNo} and gbno=#{guestBookNo}
+      mno=#{memberNo} and gbno=#{guestBookNo}
   </delete>
 
   <delete id="deleteLikes" parameterType="int">
     delete from sns_guestbook_like
     where
-    gbno=#{guestBookNo}
+      gbno=#{guestBookNo}
   </delete>
 
   <select id="findLikeByMno" parameterType="int">
     select
-    gbno
+      gbno
     from
-    sns_guestbook_like
+      sns_guestbook_like
     where
-    mno=#{memberNo}
+      mno=#{memberNo}
   </select>
 
   <select id="findLikeByBno" parameterType="int">
     select
-    m.nick
+      m.nick
     from
-    sns_guestbook_like g inner join sns_member m on g.mno=m.mno
+      sns_guestbook_like g inner join sns_member m on g.mno=m.mno
     where
-    g.gbno=#{guestBookNo}
+      g.gbno=#{guestBookNo}
   </select>
 
   <select id="findNickByMpno" parameterType="int" resultType="String">
