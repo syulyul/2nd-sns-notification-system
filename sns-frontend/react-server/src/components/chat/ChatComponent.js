@@ -115,7 +115,6 @@ const ChatMessage = styled.div`
     padding-right: 10px;
     align-self: flex-end;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
-    
   }
 
   .StyledChatOther {
@@ -129,13 +128,10 @@ const ChatMessage = styled.div`
     float: left;
     margin: 10px auto;
     margin-bottom: 5px;
-   align-self: flex-start;
+    align-self: flex-start;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
-    
   }
 `;
-
-
 
 const UserName = styled.div`
   font-size: 17px;
@@ -267,7 +263,7 @@ const TranslateButtonContainer = styled.div`
   margin-top: 10px; /* 번역 버튼을 상단에서 하단으로 이동 */
 `;
 
-const ChatItem = ({ chatLog, loginUser, targetLanguage}) => {
+const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
   return (
@@ -279,34 +275,69 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage}) => {
       {chat}
       {translated.map((result) => {
         if (result.langCode === targetLanguage) {
-          return (
-              <span key={result.langCode}>
-        ({result.txt})
-      </span>
-          );
+          return <span key={result.langCode}>({result.txt})</span>;
         }
         return null; // 조건을 만족하지 않으면 null 반환
       })}
-        </ChatMessage>
-        );
-      };
+    </ChatMessage>
+  );
+};
 
 const LanguageOptions = [
   { value: 'ko', label: '한국어', flag: '/images/ko.png', abbreviation: 'KO' },
   { value: 'en', label: '영어', flag: '/images/en.png', abbreviation: 'EN' },
   { value: 'ja', label: '일본어', flag: '/images/ja.png', abbreviation: 'JA' },
-  { value: 'zh-CN', label: '중국어 간체', flag: '/images/zh-CN.png', abbreviation: 'CN' },
-  { value: 'zh-TW', label: '중국어 번체', flag: '/images/zh-TW.png', abbreviation: 'TW' },
-  { value: 'vi', label: '베트남어', flag: '/images/vi.png', abbreviation: 'VI' },
-  { value: 'id', label: '인도네시아어', flag: '/images/id.png', abbreviation: 'ID' },
+  {
+    value: 'zh-CN',
+    label: '중국어 간체',
+    flag: '/images/zh-CN.png',
+    abbreviation: 'CN',
+  },
+  {
+    value: 'zh-TW',
+    label: '중국어 번체',
+    flag: '/images/zh-TW.png',
+    abbreviation: 'TW',
+  },
+  {
+    value: 'vi',
+    label: '베트남어',
+    flag: '/images/vi.png',
+    abbreviation: 'VI',
+  },
+  {
+    value: 'id',
+    label: '인도네시아어',
+    flag: '/images/id.png',
+    abbreviation: 'ID',
+  },
   { value: 'th', label: '태국어', flag: '/images/th.png', abbreviation: 'TH' },
   { value: 'de', label: '독일어', flag: '/images/de.png', abbreviation: 'DE' },
-  { value: 'ru', label: '러시아어', flag: '/images/ru.png', abbreviation: 'RU' },
-  { value: 'es', label: '스페인어', flag: '/images/es.png', abbreviation: 'ES' },
-  { value: 'it', label: '이탈리아어', flag: '/images/it.png', abbreviation: 'IT' },
-  { value: 'fr', label: '프랑스어', flag: '/images/fr.png', abbreviation: 'FR' },
+  {
+    value: 'ru',
+    label: '러시아어',
+    flag: '/images/ru.png',
+    abbreviation: 'RU',
+  },
+  {
+    value: 'es',
+    label: '스페인어',
+    flag: '/images/es.png',
+    abbreviation: 'ES',
+  },
+  {
+    value: 'it',
+    label: '이탈리아어',
+    flag: '/images/it.png',
+    abbreviation: 'IT',
+  },
+  {
+    value: 'fr',
+    label: '프랑스어',
+    flag: '/images/fr.png',
+    abbreviation: 'FR',
+  },
 ];
-
 
 const ChatComponent = ({
   room,
@@ -341,15 +372,17 @@ const ChatComponent = ({
       )}
       <LanguageSelectContainer>
         {LanguageOptions.map((option) => (
-        <div key={option.value}> {/* 각 요소를 div 등의 요소로 감싸기 */}
-          <LanguageAbbreviation>{option.abbreviation}</LanguageAbbreviation>
-          <FlagIcon
+          <div key={option.value}>
+            {' '}
+            {/* 각 요소를 div 등의 요소로 감싸기 */}
+            <LanguageAbbreviation>{option.abbreviation}</LanguageAbbreviation>
+            <FlagIcon
               src={option.flag}
               alt={option.label}
               selected={option.value === targetLanguage}
               onClick={() => setTargetLanguage(option.value)}
-          />
-        </div>
+            />
+          </div>
         ))}
       </LanguageSelectContainer>
 
@@ -369,7 +402,8 @@ const ChatComponent = ({
         }}
       >
         <ChatMessage>
-          {chats && chats.map((chatLog, index) => {
+          {chats &&
+            chats.map((chatLog, index) => {
               // 현재 메시지 날짜
               const messageDate = new Date(
                 chatLog.createdAt
@@ -409,7 +443,11 @@ const ChatComponent = ({
                       )}
                     </div>
                     <div>
-                      <ChatItem chatLog={chatLog} loginUser={user} targetLanguage={targetLanguage} />
+                      <ChatItem
+                        chatLog={chatLog}
+                        loginUser={user}
+                        targetLanguage={targetLanguage}
+                      />
                       {user.no !== chatLog.user.mno && (
                         <TimeStampOther>{`${new Date(
                           chatLog.createdAt
@@ -429,18 +467,17 @@ const ChatComponent = ({
                     </div>
                     <div>
                       {user.no !== chatLog.user.mno && (
-                          <div>
-                            <TranslateText onClick={(e) => onTranslate(chatLog)}>
-                              <img src="/images/tricon.png" alt="번역" />
-                            </TranslateText>
-                          </div>
+                        <div>
+                          <TranslateText onClick={(e) => onTranslate(chatLog)}>
+                            <img src="/images/tricon.png" alt="번역" />
+                          </TranslateText>
+                        </div>
                       )}
                     </div>
                   </div>
                 </div>
               );
             })}
-            
           <div ref={messageEndRef}></div> {/* Scroll to this div */}
         </ChatMessage>
       </StyledChatList>

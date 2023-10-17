@@ -17,7 +17,7 @@ const ChatRoomList = styled.div`
   display: inline-block;
   background-color: #f2f2f2;
   padding: 20px;
-  margin-left:380px;
+  margin-left: 380px;
   //margin-top:-100px;
 `;
 
@@ -36,7 +36,7 @@ const ChatRoomItem = styled.div`
 
 const ProfileImagesContainer = styled.div`
   position: relative;
-  width: 70px; 
+  width: 70px;
   height: 35px;
 `;
 
@@ -57,7 +57,10 @@ const ProfileImage = styled.img`
   &:nth-of-type(2) {
     left: 50%; /* 이미지의 중간부터 시작되도록 설정 */
     top: -15px;
-    transform: translate(-20px, 20px); /* X축과 Y축을 이용하여 이미지를 원하는 만큼 이동 */
+    transform: translate(
+      -20px,
+      20px
+    ); /* X축과 Y축을 이용하여 이미지를 원하는 만큼 이동 */
   }
 `;
 
@@ -69,34 +72,39 @@ const ListComponent = styled.div`
   display: flex;
 `;
 
-
-
 const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
   return (
     <ChatRoomList>
       <h2>채팅방 목록</h2>
       <ChatRoomListBox>
-        {rooms.map((room) => (
-          <ChatRoomItemContainer>
-            <ChatRoomItem
-              key={room._id}
-              onClick={(e) => {
-                console.log(room);
-                onSelectRoom(room.users);
-              }}
-            >
-              <ListComponent>
-              <ProfileImagesContainer>
-              <ProfileImage src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[0].photo}`} alt="Profile 0" />
-              <ProfileImage src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[1].photo}`} alt="Profile 1" />
-              </ProfileImagesContainer>
-              <NicknameContainer>
-              {`${room.users[0].nick}, ${room.users[1].nick}`}
-              </NicknameContainer>
-              </ListComponent>
-            </ChatRoomItem>
-          </ChatRoomItemContainer>
-        ))}
+        {rooms &&
+          rooms.map((room) => (
+            <ChatRoomItemContainer>
+              <ChatRoomItem
+                key={room._id}
+                onClick={(e) => {
+                  console.log(room);
+                  onSelectRoom(room.users);
+                }}
+              >
+                <ListComponent>
+                  <ProfileImagesContainer>
+                    <ProfileImage
+                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[0].photo}`}
+                      alt="Profile 0"
+                    />
+                    <ProfileImage
+                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[1].photo}`}
+                      alt="Profile 1"
+                    />
+                  </ProfileImagesContainer>
+                  <NicknameContainer>
+                    {`${room.users[0].nick}, ${room.users[1].nick}`}
+                  </NicknameContainer>
+                </ListComponent>
+              </ChatRoomItem>
+            </ChatRoomItemContainer>
+          ))}
       </ChatRoomListBox>
     </ChatRoomList>
   );
