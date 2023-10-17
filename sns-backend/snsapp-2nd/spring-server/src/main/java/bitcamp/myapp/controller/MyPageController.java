@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -119,31 +120,44 @@ public class MyPageController {
   }
 
   @PostMapping("{no}/update")
-  public String update(
-      @RequestBody(required = false) MyPage myPage,
+  public ResponseEntity update(
+      @RequestPart("data") MyPage myPage,
       @PathVariable int no,
-      Model model,
-      @RequestParam(required = false) MultipartFile photofile,
-      HttpSession session) throws Exception {
-    Member member = myPage;
-    Member loginUser = memberService.get(member.getPhoneNumber(), member.getPassword());
-    if (loginUser == null) {
-      // 로그인되지 않은 경우 처리
-      return "/auth/login"; // 로그인 페이지로 리다이렉트 또는 다른 처리
+      @RequestPart(value = "files", required = false) MultipartFile[] files,
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie)
+      throws Exception {
+    Member member = (Member) myPage;
+
+    LoginUser loginUser = null;
+    try {
+      String sessionId = sessionCookie.getValue();
+      String temp = (String) redisService.getValueOps().get(sessionId);
+      if (temp != null) {
+        int loginUserNo = Integer.parseInt(temp);
+        loginUser = new LoginUser(memberService.get(loginUserNo));
+
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
-    if (member.getNo() == myPage.getNo()) {
-      if (photofile != null && !photofile.isEmpty()) {
+    if (files != null) {
+      if (files[0].getSize() > 0) {
         String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_member/", photofile);
+            "bitcamp-nc7-bucket-14", "sns_member/", files[0]);
         member.setPhoto(uploadFileUrl);
       }
+    }
 
-      myPage.setGender(myPage.getGender());
-      myPage.setStateMessage(myPage.getStateMessage());
-      // myPage.setEmail(email);
-      myPage.setBirthday(myPage.getBirthday());
+    myPage.setGender(myPage.getGender());
+    myPage.setStateMessage(myPage.getStateMessage());
+    myPage.setEmail(myPage.getEmail());
+    myPage.setBirthday(myPage.getBirthday());
 //        if (birthday.isEmpty()) {
 //          birthday = null;
 //        } else {
@@ -155,34 +169,23 @@ public class MyPageController {
 //          myPage.setBirthday(timestamp);
 //
 //        }
+//
 
-      if (member.getEmail() == null) {
-        member.setEmail(""); // null인 경우 빈 문자열로 설정
-      }
-//      if (member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
-//        member.setEmail(" ");
-//      }
-
-      if (memberService.update(member) == 0 || myPageService.update(myPage) == 0) {
-        throw new Exception("회원이 없습니다.");
-      } else {
-        // 사용자 정보 업데이트 후, 세션에 새 정보를 설정
-        loginUser.setName(member.getName()); // 사용자 이름 업데이트
-        loginUser.setNick(member.getNick()); // 사용자 닉네임 업데이트
-        if (!photofile.isEmpty()) {
-          loginUser.setPhoto(member.getPhoto()); // 사용자 사진 업데이트
-        }
-
-        // 세션에 업데이트된 loginUser 속성을 다시 설정
-        session.setAttribute("loginUser", loginUser);
-
-        return "/myPage/" + myPage.getNo();
-      }
-
-    } else {
-      return "/myPageError";
+    if (member.getEmail().equals(" ") || member.getEmail().isEmpty()) {
+      member.setEmail(" ");
     }
 
+    if (memberService.update(member) == 0 || myPageService.update(myPage) == 0) {
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } else {
+      memberService.update(member);
+      // 사용자 정보 업데이트 후, 세션에 새 정보를 설정
+      loginUser.setName(member.getName()); // 사용자 이름 업데이트
+      loginUser.setNick(member.getNick()); // 사용자 닉네임 업데이트
+      loginUser.setPhoto(member.getPhoto()); // 사용자 사진 업데이트
+
+      return new ResponseEntity<>(myPage, HttpStatus.OK);
+    }
   }
 
   @GetMapping("{no}/update")

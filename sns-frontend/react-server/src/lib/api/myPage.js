@@ -7,27 +7,11 @@ export const list = (userNo) => {
 
 export const info = (userNo) => springClient.get(`/myPage/${userNo}/info`);
 
-export const update = ({
-  userNo,
-  photo,
-  name,
-  nick,
-  birthday,
-  email,
-  phoneNumber,
-  password,
-  gender,
-}) =>
-  springClient.post(`/myPage/${userNo}/update`, {
-    userNo,
-    photo,
-    name,
-    nick,
-    birthday,
-    email,
-    phoneNumber,
-    password,
-    gender,
+export const update = ({ updateData, userNo }) =>
+  springClient.post(`myPage/${userNo}/update`, updateData, userNo, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
 export const following = (userNo) => {
