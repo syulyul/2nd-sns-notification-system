@@ -18,7 +18,7 @@
     <association property="writer" javaType="member">
       <id column="mno" property="no" />
       <result column="nick" property="nick" />
-      <result column="filepath" property="photo" />
+      <result column="member_filepath" property="photo" />
     </association>
 
     <collection property="attachedFiles" ofType="boardPhoto">
@@ -30,7 +30,7 @@
 
   <resultMap type="boardPhoto" id="boardPhotoMap">
     <id column="bpno" property="no" />
-    <result column="filepath" property="filePath" />
+    <result column="filePath" property="filePath" />
     <result column="bno" property="boardNo" />
   </resultMap>
 
@@ -56,9 +56,13 @@
     b.likes,
     m.mno,
     m.nick,
-    m.filepath
+    m.filepath as member_filepath,
+    f.bpno,
+    f.filepath,
+    f.bno
     from
     sns_board b inner join sns_member m on b.mno=m.mno
+    left outer join sns_board_photo f on b.bno=f.bno
     where
     category=#{category}
     order by
@@ -214,9 +218,13 @@
     b.likes,
     m.mno,
     m.nick,
-    m.filepath
+    m.filepath as member_filepath,
+    f.bpno,
+    f.filepath,
+    f.bno
     from
     sns_board b inner join sns_member m on b.mno=m.mno
+    left outer join sns_board_photo f on b.bno=f.bno
     where
     m.mno=#{writerNo} and category=#{category}
     order by
@@ -235,9 +243,13 @@
     b.likes,
     m.mno,
     m.nick,
-    m.filepath
+    m.filepath as member_filepath,
+    f.bpno,
+    f.filepath,
+    f.bno
     from
     sns_board b inner join sns_member m on b.mno=m.mno
+    left outer join sns_board_photo f on b.bno=f.bno
     where
     category=#{category}
     AND (

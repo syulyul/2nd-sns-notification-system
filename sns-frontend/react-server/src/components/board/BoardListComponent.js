@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link, useLocation, useNavigate  } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSpring, animated } from 'react-spring';
 import Pagination from '../common/Pagination';
 import SearchBoardContainer from '../../containers/board/SearchBoardContainer';
@@ -12,15 +12,16 @@ const Container = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: white;
   padding: 5px 10px;
   text-decoration: none;
   border: none;
   border-radius: 4px;
-  margin-right: ${props => props.main ? '300px' : props.write ? '10px' : '0'};
+  margin-right: ${(props) =>
+    props.main ? '300px' : props.write ? '10px' : '0'};
   &:hover {
-    background-color: #426B1F;
+    background-color: #426b1f;
   }
 `;
 
@@ -92,24 +93,18 @@ const ActionButtonsContainer = styled.div`
 `;
 
 const ProfilePicture = styled.div`
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    overflow: hidden;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
 
-    img {
-        width: 100%;
-        height: auto;
-    }
+  img {
+    width: 100%;
+    height: auto;
+  }
 `;
 
-
-const BoardListComponent = ({
-  boardListData,
-  lastPage,
-  page,
-  query,
-}) => {
+const BoardListComponent = ({ boardListData, lastPage, page, query }) => {
   const navigate = useNavigate();
 
   // Card 아무곳이나 클릭 시 detail 페이지로 이동하는 함수
@@ -123,47 +118,63 @@ const BoardListComponent = ({
     delay: 0,
     reset: true,
     config: {
-     duration: 500 // 애니메이션의 지속 시간 설정
-    }
+      duration: 500, // 애니메이션의 지속 시간 설정
+    },
   });
 
   return (
-      <Container>
-        <SearchBoardContainer></SearchBoardContainer>
-        <ActionButtonsContainer>
-          <Link to={`/board/form/1`}>
-            <Button>✏️글쓰기</Button>
-          </Link>
-        </ActionButtonsContainer>
+    <Container>
+      <SearchBoardContainer></SearchBoardContainer>
+      <ActionButtonsContainer>
+        <Link to={`/board/form/1`}>
+          <Button>✏️글쓰기</Button>
+        </Link>
+      </ActionButtonsContainer>
 
-        <animated.div style={fadeIn}>
-          <CardContainer>
-            {boardListData && boardListData.map(board => (
-                <Card key={board.no} onClick={() => handleCardClick(board.category, board.no)}>
-                  <CardImage src={board.attachedFiles && board.attachedFiles.length > 0
+      <animated.div style={fadeIn}>
+        <CardContainer>
+          {boardListData &&
+            boardListData.map((board) => (
+              <Card
+                key={board.no}
+                onClick={() => handleCardClick(board.category, board.no)}
+              >
+                <CardImage
+                  src={
+                    board.attachedFiles && board.attachedFiles.length > 0
                       ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${board.attachedFiles[0].filePath}`
-                      : '/images/mangom.png'}
-                  />
-                  <CardContent>
-                    <BoardLink href={`/board/detail/${board.category}/${board.no}`}>{board.title || '제목없음'}</BoardLink>
-                    <p>{board.content}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <AuthorText>
-                      <ProfilePicture>
-                        <img src={board.writer.photo || '/images/avatar.png'} alt="profile"/>
-                      </ProfilePicture>
-                      {board.writer.nick}
-                    </AuthorText>
-                    <DateText>{new Date(board.createdAt).toLocaleDateString()}</DateText>
-                  </CardFooter>
-                </Card>
+                      : '/images/mangom.png'
+                  }
+                />
+                <CardContent>
+                  <BoardLink
+                    href={`/board/detail/${board.category}/${board.no}`}
+                  >
+                    {board.title || '제목없음'}
+                  </BoardLink>
+                  <p>{board.content}</p>
+                </CardContent>
+                <CardFooter>
+                  <AuthorText>
+                    <ProfilePicture>
+                      <img
+                        src={board.writer.photo || '/images/avatar.png'}
+                        alt="profile"
+                      />
+                    </ProfilePicture>
+                    {board.writer.nick}
+                  </AuthorText>
+                  <DateText>
+                    {new Date(board.createdAt).toLocaleDateString()}
+                  </DateText>
+                </CardFooter>
+              </Card>
             ))}
-          </CardContainer>
-        </animated.div>
+        </CardContainer>
+      </animated.div>
 
-        <Pagination page={page} query={query} lastPage={lastPage} />
-      </Container>
+      <Pagination page={page} query={query} lastPage={lastPage} />
+    </Container>
   );
 };
 
