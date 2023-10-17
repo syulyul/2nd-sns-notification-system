@@ -17,7 +17,7 @@ const ChatRoomList = styled.div`
   display: inline-block;
   background-color: #f2f2f2;
   padding: 20px;
-  margin-left:380px;
+  margin-left: 380px;
   //margin-top:-100px;
 `;
 
@@ -39,19 +39,20 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
     <ChatRoomList>
       <h2>채팅방 목록</h2>
       <ChatRoomListBox>
-        {rooms.map((room) => (
-          <ChatRoomItemContainer>
-            <ChatRoomItem
-              key={room._id}
-              onClick={(e) => {
-                console.log(room);
-                onSelectRoom(room.users);
-              }}
-            >
-              {`${room.users[0].nick}, ${room.users[1].nick}`}
-            </ChatRoomItem>
-          </ChatRoomItemContainer>
-        ))}
+        {rooms &&
+          rooms.map((room) => (
+            <ChatRoomItemContainer>
+              <ChatRoomItem
+                key={room._id}
+                onClick={(e) => {
+                  console.log(room);
+                  onSelectRoom(room.users);
+                }}
+              >
+                {`${room.users[0].nick}, ${room.users[1].nick}`}
+              </ChatRoomItem>
+            </ChatRoomItemContainer>
+          ))}
       </ChatRoomListBox>
     </ChatRoomList>
   );

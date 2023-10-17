@@ -30,15 +30,20 @@ const ChatRoomListContainer = () => {
   }));
 
   useEffect(() => {
-    dispatch(roomList(user.no));
-  }, [dispatch, user.no]);
+    if (user && user.no) {
+      // 'user' 및 'no' 속성이 존재하는지 확인
+      dispatch(roomList(user.no));
+    }
+  }, [dispatch, user]);
   const handleSelectRoom = (users) => {
-    console.log('sljflkadsjlkdflsajfldjlksjjf');
+    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
     console.log(users);
     console.log(users[0]);
     console.log(users[1]);
 
-    navigate(`/room?mno1=${users[0].mno}&mno2=${users[1].mno}`);
+    if (users && users[0] && users[1]) {
+      navigate(`/room?mno1=${users[0].mno}&mno2=${users[1].mno}`);
+    }
   };
 
   return (
