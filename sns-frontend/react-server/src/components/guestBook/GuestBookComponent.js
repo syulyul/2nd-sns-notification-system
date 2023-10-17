@@ -418,8 +418,14 @@ const GuestBookComponent = ({
                 <SecondRow>
                   <WriterCell>
                     <ProfilePicture>
-                      <img src={guestBook.writer.photo || '/images/avatar.png'}
-                           alt='profile' />
+                      <img
+                          src={
+                            guestBook.writer.photo
+                                ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${guestBook.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
+                                : '/images/avatar.png'
+                          }
+                          alt="profile"
+                      />
                     </ProfilePicture>
                     <NickNameDiv>{guestBook.writer.nick
                       || '임시 닉네임'}</NickNameDiv>
