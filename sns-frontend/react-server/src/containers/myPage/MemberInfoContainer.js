@@ -9,7 +9,7 @@ import {
   info,
 } from '../../modules/myPage';
 import { useNavigate, useParams } from 'react-router-dom';
-import { follow, unfollow } from '../../modules/auth';
+import { check, follow, unfollow } from '../../modules/auth';
 
 const MemberInfoContainer = () => {
   const dispatch = useDispatch();
