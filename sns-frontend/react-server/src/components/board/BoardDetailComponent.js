@@ -349,7 +349,10 @@ const BoardDetailComponent = ({
                 ? board.attachedFiles.map((file, index) => (
                   <div key={index}>
                     <a href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}>
-                      <img src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`} alt="Attached file" />
+                      <StyledImage
+                          src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                          alt="Attached file"
+                      />
                     </a>
 
                     {user.no === board.writer.no ? (
