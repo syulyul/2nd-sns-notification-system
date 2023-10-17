@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import io from 'socket.io-client';
 import { useRef, useEffect } from 'react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 // import { roomList } from '../../modules/rooms';
 
 const ChatContainer = styled.div`
@@ -431,13 +432,15 @@ const ChatComponent = ({
                     <div>
                       {user.no !== chatLog.user.mno && (
                         <UserName className={'UserName'}>
-                          <UserImage
-                            src={
-                              chatLog.user.photo
-                                ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
-                                : 'images/default.jpg'
-                            }
-                          />
+                          <Link to={`/myPage/${chatLog.user.mno}`}>
+                            <UserImage
+                              src={
+                                chatLog.user.photo
+                                  ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
+                                  : 'images/default.jpg'
+                              }
+                            />
+                          </Link>
                           {`${chatLog.user.nick}`}
                         </UserName>
                       )}

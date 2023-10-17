@@ -147,7 +147,9 @@ const MemberInfoComponent = ({
         </SidebarButton>
       </ButtonContainer>
       <ButtonContainer>
-        <ChatRoomListButton to={`/room/list`}>채팅 리스트</ChatRoomListButton>
+        {user && user.no === myPageData.no && (
+          <ChatRoomListButton to={`/room/list`}>채팅 리스트</ChatRoomListButton>
+        )}
       </ButtonContainer>
     </Sidebar>
   );
