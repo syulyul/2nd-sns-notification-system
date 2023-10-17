@@ -115,6 +115,7 @@ const ChatMessage = styled.div`
     padding-right: 10px;
     align-self: flex-end;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
+    
   }
 
   .StyledChatOther {
@@ -128,10 +129,13 @@ const ChatMessage = styled.div`
     float: left;
     margin: 10px auto;
     margin-bottom: 5px;
-    align-self: flex-start;
+   align-self: flex-start;
     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
+    
   }
 `;
+
+
 
 const UserName = styled.div`
   font-size: 17px;
@@ -251,6 +255,18 @@ const DateLine = styled.div`
   }
 `;
 
+const TranslateText = styled.span`
+  color: blue;
+  cursor: pointer;
+  margin-top: 100000px; /* 번역 버튼을 아래로 내리기 */
+`;
+
+const TranslateButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px; /* 번역 버튼을 상단에서 하단으로 이동 */
+`;
+
 const ChatItem = ({ chatLog, loginUser, targetLanguage}) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
@@ -265,7 +281,7 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage}) => {
         if (result.langCode === targetLanguage) {
           return (
               <span key={result.langCode}>
-        {result.langCode}:{result.txt}
+        ({result.txt})
       </span>
           );
         }
@@ -413,11 +429,11 @@ const ChatComponent = ({
                     </div>
                     <div>
                       {user.no !== chatLog.user.mno && (
-                        <div>
-                          <button onClick={(e) => onTranslate(chatLog)}>
-                            번역
-                          </button>
-                        </div>
+                          <div>
+                            <TranslateText onClick={(e) => onTranslate(chatLog)}>
+                              <img src="/images/tricon.png" alt="번역" />
+                            </TranslateText>
+                          </div>
                       )}
                     </div>
                   </div>

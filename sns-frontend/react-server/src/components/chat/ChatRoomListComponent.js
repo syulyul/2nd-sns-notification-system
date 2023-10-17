@@ -17,6 +17,8 @@ const ChatRoomList = styled.div`
   display: inline-block;
   background-color: #f2f2f2;
   padding: 20px;
+  margin-left:380px;
+  //margin-top:-100px;
 `;
 
 const ChatRoomListBox = styled.div`
