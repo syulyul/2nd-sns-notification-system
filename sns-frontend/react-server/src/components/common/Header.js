@@ -7,7 +7,7 @@ const HeaderBlock = styled.div`
   position: fixed;
   width: 100%;
   background: white;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
+  //box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
   z-index: 100;
 
   .logo {
@@ -15,7 +15,7 @@ const HeaderBlock = styled.div`
   }
 `;
 
-const Wrapper = styled(Responsive)`
+const Wrapper = styled.div`
   height: 1rem;
   background-color: white;
   color: #426b1f;
@@ -34,12 +34,13 @@ const Spacer = styled.div`
 const HeaderNav = styled.div`
   display: flex;
   gap: 20px;
+  margin-right:200px;
 
   a {
     text-decoration: none;
     color: #426b1f;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.5rem;
     padding: 10px 10px;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;

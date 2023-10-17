@@ -3,6 +3,9 @@ import HeaderContainer from '../containers/common/HeaderContainer';
 import FollowContainer from '../containers/myPage/FollowContainer';
 import PageDetailContainer from '../containers/myPage/PageDetailContainer';
 import SearchUserContainer from '../containers/myPage/SearchUserContainer';
+import FooterContainer from '../containers/common/FooterContainer';
+
+
 
 
 const MemberInfoPage = () => {
@@ -16,6 +19,8 @@ const MemberInfoPage = () => {
 
       <PageDetailContainer />
       <FollowContainer />
+      <FooterContainer />
+      <FooterContainer />
     </>
   );
 };

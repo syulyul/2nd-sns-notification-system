@@ -2,6 +2,8 @@ import MemberInfoUpdateContainer from '../containers/myPage/MemberInfoUpdateCont
 import HeaderContainer from "../containers/common/HeaderContainer";
 import SearchUserContainer from "../containers/myPage/SearchUserContainer";
 import MemberInfoContainer from "../containers/myPage/MemberInfoContainer";
+import FooterContainer from '../containers/common/FooterContainer';
+
 
 const MemberInfoUpdatePage = () => {
   return    <>
@@ -9,9 +11,11 @@ const MemberInfoUpdatePage = () => {
 
     <MemberInfoContainer />
 
-    <div style={{ marginLeft: '600px', marginBottom: '30px', marginTop: '-20px'}}>
+    <div style={{ marginLeft: '480px', marginBottom: '30px'}}>
       <MemberInfoUpdateContainer />
-    </div>  </>
+    </div>
+    <FooterContainer />
+  </>
 };
 
 export default MemberInfoUpdatePage;
