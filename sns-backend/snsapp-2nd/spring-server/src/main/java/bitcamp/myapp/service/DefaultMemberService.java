@@ -30,19 +30,21 @@ public class DefaultMemberService implements MemberService {
   public int add(Member member) throws Exception {
 
     int result = memberDao.insert(member);
-    RestTemplate restTemplate = new RestTemplate();
+    if (result != 0) {
+      RestTemplate restTemplate = new RestTemplate();
 
-    // Header set
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+      // Header set
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-    // Message
-    HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
+      // Message
+      HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
 
-    // Request
-    String url = App.NODE_SERVER_URL + "/node/user/add";
-    ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
-        String.class);
+      // Request
+      String url = App.NODE_SERVER_URL + "/node/user/add";
+      ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
+          String.class);
+    }
 
     return result;
   }
@@ -65,22 +67,24 @@ public class DefaultMemberService implements MemberService {
   @Transactional
   @Override
   public int update(Member member) throws Exception {
+    int result = memberDao.update(member);
+    if (result != 0) {
+      RestTemplate restTemplate = new RestTemplate();
 
-    RestTemplate restTemplate = new RestTemplate();
+      // Header set
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-    // Header set
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+      // Message
+      HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
 
-    // Message
-    HttpEntity<?> requestMessage = new HttpEntity<>(member, httpHeaders);
+      // Request
+      String url = App.NODE_SERVER_URL + "/node/user/update";
+      ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
+          String.class);
+    }
 
-    // Request
-    String url = App.NODE_SERVER_URL + "/node/user/update";
-    ResponseEntity<String> nodeResponse = restTemplate.postForEntity(url, requestMessage,
-        String.class);
-
-    return memberDao.update(member);
+    return result;
   }
 
   @Transactional
