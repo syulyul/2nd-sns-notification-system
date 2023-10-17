@@ -10,8 +10,14 @@ import mongodbConnect from './schemas';
 import redisConnect from './redis';
 import webSocket from './socket';
 
-const { PORT, NODE_ENV, COOKIE_SECRET, REACT_SERVER_URL, SPRING_SERVER_URL } =
-  process.env;
+const {
+  PORT,
+  NODE_ENV,
+  COOKIE_SECRET,
+  REACT_SERVER_URL,
+  SPRING_SERVER_URL,
+  BUILD_DIRECTORY,
+} = process.env;
 
 const app = express();
 app.set('port', PORT);
@@ -33,17 +39,19 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(
-  '/',
-  express.static(
-    path.join(__dirname, '../../../sns-frontend/react-server/build')
-  )
-);
+const buildDirectory = path.resolve(__dirname, BUILD_DIRECTORY);
+
+app.use('/', express.static(buildDirectory));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(COOKIE_SECRET));
 
 app.use('/node', api);
+
+app.use('*', function (req, res) {
+  res.sendFile(path.resolve(__dirname, BUILD_DIRECTORY + '/index.html'));
+});
 
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);

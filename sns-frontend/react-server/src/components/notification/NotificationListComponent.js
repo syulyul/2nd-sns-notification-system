@@ -84,7 +84,7 @@ const NotificationListComponent = ({
             </form>
           </NotificationTitleContainer>
 
-          {notis.map((noti) => (
+          {notis?.map((noti) => (
             <NotificationItem key={noti.id}>
               <NotificationLink
                 to={noti.url}
