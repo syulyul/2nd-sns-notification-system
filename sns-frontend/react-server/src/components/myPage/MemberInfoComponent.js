@@ -6,7 +6,7 @@ import FollowButton from './FollowButton';
 const Sidebar = styled.div`
   float: left;
   width: 430px;
-  height: 700px;
+  height: 800px;
   padding: 20px;
   background-color: #fafaf5;
   border-radius: 5px;
