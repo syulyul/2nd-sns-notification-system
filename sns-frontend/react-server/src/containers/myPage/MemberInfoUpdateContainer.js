@@ -8,7 +8,7 @@ import {
 } from '../../modules/myPage';
 import { useNavigate, useParams } from 'react-router-dom';
 import MemberInfoUpdateComponent from '../../components/myPage/MemberInfoUpdateComponent';
-import { deleteMember } from '../../modules/auth';
+import { check, deleteMember } from '../../modules/auth';
 
 const MemberInfoUpdateContainer = () => {
   const dispatch = useDispatch();
@@ -72,31 +72,30 @@ const MemberInfoUpdateContainer = () => {
     const updatedGender = updateGender || myPage.gender;
     const updatedStateMessage = updateStateMessage || myPage.stateMessage;
 
-      updateData.append(
-        'data',
-        new Blob(
-          [
-            JSON.stringify({
-              no: parseInt(userNo, 10),
-              name: myPage.name,
-              nick: updatedNick,
-              birthday: updatedBirthday,
-              email: updatedEmail,
-              phoneNumber: updatedPhoneNumber,
-              password: updatedPassword,
-              gender: updatedGender,
-              stateMessage: updatedStateMessage,
-            })
-          ],
-          {
-            type: 'application/json'
-          }
-        )
-      );
-      dispatch(update({ updateData, userNo }));
-      navigate(`/myPage/${userNo}`);
-      window.location.reload();
-    };
+    updateData.append(
+      'data',
+      new Blob(
+        [
+          JSON.stringify({
+            no: parseInt(userNo, 10),
+            name: myPage.name,
+            nick: updatedNick,
+            birthday: updatedBirthday,
+            email: updatedEmail,
+            phoneNumber: updatedPhoneNumber,
+            password: updatedPassword,
+            gender: updatedGender,
+            stateMessage: updatedStateMessage,
+          }),
+        ],
+        {
+          type: 'application/json',
+        }
+      )
+    );
+    dispatch(update({ updateData, userNo }));
+    navigate(`/myPage/${userNo}`);
+  };
 
   // 회원 삭제
   const onDelete = (e) => {

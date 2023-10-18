@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import Header from '../../components/common/Header';
-import { logout } from '../../modules/auth';
+import { check, logout } from '../../modules/auth';
 import { useEffect } from 'react';
 import {
   getNotReadNotiCount,
@@ -35,6 +35,12 @@ const HeaderContainer = () => {
       dispatch(getNotReadNotiCount({ memberNo: user.no }));
     }
   }, [user, notReadNotiCount]);
+
+  useEffect(() => {
+    if (user?.photo !== myPage?.photo) {
+      dispatch(check());
+    }
+  }, [myPage]);
 
   return (
     <Header
