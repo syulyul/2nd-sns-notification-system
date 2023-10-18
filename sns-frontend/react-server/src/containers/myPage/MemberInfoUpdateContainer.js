@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   changeField,
-  changeMyPageField,
+  deleteMember,
   info,
   initializeForm,
   update
@@ -96,12 +96,21 @@ const MemberInfoUpdateContainer = () => {
       navigate(`/myPage/${userNo}`);
     };
 
+  // 회원 삭제
+  const onDelete = (e) => {
+    e.preventDefault();
+    dispatch(deleteMember(userNo));
+    navigate(`/myPage/${userNo}`);
+  };
+
     return (
       <MemberInfoUpdateComponent
+        user={user}
         myPageData={myPage}
         myPageError={myPageError}
         onChange={onChange}
         onSubmit={onSubmit}
+        onDelete={onDelete}
         onReset={onReset}
         onChangeFile={onChangeFile}
         handleUpdateNick={handleUpdateNick}
