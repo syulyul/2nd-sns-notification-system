@@ -250,8 +250,8 @@ const CommentDate = styled.span`
 const FileInputWrapper = styled.div`
   position: relative;
   font-size: 12px;
-  // cursor: pointer;
   margin-left: 10px;
+  margin-top: 30px;
 `;
 
 const FileInputLabel = styled.label`
@@ -262,7 +262,6 @@ const FileInputLabel = styled.label`
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.65rem;
-  // margin-left: 10px;
   margin-left: 0px;
   &:hover {
     background-color: #426b1f;
@@ -442,11 +441,13 @@ const BoardDetailComponent = ({
                 type="text"
                 defaultValue={board ? board.title : ''}
                 onChange={handleUpdateTitle}
+                readOnly={board?.writer?.no !== user?.no}
               />
             </Title>
             <StyledTextArea
               defaultValue={board ? board.content : ''}
               onChange={handleUpdateContent}
+              readOnly={board?.writer?.no !== user?.no}
             ></StyledTextArea>
             <div>
               {board && (
@@ -476,7 +477,11 @@ const BoardDetailComponent = ({
             <FileInputWrapper>
               <FileInputLabel>
                 파일 선택
-                <FileInput type="file" onChange={onChangeFile} />
+                <FileInput
+                  type="file"
+                  onChange={onChangeFile}
+                  disabled={board?.writer?.no !== user?.no}
+                />
               </FileInputLabel>
               &nbsp;&nbsp;파일을 선택해 주세요
             </FileInputWrapper>
