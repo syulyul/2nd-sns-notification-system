@@ -5,10 +5,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
+import { CookiesProvider } from 'react-cookie';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer, { rootSaga } from './modules';
 import createSagaMiddleware from 'redux-saga';
+import { check } from './modules/auth';
 
 const sagaMiddleware = createSagaMiddleware();
 const store = configureStore({
@@ -23,16 +25,40 @@ const store = configureStore({
   }, // 리덕스 스토어가 생성될 때, 초기값을 정의한다.
 });
 
+function loadUser() {
+  try {
+    store.dispatch(check());
+  } catch (e) {
+    console.log('store.dispatch(check()) is not working!');
+  }
+}
+
+function requestPermission() {
+  console.log('권한 요청 중...');
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      console.log('알림 권한이 허용됨');
+      // FCM 메세지 처리
+    } else {
+      console.log('알림 권한 허용 안됨');
+    }
+  });
+}
+
 sagaMiddleware.run(rootSaga);
+loadUser();
+requestPermission(); // 앱 시작 시 권한 요청
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <HelmetProvider>
-        <App />
-      </HelmetProvider>
-    </BrowserRouter>
+    <CookiesProvider>
+      <BrowserRouter>
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
+      </BrowserRouter>
+    </CookiesProvider>
   </Provider>
 );
 

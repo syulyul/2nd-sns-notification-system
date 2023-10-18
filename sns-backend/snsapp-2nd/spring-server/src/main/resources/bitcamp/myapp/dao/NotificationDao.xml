@@ -26,82 +26,82 @@
 
   <select id="findAllNotiLog" parameterType="int" resultMap="notiLogMap">
     select
-    nlno,
-    mno,
-    ntno,
-    content,
-    url,
-    noti_state
+      nlno,
+      mno,
+      ntno,
+      content,
+      url,
+      noti_state
     from
-    sns_noti_log
+      sns_noti_log
     where
-    mno=#{memberNo}
+      mno=#{memberNo}
     order by
-    nlno desc
+      nlno desc
     limit #{limit} offset #{offset}
   </select>
 
   <select id="getNotiLogCount" parameterType="int" resultType="int">
     select
-    count(nlno)
+      count(nlno)
     from
-    sns_noti_log
+      sns_noti_log
     where
-    mno=#{memberNo}
+      mno=#{memberNo}
   </select>
 
   <select id="getNotReadNotiLogCount" parameterType="int" resultType="int">
     select
-    count(nlno)
+      count(nlno)
     from
-    sns_noti_log
+      sns_noti_log
     where
-    mno=#{memberNo}
-    and noti_state=0
+      mno=#{memberNo}
+      and noti_state=0
   </select>
 
   <select id="findBy" parameterType="int" resultMap="notiLogMap">
     select
-    nlno,
-    mno,
-    ntno,
-    content,
-    url,
-    noti_state
+      nlno,
+      mno,
+      ntno,
+      content,
+      url,
+      noti_state
     from
-    sns_noti_log
+      sns_noti_log
     where
-    nlno=#{notiNo}
+      nlno=#{notiNo}
   </select>
 
   <update id="updateState">
     update sns_noti_log set
-    noti_state=#{notiState}
+      noti_state=#{notiState}
     where
-    nlno=#{notiNo}
+      nlno=#{notiNo}
   </update>
 
   <update id="updateAllState">
     update sns_noti_log set
-    noti_state=#{notiState}
+      noti_state=#{notiState}
     where
-    mno=#{memberNo}
+      mno=#{memberNo}
   </update>
 
   <select id="findAllNotiType" resultMap="notiTypeMap">
     select
-    *
+      *
     from
-    sns_noti_type
+      sns_noti_type
   </select>
 
   <select id="findNotiTypeName" parameterType="int">
     select
-    name
+      name
     from
-    sns_noti_type
+      sns_noti_type
     where
-    ntno=#{notiTypeNo}
+      ntno=#{notiTypeNo}
   </select>
 </mapper>
 

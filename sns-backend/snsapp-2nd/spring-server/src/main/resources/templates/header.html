@@ -1,47 +1,48 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset='UTF-8'>
-  <title>BIT SNS</title>
-  <link rel="stylesheet" type="text/css" href="/css/font.css">
-</head>
-<body>
+  <head>
+    <meta charset='UTF-8'>
+    <title>BIT SNS</title>
+    <link rel="stylesheet" type="text/css" href="/css/font.css">
+  </head>
+  <body>
 
-<div data-th-fragment="header" class="header">
-  <a th:href="@{/myPage/{no}(no=${session.loginUser.no})}">
-      <img src="/images/logo.png" alt="로고" class="logo">
-    </a>
-  <div class="header_nav">
-    <a style="font-size:30px;" data-th-href="|/myPage/${session.loginUser.no}|">마이페이지</a>
-    <a style="font-size:30px;" href="/board/list?category=1">게시글</a>
-    <a data-th-if="${myPage}"
-       style="font-size:30px;"
-       data-th-href="|/guestBook/${myPage.no}|">방명록</a>
-    <a data-th-unless="${myPage}"
-       style="font-size:30px;"
-       data-th-href="|/guestBook/${session.loginUser.no}|">방명록</a>
-  </div>
-  <div style="font-size:20px" class="header_profile">
-    <div data-th-replace="notification/noti :: notiBox">새로운 알림이 도착했습니다</div>
-    <a style="text-decoration-line: none" href="/notification/list">
-      <span style="color: black;" id="notReadNotiCount" data-th-text="${session.notReadNotiCount}"></span>
-      <script src="/js/header.js"></script>
-      <img src="/images/noti.png" alt="알림" class="header_notification-icon">
-    </a>
-    <a style="text-decoration-line: none"
-       data-th-href="|http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${session.loginUser.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg|">
-      <img data-th-unless="${session.loginUser.photo == null}"
-           data-th-src="|http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${session.loginUser.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg|"
-           alt="프로필 사진" class="header_user-icon">
-    </a>
-    <img data-th-if="${session.loginUser.photo == null}" src='/images/default.jpg'
-         alt="프로필 사진" class="header_user-icon">
-    <span class="header_user-nickname" data-th-text="${session.loginUser.nick}">${session.loginUser.nick}</span>
-    <div class="logout">
-      <a style="font-size:20px" href="/auth/logout">로그아웃</a>
+    <div data-th-fragment="header" class="header">
+      <a th:href="@{/myPage/{no}(no=${session.loginUser.no})}">
+        <img src="/images/logo.png" alt="로고" class="logo">
+      </a>
+      <div class="header_nav">
+        <a style="font-size:30px;" data-th-href="|/myPage/${session.loginUser.no}|">마이페이지</a>
+        <a style="font-size:30px;" href="/board/list?category=1">게시글</a>
+        <a data-th-if="${myPage}"
+           style="font-size:30px;"
+           data-th-href="|/guestBook/${myPage.no}|">방명록</a>
+        <a data-th-unless="${myPage}"
+           style="font-size:30px;"
+           data-th-href="|/guestBook/${session.loginUser.no}|">방명록</a>
+      </div>
+      <div style="font-size:20px" class="header_profile">
+        <div data-th-replace="notification/noti :: notiBox">새로운 알림이 도착했습니다</div>
+        <a style="text-decoration-line: none" href="/notification/list">
+          <span style="color: black;" id="notReadNotiCount"
+                data-th-text="${session.notReadNotiCount}"></span>
+          <script src="/js/header.js"></script>
+          <img src="/images/noti.png" alt="알림" class="header_notification-icon">
+        </a>
+        <a style="text-decoration-line: none"
+           data-th-href="|http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${session.loginUser.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg|">
+          <img data-th-unless="${session.loginUser.photo == null}"
+               data-th-src="|http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${session.loginUser.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg|"
+               alt="프로필 사진" class="header_user-icon">
+        </a>
+        <img data-th-if="${session.loginUser.photo == null}" src='/images/default.jpg'
+             alt="프로필 사진" class="header_user-icon">
+        <span class="header_user-nickname" data-th-text="${session.loginUser.nick}">${session.loginUser.nick}</span>
+        <div class="logout">
+          <a style="font-size:20px" href="/auth/logout">로그아웃</a>
+        </div>
+      </div>
+      <!--  </div>-->
     </div>
-  </div>
-  <!--  </div>-->
-</div>
-</body>
+  </body>
 </html>

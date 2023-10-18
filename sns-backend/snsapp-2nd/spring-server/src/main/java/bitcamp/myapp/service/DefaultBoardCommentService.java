@@ -33,7 +33,7 @@ public class DefaultBoardCommentService implements BoardCommentService {
   public int add(BoardComment boardComment) throws Exception {
     int count = boardCommentDao.insert(boardComment);
     Board board = boardDao.findBy(boardComment.getBoardNo());
-    if (!session.getAttribute("loginUser").equals(board.getWriter())) {
+    if (boardComment.getWriter().getNo() != board.getWriter().getNo()) {
       notificationService.add(new NotiLog(
           board.getWriter().getNo(),
           NotiType.COMMENT_TYPE,

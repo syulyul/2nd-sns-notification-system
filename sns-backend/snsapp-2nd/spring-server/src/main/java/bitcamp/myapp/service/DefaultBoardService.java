@@ -96,7 +96,7 @@ public class DefaultBoardService implements BoardService {
   public int like(Member member, Board board) throws Exception {
     int result = boardDao.insertLike(member.getNo(), board.getNo());
     boardDao.updateLike(board.getNo());
-    if (!session.getAttribute("loginUser").equals(board.getWriter())) {
+    if (member.getNo() != board.getWriter().getNo()) {
       notificationService.add(new NotiLog(
           board.getWriter().getNo(),
           NotiType.LIKE_TYPE,

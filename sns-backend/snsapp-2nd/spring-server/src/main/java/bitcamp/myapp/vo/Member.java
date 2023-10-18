@@ -16,6 +16,8 @@ public class Member implements Serializable {
   private String email; // 이메일
   private String password; // 비밀번호
   private String photo; // 프로필 사진
+  private String fcmToken;
+
 
   @Override
   public String toString() {
@@ -23,11 +25,11 @@ public class Member implements Serializable {
         "no=" + no +
         ", nick='" + nick + '\'' +
         ", name='" + name + '\'' +
-        ", phoneNumber=" + phoneNumber +
+        ", phoneNumber='" + phoneNumber + '\'' +
         ", email='" + email + '\'' +
-        ", photo='" + photo + '\'' +
         ", password='" + password + '\'' +
-//        ", hashCode='" + this.hashCode() + '\'' +
+        ", photo='" + photo + '\'' +
+        ", fcmToken='" + fcmToken + '\'' +
         '}';
   }
 
@@ -101,5 +103,13 @@ public class Member implements Serializable {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getFcmToken() {
+    return fcmToken;
+  }
+
+  public void setFcmToken(String fcmToken) {
+    this.fcmToken = fcmToken;
   }
 }

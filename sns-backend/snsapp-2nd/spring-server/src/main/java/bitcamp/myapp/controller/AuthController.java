@@ -5,15 +5,15 @@ import bitcamp.myapp.service.GuestBookService;
 import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.MyPageService;
 import bitcamp.myapp.service.NcpObjectStorageService;
-import bitcamp.myapp.service.NotificationService;
+import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.service.SmsService;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import bitcamp.myapp.vo.MyPage;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import javax.servlet.ServletContext;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,17 +22,18 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -47,11 +48,9 @@ public class AuthController {
   @Autowired
   MyPageService myPageService;
   @Autowired
-  NotificationService notificationService;
-  @Autowired
   NcpObjectStorageService ncpObjectStorageService;
   @Autowired
-  ServletContext context;
+  RedisService redisService;
 
   {
     System.out.println("AuthController 생성됨!");
@@ -77,85 +76,170 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<Map<String, Object>> login(
-      @RequestParam String phoneNumber,
-      @RequestParam String password,
-      @RequestParam(name = "savePhoneNumber", required = false) String savePhoneNumber,
-      HttpSession session,
-      HttpServletResponse response,
-      Model model) {
+  public ResponseEntity login(
+      @RequestBody Member member,
+      HttpServletResponse response) {
+    String phoneNumber = member.getPhoneNumber();
+    String password = member.getPassword();
+    System.out.println(member);
     phoneNumber = phoneNumber.replaceAll("\\D+", "");
-
+    LoginUser loginUserObject = null;
     try {
       // 여기에서 phoneNumber와 password를 사용하여 회원 정보를 검증합니다.
       Member loginUser = memberService.get(phoneNumber, password);
+
       if (loginUser != null) {
         // 로그인 성공 시 처리
         // 쿠키 설정
-        if (savePhoneNumber != null) {
-          Cookie cookie = new Cookie("phoneNumber", phoneNumber);
-          response.addCookie(cookie);
-        } else {
-          Cookie cookie = new Cookie("phoneNumber", "no");
-          cookie.setMaxAge(0);
-          response.addCookie(cookie);
-        }
 
+        String sessionId = UUID.randomUUID().toString();
+        Cookie cookie = new Cookie("sessionId", sessionId);
+        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+        redisService.getValueOps()
+            .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.DAYS);
         // 세션에 로그인 사용자 정보 저장
-        LoginUser loginUserObject = new LoginUser(loginUser);
-        loginUserObject.setFollowMemberSet(
-            new HashSet<>(myPageService.followingList(loginUser.getNo())));
+
+        loginUserObject = new LoginUser(loginUser);
+
+        String fcmToken = member.getFcmToken();
+        redisService.getValueOps()
+            .set("FcmToken:" + loginUser.getNo(), fcmToken, 1, TimeUnit.HOURS);
+
+        HashSet<Member> followMemberSet = new HashSet<>(
+            myPageService.followingList(loginUser.getNo()));
+        HashSet<Integer> followMemberNoSet = new HashSet<>();
+        for (Member m : followMemberSet) {
+          followMemberNoSet.add(m.getNo());
+        }
+        loginUserObject.setFollowMemberSet(followMemberNoSet);
+
         loginUserObject.setLikeBoardSet(
             new HashSet<>(boardService.likelist(loginUser.getNo())));
-        loginUserObject.setLikedGuestBookSet(
+        loginUserObject.setLikeGuestBookSet(
             new HashSet<>(guestBookService.likelist(loginUser.getNo())));
-        session.setAttribute("loginUser", loginUserObject);
+        loginUser.setFcmToken(fcmToken);
 
-        int notReadNotiCount = notificationService.notReadNotiLogCount(loginUser.getNo());
-        context.setAttribute("notReadNotiCount" + loginUser.getNo(), notReadNotiCount);
-
-        Map<String, Object> jsonResponse = new HashMap<>();
-        jsonResponse.put("userNo", loginUser.getNo());
-        return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
-        // 로그인 성공 시 마이페이지로 리다이렉트
-      } else {
-        // 로그인 실패 시 메시지 설정
-        model.addAttribute("loginError", "로그인 실패. 회원 정보가 일치하지 않습니다.");
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
       }
     } catch (Exception e) {
       e.printStackTrace();
       // 예외 발생 시 처리
-      model.addAttribute("loginError", "로그인 중 오류가 발생했습니다.");
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
+    return new ResponseEntity<>(loginUserObject, HttpStatus.OK);
+  }
+
+  @GetMapping("/check")
+  public ResponseEntity check(
+      HttpServletRequest request,
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie) {
+
+    if (sessionCookie == null) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    LoginUser loginUserObject = null;
+    try {
+      String sessionId = sessionCookie.getValue();
+      // System.out.println(sessionId);
+
+      // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
+      // String temp = (String) redisService.getValueOps()
+      // .getAndExpire(sessionId, 1, TimeUnit.DAYS);
+      String temp = (String) redisService.getValueOps().get(sessionId);
+      if (temp != null) {
+        int loginUserNo = Integer.parseInt(temp);
+        loginUserObject = new LoginUser(memberService.get(loginUserNo));
+
+        HashSet<Member> followMemberSet = new HashSet<>(
+            myPageService.followingList(loginUserNo));
+        HashSet<Integer> followMemberNoSet = new HashSet<>();
+        for (Member m : followMemberSet) {
+          followMemberNoSet.add(m.getNo());
+        }
+        loginUserObject.setFollowMemberSet(followMemberNoSet);
+
+        loginUserObject.setLikeBoardSet(
+            new HashSet<>(boardService.likelist(loginUserNo)));
+        loginUserObject.setLikeGuestBookSet(
+            new HashSet<>(guestBookService.likelist(loginUserNo)));
+
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(loginUserObject, HttpStatus.OK);
+  }
+
+  @GetMapping("logout")
+  public String logout(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie)
+      throws Exception {
+
+    String sessionId = sessionCookie.getValue();
+
+    if (sessionId != null) {
+      // 로컬 레디스가 3.0 버전이라 오류 발생, NCP에서 최신 버전으로 테스트 해볼것
+      // redisService.getValueOps().getAndDelete(sessionId);
+    }
+
+    Cookie cookie = new Cookie("sessionId", "invalidate");
+    cookie.setPath("/");
+    cookie.setMaxAge(1000);
+    response.addCookie(cookie);
+
+    return null;
   }
 
   @PostMapping("add")
-  public String add(
-      Member member,
-      MultipartFile photofile,
-      Model model) throws Exception {
+  public ResponseEntity add(
+      @RequestPart("data") Member member,
+      @RequestPart("verificationCode") String verificationCode,
+      @RequestPart(value = "files", required = false) MultipartFile[] files,
+      HttpServletResponse response) throws Exception {
 
     member.setPhoneNumber(member.getPhoneNumber().replaceAll("\\D+", ""));
+
+    String rand = (String) redisService.getValueOps().get(member.getPhoneNumber());
+    if (!verificationCode.equals(rand)) {
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.BAD_REQUEST);
+    }
+
     try {
-      System.out.println(member);
-      if (photofile.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_member/", photofile);
-        member.setPhoto(uploadFileUrl);
+      if (files != null) {
+        if (files[0].getSize() > 0) {
+          String uploadFileUrl = ncpObjectStorageService.uploadFile(
+              "bitcamp-nc7-bucket-14", "sns_member/", files[0]);
+          member.setPhoto(uploadFileUrl);
+        }
       }
+
       memberService.add(member);
-      MyPage myPage = new MyPage();
-      myPage.setNo(member.getNo());
+      MyPage myPage = new MyPage(member);
       myPageService.add(myPage);
 
-      return "auth/form";
+      String sessionId = UUID.randomUUID().toString();
+      Cookie cookie = new Cookie("sessionId", sessionId);
+      cookie.setPath("/");
+      cookie.setHttpOnly(true);
+      response.addCookie(cookie);
+      redisService.getValueOps()
+          .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.DAYS);
+
+      return new ResponseEntity<>(member, HttpStatus.OK);
 
     } catch (Exception e) {
-      model.addAttribute("message", "회원 등록 오류!");
-      model.addAttribute("refresh", "2;url=list");
-      throw e;
+      e.printStackTrace();
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -165,32 +249,45 @@ public class AuthController {
     return "auth/loginfind";
   }
 
-  @GetMapping("logout")
-  public String logout(HttpSession session) throws Exception {
-    session.invalidate();
-    return "redirect:/";
-  }
-
-  @PostMapping("phoneAuth")
+  @PostMapping("getPhoneAuthCode")
   @ResponseBody
-  public Boolean phoneAuth(
-      String phoneNumber,
-      HttpSession session) {
+  public ResponseEntity phoneAuth(@RequestBody HashMap<String, String> bodyMap) {
+    String phoneNumber = bodyMap.get("phoneNumber");
     phoneNumber = phoneNumber.replaceAll("\\D+", "");
     try { // 이미 가입된 전화번호가 있으면
       if (smsService.memberTelCount(phoneNumber) > 0) {
-        return true;
+        return new ResponseEntity<>("이미 가입된 회원입니다", HttpStatus.OK);
+      } else {
+        String code = smsService.sendRandomMessage(phoneNumber);
+        redisService.getValueOps()
+            .set(phoneNumber, code, 3, TimeUnit.MINUTES);
+        // 전화 번호에 인증 코드 저장
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    JSONObject toJson = new JSONObject();
+    return new ResponseEntity<>("3분 안에 인증해주세요", HttpStatus.OK);
+  }
 
-    String code = smsService.sendRandomMessage(phoneNumber);
-    session.setAttribute("rand", code);
+  @PostMapping("checkPhoneAuthCode")
+  @ResponseBody
+  public ResponseEntity phoneAuthOk(
+      @RequestBody HashMap<String, String> bodyMap) {
+    String phoneNumber = bodyMap.get("phoneNumber");
+    String rand = (String) redisService.getValueOps().get(phoneNumber);
+    String code = bodyMap.get("verificationCode");
 
-    return false;
+    System.out.println(rand + " : " + code);
+
+    if (rand == null || !rand.equals(code)) {
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
+
+    redisService.getValueOps()
+        .set(phoneNumber, code, 15, TimeUnit.MINUTES);
+    // 회원 가입 요청 에도 인증을 추가 시 필요
+    return new ResponseEntity<>("인증 성공", HttpStatus.OK);
   }
 
   @PostMapping("phoneFind")
@@ -214,32 +311,24 @@ public class AuthController {
     return true;
   }
 
-  @PostMapping("phoneAuthOk")
-  @ResponseBody
-  public Boolean phoneAuthOk(HttpSession session, HttpServletRequest request) {
-    String rand = (String) session.getAttribute("rand");
-    String code = (String) request.getParameter("code");
-
-    System.out.println(rand + " : " + code);
-
-    if (rand != null && rand.equals(code)) {
-      session.removeAttribute("rand");
-      return false;
-    }
-
-    return true;
-  }
 
   @PostMapping("/resetPassword")
   @ResponseBody
   public ResponseEntity<String> resetPassword(
-      @RequestParam String phoneNumber,
-      @RequestParam String newPassword) {
-    phoneNumber = phoneNumber.replaceAll("\\D+", "");
+      @RequestBody HashMap<String, String> bodyMap) {
+    String phoneNumber = bodyMap.get("phoneNumber").replaceAll("\\D+", "");
+    String rand = (String) redisService.getValueOps().get(phoneNumber);
+    String code = bodyMap.get("verificationCode");
+
+    System.out.println(rand + " : " + code);
+
+    if (rand == null || !rand.equals(code)) {
+      return new ResponseEntity<>("인증 코드가 일치하지 않습니다", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
 
     try {
       // 새로운 비밀번호로 업데이트
-      smsService.updatePasswordByPhoneNumber(phoneNumber, newPassword);
+      smsService.updatePasswordByPhoneNumber(phoneNumber, bodyMap.get("password"));
 
       return new ResponseEntity<>("비밀번호 재설정이 완료되었습니다.", HttpStatus.OK);
     } catch (Exception e) {
@@ -248,4 +337,5 @@ public class AuthController {
       return new ResponseEntity<>("비밀번호 변경 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
 }

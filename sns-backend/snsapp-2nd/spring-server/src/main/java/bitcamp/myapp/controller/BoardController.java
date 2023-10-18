@@ -2,39 +2,61 @@ package bitcamp.myapp.controller;
 
 import bitcamp.myapp.service.BoardCommentService;
 import bitcamp.myapp.service.BoardService;
+import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.NcpObjectStorageService;
+import bitcamp.myapp.service.RedisService;
 import bitcamp.myapp.vo.Board;
 import bitcamp.myapp.vo.BoardComment;
 import bitcamp.myapp.vo.BoardPhoto;
 import bitcamp.myapp.vo.LoginUser;
 import bitcamp.myapp.vo.Member;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@Controller
+@RestController
 @RequestMapping("/board")
 public class BoardController {
 
+  @Autowired
+  MemberService memberService;
   @Autowired
   BoardService boardService;
   @Autowired
   BoardCommentService boardCommentService;
   @Autowired
   NcpObjectStorageService ncpObjectStorageService;
+  @Autowired
+  RedisService redisService;
 
   {
     System.out.println("BoardController 생성됨!");
@@ -45,77 +67,99 @@ public class BoardController {
   }
 
   @PostMapping("add")
-  public String add(Board board, MultipartFile[] files, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
-    board.setWriter(loginUser);
+  public ResponseEntity add(@RequestPart("data") Board board,
+      @RequestPart(value = "files", required = false) MultipartFile[] files) throws Exception {
+    System.out.println(board);
+//    Member loginUser = board.getWriter();
+//    if (loginUser == null) {
+//      return new ResponseEntity<>("not exist writer", HttpStatus.BAD_REQUEST);
+//    }
 
-    ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
-    for (MultipartFile part : files) {
-      if (part.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_board/", part);
-        BoardPhoto attachedFile = new BoardPhoto();
-        attachedFile.setFilePath(uploadFileUrl);
-        attachedFiles.add(attachedFile);
+    try {
+      ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
+      if (files != null) {
+        for (MultipartFile part : files) {
+          if (part.getSize() > 0) {
+            String uploadFileUrl = ncpObjectStorageService.uploadFile(
+                "bitcamp-nc7-bucket-14", "sns_board/", part);
+            BoardPhoto attachedFile = new BoardPhoto();
+            attachedFile.setFilePath(uploadFileUrl);
+            attachedFiles.add(attachedFile);
+          }
+        }
       }
-    }
-    board.setAttachedFiles(attachedFiles);
+      board.setAttachedFiles(attachedFiles);
 
-    boardService.add(board);
-    return "redirect:/board/list?category=" + board.getCategory();
+      boardService.add(board);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return new ResponseEntity<>(board, HttpStatus.OK);
   }
 
-  @GetMapping("delete")
-  public String delete(int no, int category, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
+  @DeleteMapping("delete/{boardNo}")
+  public ResponseEntity delete(
+      @PathVariable int boardNo,
+      @RequestParam int category,
+      @CookieValue(value = "sessionId", required = false) Cookie sessionCookie) throws Exception {
+    Board b = boardService.get(boardNo);
 
-    System.out.println(no);
-    Board b = boardService.get(no);
-
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-    } else {
-      boardService.delete(b.getNo());
-      return "redirect:/board/list?category=" + category;
+    LoginUser loginUserObject = null;
+    try {
+      String sessionId = sessionCookie.getValue();
+      String temp = (String) redisService.getValueOps().get(sessionId);
+      if (temp != null) {
+        int loginUserNo = Integer.parseInt(temp);
+        loginUserObject = new LoginUser(memberService.get(loginUserNo));
+        if (b == null || b.getWriter().getNo() != loginUserObject.getNo()) {
+          return new ResponseEntity<>("게시글이 없거나 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        } else {
+          boardService.delete(b.getNo());
+          return new ResponseEntity<>(HttpStatus.OK);
+        }
+      } else { // 해당하는 유저가 없을 경우
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
     }
   }
 
-  @GetMapping("detail/{category}/{no}")
-  public String detail(
-      @PathVariable int category,
-      @PathVariable int no,
-      Model model) throws Exception {
+  @GetMapping("detail")
+  public ResponseEntity<Map<String, Object>> detail(
+      int category,
+      int boardNo) throws Exception {
 
-    Board board = boardService.get(no);
+    Map<String, Object> response = new HashMap<>();
+
+    Board board = boardService.get(boardNo);
     if (board != null) {
-      boardService.increaseViewCount(no);
-      model.addAttribute("board", board);
+      boardService.increaseViewCount(boardNo);
+      response.put("board", board);
     }
 
     // 좋아요 누른 사람들 닉네임 조회
-    List<String> likedUserNicknames = boardService.boardlikelist(no);
-    model.addAttribute("likedUserNicknames", likedUserNicknames);
+    List<String> likedUserNicknames = boardService.boardlikelist(boardNo);
+    response.put("likedUserNicknames", likedUserNicknames);
 
     // 댓글 조회
-    List<BoardComment> comments = null;
-    comments = boardCommentService.list(no);
-    model.addAttribute("comments", comments);
+    List<BoardComment> comments = boardCommentService.list(boardNo);
+    response.put("comments", comments);
 
-    return "board/detail";
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+
   @GetMapping("list")
-  public String list(@RequestParam int category,
+  public ResponseEntity<Map<String, Object>> list(
+      @RequestParam int category,
       @RequestParam(defaultValue = "") String keyword,
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(defaultValue = "5") int pageSize,
       Model model, HttpSession session) throws Exception {
+
     Member loginUser = (Member) session.getAttribute("loginUser");
     List<Board> boardList;
     int totalRecords;
@@ -133,105 +177,116 @@ public class BoardController {
       totalRecords = boardService.getSearchBoardsCount(keyword);
     }
 
-    model.addAttribute("boardList", boardList);
-    model.addAttribute("maxPage", (totalRecords + (pageSize - 1)) / pageSize);
-    model.addAttribute("page", page);
-    model.addAttribute("pageSize", pageSize);
-    model.addAttribute("category", category);
+    int maxPage = (totalRecords + (pageSize - 1)) / pageSize;
+
+    Map<String, Object> resultMap = new HashMap<>();
+    resultMap.put("boardList", boardList);
+    resultMap.put("maxPage", maxPage);
+    resultMap.put("currentPage", page);
+    resultMap.put("pageSize", pageSize);
+    resultMap.put("totalRecords", totalRecords);
 
     if (category == 1) {
-      return "board/list"; // 카테고리가 1일 때 "list.html"을 실행
-
+      return ResponseEntity.ok(resultMap);
     } else {
-      throw new Exception("유효하지 않은 카테고리입니다.");
+      return ResponseEntity.badRequest()
+          .body(Collections.singletonMap("error", "유효하지 않은 카테고리입니다."));
     }
   }
 
+
   @PostMapping("list/{category}")
-  public String searchBoards(@PathVariable int category,
+  public String searchBoards(
+      @PathVariable int category,
       @RequestParam("keyword") String keyword,
       @RequestParam(defaultValue = "1") int page) throws Exception {
-    String encodedKeyword = URLEncoder.encode(keyword, "UTF-8");
+    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
     String queryString = String.format("&keyword=%s&page=%d", encodedKeyword, page);
+
     return "redirect:/board/list?category=" + category + queryString;
   }
 
   @PostMapping("update")
-  public String update(Board board, MultipartFile[] files, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
-
-    Board b = boardService.get(board.getNo());
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("게시글이 존재하지 않거나 변경 권한이 없습니다.");
-    }
-
-    ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
-    for (MultipartFile part : files) {
-      if (part.getSize() > 0) {
-        String uploadFileUrl = ncpObjectStorageService.uploadFile(
-            "bitcamp-nc7-bucket-14", "sns_board/", part);
-        BoardPhoto attachedFile = new BoardPhoto();
-        attachedFile.setFilePath(uploadFileUrl);
-        attachedFiles.add(attachedFile);
+  public ResponseEntity update(@RequestPart("data") Board board,
+      @RequestPart(value = "files", required = false) MultipartFile[] files) throws Exception {
+    System.out.println(board);
+    try {
+      ArrayList<BoardPhoto> attachedFiles = new ArrayList<>();
+      if (files != null) {
+        for (MultipartFile part : files) {
+          if (part.getSize() > 0) {
+            String uploadFileUrl = ncpObjectStorageService.uploadFile(
+                "bitcamp-nc7-bucket-14", "sns_board/", part);
+            BoardPhoto attachedFile = new BoardPhoto();
+            attachedFile.setFilePath(uploadFileUrl);
+            attachedFiles.add(attachedFile);
+          }
+        }
       }
-    }
-    board.setAttachedFiles(attachedFiles);
+      board.setAttachedFiles(attachedFiles);
 
-    boardService.update(board);
-    return "redirect:/board/detail/" + board.getCategory() + "/" + board.getNo();
+      boardService.update(board);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<>(boardService.get(board.getNo()), HttpStatus.OK);
   }
 
-
-  @GetMapping("fileDelete/{attachedFile}") // 예) .../fileDelete/attachedfile;no=30
-  public String fileDelete(@MatrixVariable("no") int no, HttpSession session) throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
-
+  @DeleteMapping("fileDelete/{fileNo}") // 예) .../fileDelete/attachedfile;no=30
+  public ResponseEntity fileDelete(@PathVariable int fileNo) throws Exception {
     Board board = null;
-    BoardPhoto attachedFile = boardService.getAttachedFile(no);
+    BoardPhoto attachedFile = boardService.getAttachedFile(fileNo);
     board = boardService.get(attachedFile.getBoardNo());
-    if (board.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("게시글 변경 권한이 없습니다!");
-    }
 
-    if (boardService.deleteAttachedFile(no) == 0) {
-      throw new Exception("해당 번호의 첨부파일이 없습니다.");
+    if (boardService.deleteAttachedFile(fileNo) == 0) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     } else {
-      return "redirect:/board/detail/" + board.getCategory() + "/" + board.getNo();
+      boardService.deleteAttachedFile(fileNo);
+      return new ResponseEntity<>(HttpStatus.OK);
     }
   }
 
   // 좋아요 기능
   @PostMapping("like")
-  public int like(@RequestParam int boardNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+  public ResponseEntity like(@RequestParam int boardNo,
+      @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
     try {
+      String sessionId = sessionCookie.getValue();
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
+      Member loginUser = memberService.get(loginUserNo);
       Board board = boardService.get(boardNo);
+
+      if (board == null) {
+        return new ResponseEntity<>(boardNo, HttpStatus.NOT_FOUND);
+      }
+
       boardService.like(loginUser, board);
-      loginUser.getLikeBoardSet().add(boardNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
+      return new ResponseEntity<>(boardNo, HttpStatus.OK);
     } catch (Exception e) {
-      return -1;
+      e.printStackTrace();
+      return new ResponseEntity<>(boardNo, HttpStatus.BAD_REQUEST);
     }
   }
 
   @PostMapping("unlike")
-  public int unlike(@RequestParam int boardNo, HttpSession session) throws Exception {
-    LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+  public ResponseEntity unlike(@RequestParam int boardNo,
+      @CookieValue("sessionId") Cookie sessionCookie) throws Exception {
     try {
+      String sessionId = sessionCookie.getValue();
+      int loginUserNo = Integer.parseInt((String) redisService.getValueOps().get(sessionId));
+      Member loginUser = memberService.get(loginUserNo);
       Board board = boardService.get(boardNo);
+
+      if (board == null) {
+        return new ResponseEntity<>(boardNo, HttpStatus.NOT_FOUND);
+      }
+
       boardService.unlike(loginUser, board);
-      loginUser.getLikeBoardSet().remove(boardNo);
-      session.setAttribute("loginUser", loginUser);
-      return 1; // 예: 성공시 1 반환
+      return new ResponseEntity<>(boardNo, HttpStatus.OK);
     } catch (Exception e) {
-      return -1;
+      e.printStackTrace();
+      return new ResponseEntity<>(boardNo, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -251,22 +306,25 @@ public class BoardController {
     }
   }
 
+
   // 댓글 기능
   @PostMapping("addComment")
-  public String addComment(
-      BoardComment boardComment,
-      HttpSession session,
-      @RequestParam("boardNo") int boardNo) throws Exception {
-    Member loginUser = (LoginUser) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
+  public ResponseEntity addComment(@RequestBody BoardComment boardComment)
+      throws Exception {
+    System.out.println(boardComment);
+//    Member loginUser = boardComment.getWriter();
+//
+//    if (loginUser == null) {
+//      return new ResponseEntity<>("User not authenticated", HttpStatus.UNAUTHORIZED);
+//    }
+
+    try {
+      boardCommentService.add(boardComment);
+
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-
-    boardComment.setBoardNo(boardNo);
-    boardComment.setWriter(loginUser);
-
-    boardCommentService.add(boardComment);
-    return "redirect:/board/detail/1/" + boardComment.getBoardNo();
+    return new ResponseEntity<>(boardComment, HttpStatus.OK);
   }
 
   @GetMapping("detailComment/{boardNo}/{no}")
@@ -300,21 +358,70 @@ public class BoardController {
     return "redirect:/board/detail/1/" + boardComment.getBoardNo();
   }
 
-  @GetMapping("deleteComment/{boardNo}/{no}")
-  public String deleteComment(@PathVariable int no, @PathVariable int boardNo, HttpSession session)
-      throws Exception {
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      return "redirect:/auth/form";
-    }
+  @DeleteMapping("deleteComment/{boardNo}/{commentNo}")
+  public ResponseEntity deleteComment(
+      @PathVariable int commentNo,
+      @PathVariable int boardNo,
+      HttpServletRequest request,
+      HttpServletResponse response) {
 
-    BoardComment b = boardCommentService.get(no, boardNo);
+    try {
+      // 1. 'sessionId' 쿠키에서 값 가져오기
+      String sessionId = null;
+      Cookie[] cookies = request.getCookies();
+      if (cookies != null) {
+        for (Cookie cookie : cookies) {
+          if ("sessionId".equals(cookie.getName())) {
+            sessionId = cookie.getValue();
+            break;
+          }
+        }
+      }
 
-    if (b == null || b.getWriter().getNo() != loginUser.getNo()) {
-      throw new Exception("해당 번호의 게시글이 없거나 삭제 권한이 없습니다.");
-    } else {
-      boardCommentService.delete(no, boardNo);
-      return "redirect:/board/detail/1/" + boardNo;
+      if (sessionId == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      }
+
+      // 2. Redis에서 해당 sessionId로 사용자 정보를 가져오기
+      String loginUserNoStr = (String) redisService.getValueOps().get(sessionId);
+      if (loginUserNoStr == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      }
+
+      int loginUserNo = Integer.parseInt(loginUserNoStr);
+
+      // 3. 게시글 삭제 권한 검사
+      BoardComment b = boardCommentService.get(commentNo, boardNo);
+      if (b == null || b.getWriter().getNo() != loginUserNo) {
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+      }
+
+      boardCommentService.delete(commentNo, boardNo);
+      return new ResponseEntity<>(HttpStatus.OK);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @GetMapping("/searchBoards")
+  @ResponseBody
+  public ResponseEntity searchBoards(
+      @RequestParam int category,
+      @RequestParam(name = "searchTxt") String keyword,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "6") int pageSize) {
+    List<Board> resultList;
+//    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+    try {
+      resultList = boardService.searchBoardsList(category, keyword, pageSize, page);
+    } catch (Exception e) {
+      e.printStackTrace();
+      // 예외 발생 시 처리
+      return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(resultList, HttpStatus.OK);
+  }
+
+
 }

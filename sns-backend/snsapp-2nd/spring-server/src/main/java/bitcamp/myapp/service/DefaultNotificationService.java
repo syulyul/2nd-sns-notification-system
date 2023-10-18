@@ -1,19 +1,21 @@
 package bitcamp.myapp.service;
 
+import bitcamp.myapp.App;
 import bitcamp.myapp.dao.NotificationDao;
 import bitcamp.myapp.vo.NotiLog;
 import bitcamp.myapp.vo.NotiType;
 import java.util.List;
-import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class DefaultNotificationService implements NotificationService {
 
-  @Autowired
-  ServletContext context;
   @Autowired
   NotificationDao notificationDao;
 
@@ -24,16 +26,26 @@ public class DefaultNotificationService implements NotificationService {
   @Transactional
   @Override
   public int add(NotiLog notiLog) throws Exception {
-    int result = notificationDao.insert(notiLog);
-    String key = "notReadNotiCount" + notiLog.getMemberNo();
-    Integer value = (Integer) context.getAttribute(key);
-    if (value == null) {
-      value = notificationDao.getNotiLogCount(notiLog.getMemberNo());
-      context.setAttribute(key, value);
-    } else {
-      context.setAttribute(key, value + 1);
+    try {
+
+      RestTemplate restTemplate = new RestTemplate();
+
+      // Header set
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+      // Message
+      HttpEntity<?> requestMessage = new HttpEntity<>(notiLog, httpHeaders);
+
+      // Request
+      String url = App.NODE_SERVER_URL + "/node/notification/add";
+      HttpEntity<String> response = restTemplate.postForEntity(url, requestMessage, String.class);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return 0;
     }
-    return result;
+    return 1;
   }
 
   @Override
@@ -60,14 +72,6 @@ public class DefaultNotificationService implements NotificationService {
   @Override
   public int updateState(NotiLog notiLog, int notiState) throws Exception {
     int result = notificationDao.updateState(notiLog.getNo(), notiState);
-    String key = "notReadNotiCount" + notiLog.getMemberNo();
-    Integer value = (Integer) context.getAttribute(key);
-    if (value == null) {
-      value = notificationDao.getNotiLogCount(notiLog.getMemberNo());
-      context.setAttribute(key, value);
-    } else {
-      context.setAttribute(key, value - 1);
-    }
     return result;
   }
 
