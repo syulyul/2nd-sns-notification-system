@@ -29,6 +29,47 @@ const StyledInput = styled.input`
     color: #3a3a3a;
   }
 `;
+const PhoneNumberInput = styled.input`
+  width: 50%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 16px;
+  margin-left: 5px;
+
+  ::placeholder {
+    color: #3a3a3a;
+  }
+`;
+
+const VerificationCodeInput = styled.input`
+  width: 50%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 16px;
+  margin-left: 5px;
+
+  ::placeholder {
+    color: #3a3a3a;
+  }
+`;
+
+const PhoneNumberInputWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+`;
+
+const VerificationCodeInputWrapper = styled.div`
+  display: left;
+  flex-direction: row;
+  width: 100%;
+  align-items: left;
+`;
 
 const InputBlock = styled.div`
   display: flex;
@@ -63,18 +104,21 @@ const SubmitButton = styled(Button)`
   border-radius: 4px;
   cursor: pointer;
   font-size: 25px;
+  font-weight: normal;
 `;
 
 const CodeButton = styled(Button)`
-  padding: 5px 10px;
+  padding: 10px 10px;
   background-color: #426b1f;
-  color: white;
-  border: none;
   border-radius: 4px;
   cursor: pointer;
   margin-left: 10px;
   width: 150px;
-  font-size: 20px;
+`;
+const CodeButtonText = styled.span`
+  font-size: 16px;
+  font-weight: normal;
+  color: white;
 `;
 
 const PhoneNumberWrapper = styled.div`
@@ -97,7 +141,7 @@ const ButtonFlexWrapper = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 95%;
 `;
 
 const HorizontalWrapper = styled.div`
@@ -169,8 +213,8 @@ const RegisterComponent = ({
           <Label>🌱 전화번호</Label>
           <PhoneNumberWrapper>
             <Wrapper>
-              <HorizontalWrapper>
-                <StyledInput
+              <PhoneNumberInputWrapper>
+                <PhoneNumberInput
                   width="200px"
                   type="text"
                   name="phoneNumber"
@@ -179,12 +223,13 @@ const RegisterComponent = ({
                   onChange={onChange}
                 />
                 <CodeButton type="sendCode" onClick={onAuthPhoneNumber}>
-                  인증번호전송
+                  <CodeButtonText>인증번호전송</CodeButtonText>
                 </CodeButton>
-              </HorizontalWrapper>
 
-              <HorizontalWrapper>
-                <StyledInput
+              </PhoneNumberInputWrapper>
+
+              <VerificationCodeInputWrapper>
+                <VerificationCodeInput
                   width="200px"
                   type="text"
                   name="verificationCode"
@@ -193,9 +238,9 @@ const RegisterComponent = ({
                   onChange={onChange}
                 />
                 <CodeButton type="verifyCode" onClick={onCheckPhoneNumber}>
-                  인증번호확인
+                  <CodeButtonText>인증번호확인</CodeButtonText>
                 </CodeButton>
-              </HorizontalWrapper>
+              </VerificationCodeInputWrapper>
             </Wrapper>
           </PhoneNumberWrapper>
         </InputBlock>
