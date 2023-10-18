@@ -15,7 +15,7 @@ const ChatRoomList = styled.div`
   width: 350px;
   height: 700px;
   display: inline-block;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   padding: 20px;
   margin-left: 380px;
   //margin-top:-100px;
@@ -25,7 +25,7 @@ const ChatRoomListBox = styled.div`
   width: 350px;
   height: 600px;
   display: inline-block;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   overflow-y: auto; /* 목록이 넘치면 스크롤 가능하도록 설정 */
 `;
 

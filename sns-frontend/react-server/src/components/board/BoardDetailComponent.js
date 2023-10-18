@@ -17,7 +17,7 @@ const Container = styled.div`
 const ContentBox = styled.div`
   text-align: left;
   padding: 20px;
-  background: #f2f2f2;
+  background: #fafaf5;
   width: 600px;
   //height: 7000px;
   position: relative;

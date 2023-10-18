@@ -50,7 +50,7 @@ const DetailForm = styled.div`
 `;
 const StyledInput = styled.input`
   border: none;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #fafaf5;
   margin-bottom: 10px;
   border-radius: 3px;
   outline: none;
