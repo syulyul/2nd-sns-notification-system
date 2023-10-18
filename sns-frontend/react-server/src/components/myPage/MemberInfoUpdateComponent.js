@@ -116,7 +116,8 @@ const MemberInfoUpdateComponent = ({
   handleUpdateEmail,
   handleUpdatePhoneNumber,
   handleUpdatePassword,
-  handleUpdateGender}) => {
+  handleUpdateGender,
+  handleUpdateStateMessage}) => {
   const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   if (myPageData == null) {
     return <div>loading...</div>;
@@ -202,6 +203,15 @@ const MemberInfoUpdateComponent = ({
           <option value="1">남자</option>
           <option value="2">여자</option>
         </FormSelect>
+      </FormGroup>
+
+      <FormGroup>
+        <FormLabel>🌱 상태메세지</FormLabel>
+        <FormInput
+            type="text"
+            defaultValue={myPageData.stateMessage}
+            onChange={handleUpdateStateMessage}
+        />
       </FormGroup>
       <input type='hidden' name='no' value={myPageData.no} />
       <ButtonContainer>

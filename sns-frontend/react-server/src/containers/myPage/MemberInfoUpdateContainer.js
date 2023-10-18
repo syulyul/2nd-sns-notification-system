@@ -22,6 +22,7 @@ const MemberInfoUpdateContainer = () => {
     const [updatePhoneNumber, setUpdatePhoneNumber] = useState('');
     const [updatePassword, setUpdatePassword] = useState('');
     const [updateGender, setUpdateGender] = useState('');
+    const [updateStateMessage, setUpdateStateMessage] = useState('');
 
     const { user, myPage, myPageError } = useSelector(
       (state) => ({
@@ -53,6 +54,7 @@ const MemberInfoUpdateContainer = () => {
     const handleUpdatePhoneNumber = (e) => setUpdatePhoneNumber(e.target.value);
     const handleUpdatePassword = (e) => setUpdatePassword(e.target.value);
     const handleUpdateGender = (e) => setUpdateGender(e.target.value);
+    const handleUpdateStateMessage = (e) => setUpdateStateMessage(e.target.value);
 
     let updateData = new FormData();
     updateData.append('files', null);
@@ -71,6 +73,7 @@ const MemberInfoUpdateContainer = () => {
       const updatedPhoneNumber = updatePhoneNumber || myPage.phoneNumber;
       const updatedPassword = updatePassword || myPage.password;
       const updatedGender = updateGender || myPage.gender;
+      const updatedStateMessage = updateStateMessage || myPage.gender;
 
       updateData.append(
         'data',
@@ -85,6 +88,7 @@ const MemberInfoUpdateContainer = () => {
               phoneNumber: updatedPhoneNumber,
               password: updatedPassword,
               gender: updatedGender,
+              stateMessage: updatedStateMessage,
             })
           ],
           {
@@ -110,6 +114,7 @@ const MemberInfoUpdateContainer = () => {
         handleUpdatePhoneNumber={handleUpdatePhoneNumber}
         handleUpdatePassword={handleUpdatePassword}
         handleUpdateGender={handleUpdateGender}
+        handleUpdateStateMessage={handleUpdateStateMessage}
       />
     );
   }
