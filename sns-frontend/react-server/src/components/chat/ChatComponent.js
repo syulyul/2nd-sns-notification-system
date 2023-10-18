@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 const ChatContainer = styled.div`
   padding: 20px;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   width: 600px;
   margin: auto;
   margin-left: 20px;

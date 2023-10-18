@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const BoardFormContainer = styled.div`
   padding: 20px;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   width: 700px;
   margin: auto;
 `;
