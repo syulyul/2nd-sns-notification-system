@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   changeField,
-  changeMyPageField,
   info,
   initializeForm,
   update
@@ -10,6 +9,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import MemberInfoUpdateComponent
   from '../../components/myPage/MemberInfoUpdateComponent';
+import { deleteMember } from '../../modules/auth';
 
 const MemberInfoUpdateContainer = () => {
     const dispatch = useDispatch();
@@ -22,6 +22,7 @@ const MemberInfoUpdateContainer = () => {
     const [updatePhoneNumber, setUpdatePhoneNumber] = useState('');
     const [updatePassword, setUpdatePassword] = useState('');
     const [updateGender, setUpdateGender] = useState('');
+    const [updateStateMessage, setUpdateStateMessage] = useState('');
 
     const { user, myPage, myPageError } = useSelector(
       (state) => ({
@@ -53,6 +54,7 @@ const MemberInfoUpdateContainer = () => {
     const handleUpdatePhoneNumber = (e) => setUpdatePhoneNumber(e.target.value);
     const handleUpdatePassword = (e) => setUpdatePassword(e.target.value);
     const handleUpdateGender = (e) => setUpdateGender(e.target.value);
+    const handleUpdateStateMessage = (e) => setUpdateStateMessage(e.target.value);
 
     let updateData = new FormData();
     updateData.append('files', null);
@@ -71,6 +73,7 @@ const MemberInfoUpdateContainer = () => {
       const updatedPhoneNumber = updatePhoneNumber || myPage.phoneNumber;
       const updatedPassword = updatePassword || myPage.password;
       const updatedGender = updateGender || myPage.gender;
+      const updatedStateMessage = updateStateMessage || myPage.gender;
 
       updateData.append(
         'data',
@@ -85,6 +88,7 @@ const MemberInfoUpdateContainer = () => {
               phoneNumber: updatedPhoneNumber,
               password: updatedPassword,
               gender: updatedGender,
+              stateMessage: updatedStateMessage,
             })
           ],
           {
@@ -96,12 +100,21 @@ const MemberInfoUpdateContainer = () => {
       navigate(`/myPage/${userNo}`);
     };
 
+  // 회원 삭제
+  const onDelete = (e) => {
+    e.preventDefault();
+    dispatch(deleteMember(userNo));
+    navigate(`/auth/login`);
+  };
+
     return (
       <MemberInfoUpdateComponent
+        user={user}
         myPageData={myPage}
         myPageError={myPageError}
         onChange={onChange}
         onSubmit={onSubmit}
+        onDelete={onDelete}
         onReset={onReset}
         onChangeFile={onChangeFile}
         handleUpdateNick={handleUpdateNick}
@@ -110,6 +123,7 @@ const MemberInfoUpdateContainer = () => {
         handleUpdatePhoneNumber={handleUpdatePhoneNumber}
         handleUpdatePassword={handleUpdatePassword}
         handleUpdateGender={handleUpdateGender}
+        handleUpdateStateMessage={handleUpdateStateMessage}
       />
     );
   }

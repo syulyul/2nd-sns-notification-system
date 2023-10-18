@@ -40,18 +40,12 @@ const ProfileAuthor = styled.div`
   justify-content: center;
 `;
 
-const ProfilePicture = styled.div`
+const ProfilePictureImg = styled.img`
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-right: 0px;
-`;
-
-const ProfilePictureImg = styled.img`
-  width: 100%;
-  height: auto;
+  object-fit: cover;  // 이미지를 컨테이너에 맞게 조절
   margin-right: 8px;
+  border-radius: 50%;
 `;
 
 const TitleTableCell = styled(TableHeaderCell)`
@@ -157,16 +151,14 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
                             <TableRow key={board.id}>
                               <TableCell>
                                 <ProfileAuthor>
-                                  <ProfilePicture>
-                                    <img
-                                        src={
-                                          board.writer.photo
-                                              ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${board.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
-                                              : '/images/avatar.png'
-                                        }
-                                        alt="profile"
-                                    />
-                                  </ProfilePicture>
+                                  <ProfilePictureImg
+                                      src={
+                                        board.writer.photo
+                                            ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${board.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
+                                            : '/images/avatar.png'
+                                      }
+                                      alt="profile"
+                                  />
                                   <span>{board.writer.nick}</span>
                                 </ProfileAuthor>
                               </TableCell>
@@ -206,8 +198,7 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
                             <CommentTableRow key={boardComment.id}>
                               <CommentTableCell>
                                 <ProfileAuthor>
-                                  <ProfilePicture>
-                                    <img
+                                    <ProfilePictureImg
                                         src={
                                           boardComment.writer.photo
                                               ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${boardComment.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
@@ -215,7 +206,6 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
                                         }
                                         alt="profile"
                                     />
-                                  </ProfilePicture>
                                   <span>{boardComment.writer.nick}</span>
                                 </ProfileAuthor>
                               </CommentTableCell>
