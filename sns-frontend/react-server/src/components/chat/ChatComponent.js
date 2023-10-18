@@ -267,7 +267,6 @@ const TranslateButtonContainer = styled.div`
 const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
-  console.log(translated);
   return (
     <ChatMessage
       className={
@@ -275,11 +274,12 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
       }
     >
       {chat}
-      <span>
-        {translated?.[targetLanguage]
-          ? '(' + translated[targetLanguage] + ')'
-          : null}
-      </span>
+      {translated.map((result) => {
+        if (result.langCode === targetLanguage) {
+          return <span key={result.langCode}>({result.txt})</span>;
+        }
+        return null; // 조건을 만족하지 않으면 null 반환
+      })}
     </ChatMessage>
   );
 };
