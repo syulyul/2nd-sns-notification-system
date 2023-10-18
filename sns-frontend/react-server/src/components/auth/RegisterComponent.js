@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import palette from '../../lib/styles/palette';
 import Button from '../common/Button';
 import AuthTemplate from './AuthTemplate';
+import React from "react";
 
 const RegisterForm = styled.div`
   width: 70%;
@@ -165,6 +166,50 @@ const StyledInput2 = styled.input`
     color: #3a3a3a;
   }
 `;
+
+const FileInputWrapper = styled.div`
+  position: relative;
+  font-size: 12px;
+
+  flex: 1;
+  padding: 13px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 79%;
+  margin-right: 5px;
+  margin-left:7px;
+
+  font-size: 12px;
+`;
+
+const FileInput = styled.input`
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+`;
+
+
+const FileInputLabel = styled.label`
+  background-color: #d3d3d3;
+  color: light-gray;
+  padding: 8px 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.65rem;
+  margin-left: 0px;
+
+  &:hover {
+    background-color: #426b1f;
+    color: white;
+  }
+`;
+
 const RegisterComponent = ({
   name,
   nick,
@@ -259,7 +304,13 @@ const RegisterComponent = ({
         <InputBlock>
           <Label>🌱 프로필사진</Label>
           <InputWrapper>
-            <StyledInput type="file" name="photo" onChange={onChangeFile} />
+            <FileInputWrapper>
+              <FileInputLabel>
+                파일선택
+                <FileInput type="file" name="photo" onChange={onChangeFile} />
+              </FileInputLabel>
+              &nbsp;&nbsp;파일을 선택해 주세요
+            </FileInputWrapper>
           </InputWrapper>
         </InputBlock>
         {verificationState ? (

@@ -106,8 +106,8 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
   const location = useLocation();
   const { userNo } = useParams(); // URL 파라미터에서 userNo를 추출
   const queryParams = new URLSearchParams(location.search);
-  const [isBoardListOpen, setIsBoardListOpen] = useState(false);
-  const [isCommentListOpen, setIsCommentListOpen] = useState(false);
+  const [isBoardListOpen, setIsBoardListOpen] = useState(true);
+  const [isCommentListOpen, setIsCommentListOpen] = useState(true);
 
   // URL이 /myPage/ 일때만 게시글과 댓글 섹션을 렌더링
   const shouldRenderSections = show === 'boardList';
