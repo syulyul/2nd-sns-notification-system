@@ -57,7 +57,6 @@ const StyledButton = styled.button`
 
   &:hover {
     pointer: cursor;
-    background-color: #5d962c;
   }
 `;
 
@@ -67,6 +66,16 @@ const LikeButton = styled(StyledButton)`
   background-color: transparent;
   color: black;
   font-size: 25px;
+
+  &:hover {
+    color: #426b1f;
+    cursor: pointer;
+    &::before {
+      content: '❤️';
+      position: absolute;
+      transition: top 0.2s, opacity 0.2s;
+    }
+  }
 `;
 
 const ClockIcon = styled.img`
@@ -99,6 +108,10 @@ const SubmitButton = styled(StyledButton)`
   justify-content: center;
   text-align: center;
   height: 50px;
+
+  &:hover {
+    background-color: #5d962c;
+  }
 `;
 
 const CommentTextArea = styled.textarea`
@@ -263,47 +276,6 @@ const FileInput = styled.input`
   opacity: 0;
   cursor: pointer;
 `;
-
-// const FileInputWrapper = styled.div`
-//   position: relative;
-//   font-size: 12px;
-
-//   flex: 1;
-//   padding: 13px;
-//   margin-right: 5px;
-//   &:hover {
-//     cursor: pointer;
-//   }
-
-//   font-size: 12px;
-// `;
-
-// const FileInputLabel = styled.label`
-//   background-color: #d3d3d3;
-//   color: light-gray;
-//   padding: 8px 8px;
-//   border: none;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   font-size: 0.65rem;
-//   // margin-left: 10px;
-//   margin-left: 0px;
-//   &:hover {
-//     background-color: #426b1f;
-//     color: white;
-//   }
-// `;
-
-// const FileInput = styled.input`
-//   display: none;
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   opacity: 0;
-//   cursor: pointer;
-// `;
 
 const BoardDetailComponent = ({
   user,
