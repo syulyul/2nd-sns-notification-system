@@ -48,13 +48,11 @@ export const translateAndDetectLang = async (data) => {
         };
 
         let isTranslated = false;
-        const findChatLog = await Chat.findById(chatLog._id);
-        for (let i = 0; findChatLog.translated[i] != null; i++) {
-          if (findChatLog.translated[i].langCode === targetLanguage) {
-            isTranslated = true;
-            break;
-          }
-        }
+        // 불필요한 번역 요청 방지를 위해 검증 로직 추가 필요
+        // const findChatLog = await Chat.findById(chatLog._id);
+        // if () {
+        //   isTranslated = true;
+        // }
 
         if (isTranslated || langCode === targetLanguage) {
           console.log('이미 번역된 언어');
@@ -72,11 +70,8 @@ export const translateAndDetectLang = async (data) => {
                 const translatedChatLog = await Chat.findByIdAndUpdate(
                   chatLog._id,
                   {
-                    $push: {
-                      translated: {
-                        langCode: targetLanguage,
-                        txt: translatedText,
-                      },
+                    $set: {
+                      [`translated.${targetLanguage}`]: translatedText,
                     },
                   },
                   { new: true }
