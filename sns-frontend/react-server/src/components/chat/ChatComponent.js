@@ -267,7 +267,6 @@ const TranslateButtonContainer = styled.div`
 const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
   const roomId = _id;
-  console.log(translated);
   return (
     <ChatMessage
       className={

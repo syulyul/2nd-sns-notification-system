@@ -78,7 +78,6 @@ const ChatContainer = () => {
         // 채팅
         const translatedChatLog = data.translatedChatLog;
         dispatch(translateChat({ translatedChatLog }));
-        console.log(translatedChatLog);
       });
     }
 
