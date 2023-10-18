@@ -207,9 +207,11 @@ const MemberInfoUpdateComponent = ({
         <FormInput
           type="date"
           name="birthday"
-          defaultValue={myPageData.birthday ?
-            format(new Date(myPageData.birthday), 'yyyy-MM-dd') :
-            myPageData.birthday}
+          defaultValue={
+            myPageData.birthday
+              ? format(new Date(myPageData.birthday), 'yyyy-MM-dd')
+              : myPageData.birthday
+          }
           onChange={handleUpdateBirthday}
         />
       </FormGroup>
@@ -260,6 +262,7 @@ const MemberInfoUpdateComponent = ({
         <FormLabel>🌱 상태메세지</FormLabel>
         <FormInput
           type="text"
+          name="text"
           defaultValue={myPageData.stateMessage}
           onChange={handleUpdateStateMessage}
         />
