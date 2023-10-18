@@ -197,9 +197,6 @@ public class MyPageController {
     }
 
     if (loginUser.getNo() == myPage.getNo()) {
-      // 세션 삭제
-      redisService.getValueOps().getOperations().delete(sessionCookie.getName());
-
       member.setPhoto(null);
       myPage.setGender(0);
       myPage.setStateMessage(null);

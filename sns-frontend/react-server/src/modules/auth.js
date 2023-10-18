@@ -36,6 +36,9 @@ const [FOLLOW, FOLLOW_SUCCESS, FOLLOW_FAILURE] =
 const [UNFOLLOW, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE] =
   createRequestActionTypes('myPage/UNFOLLOW');
 
+const [DELETE, DELETE_SUCCESS, DELETE_FAILURE] =
+  createRequestActionTypes('myPage/DELETE');
+
 const [BOARD_LIKE, BOARD_LIKE_SUCCESS, BOARD_LIKE_FAILURE] =
   createRequestActionTypes('board/LIKE');
 
@@ -92,6 +95,7 @@ export const follow = createAction(FOLLOW, (followingNo) => followingNo);
 export const unfollow = createAction(UNFOLLOW, (followingNo) => followingNo);
 export const boardlike = createAction(BOARD_LIKE, (boardNo) => boardNo);
 export const boardunlike = createAction(BOARD_UNLIKE, (boardNo) => boardNo);
+export const deleteMember = createAction(DELETE, (userNo) => userNo);
 
 export const guestBooklike = createAction(
   GUESTBOOK_LIKE,
@@ -120,6 +124,7 @@ const checkSaga = createRequestSaga(CHECK, authAPI.check);
 const logoutSaga = createRequestSaga(LOGOUT, authAPI.logout);
 const followSaga = createRequestSaga(FOLLOW, myPageAPI.follow);
 const unfollowSaga = createRequestSaga(UNFOLLOW, myPageAPI.unfollow);
+const deleteMemberSaga = createRequestSaga(DELETE, myPageAPI.deleteMember);
 const boardlikeSaga = createRequestSaga(BOARD_LIKE, boardAPI.like);
 const boardunlikeSaga = createRequestSaga(BOARD_UNLIKE, boardAPI.unlike);
 const guestBooklikeSaga = createRequestSaga(GUESTBOOK_LIKE, guestBookAPI.like);
@@ -142,6 +147,7 @@ export function* authSaga() {
   yield takeLatest(BOARD_UNLIKE, boardunlikeSaga);
   yield takeLatest(GUESTBOOK_LIKE, guestBooklikeSaga);
   yield takeLatest(GUESTBOOK_UNLIKE, guestBookunlikeSaga);
+  yield takeLatest(DELETE, deleteMemberSaga);
 }
 
 const initialState = {
@@ -263,6 +269,11 @@ const auth = handleActions(
     }),
 
     [LOGOUT]: (state) => ({
+      ...state,
+      user: null,
+    }),
+
+    [DELETE]: (state) => ({
       ...state,
       user: null,
     }),
