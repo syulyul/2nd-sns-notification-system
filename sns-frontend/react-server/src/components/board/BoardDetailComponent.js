@@ -171,9 +171,10 @@ const StyledInput = styled.input`
   margin-top: 20px;
   margin-bottom: 30px;
   margin-left: 5px;
-  font-size: 40px;
+  font-size: 30px;
   background-color: transparent;
   border: none;
+  width: 97%;
 `;
 
 const StyledTextArea = styled.textarea`
