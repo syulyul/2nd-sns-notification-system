@@ -64,7 +64,7 @@
 
 
 ## 4.유스케이스 모델링
-![img.png](./docs/image/Usecase.png)
+![img.png](./docs/image/2nd_usecase.png)
 
 ## 5. ERD
 ![img_1.png](./docs/image/ERD.png)
@@ -77,8 +77,5 @@
       + 채팅 화면
 
  ### 7.아키택처
-- API
-  ![img.png](./docs/image/ar2.png)
-
-- Cloud
-  ![img.png](./docs/image/ar1.JPG)
+- API & Cloud
+  ![img.png](./docs/image/2ndar231018.png)
