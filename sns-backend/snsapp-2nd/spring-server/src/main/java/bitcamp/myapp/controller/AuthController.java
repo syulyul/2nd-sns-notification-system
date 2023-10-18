@@ -227,14 +227,6 @@ public class AuthController {
       MyPage myPage = new MyPage(member);
       myPageService.add(myPage);
 
-      String sessionId = UUID.randomUUID().toString();
-      Cookie cookie = new Cookie("sessionId", sessionId);
-      cookie.setPath("/");
-      cookie.setHttpOnly(true);
-      response.addCookie(cookie);
-      redisService.getValueOps()
-          .set(sessionId, Integer.toString(member.getNo()), 1, TimeUnit.DAYS);
-
       return new ResponseEntity<>(member, HttpStatus.OK);
 
     } catch (Exception e) {
