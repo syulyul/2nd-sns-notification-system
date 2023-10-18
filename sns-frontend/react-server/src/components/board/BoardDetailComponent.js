@@ -337,7 +337,8 @@ const BoardDetailComponent = ({
   const [visibleComments, setVisibleComments] = useState(5); // 처음에 댓글 5개만 보이도록 설정
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const numImages = board.attachedFiles ? board.attachedFiles.length : 0;
+  const numImages =
+    board && board?.attachedFiles ? board.attachedFiles.length : 0;
 
   const settings = {
     dots: true,
@@ -449,9 +450,9 @@ const BoardDetailComponent = ({
               readOnly={board?.writer?.no !== user?.no}
             ></StyledTextArea>
             <div>
-              {board && board.attachedFiles && (
+              {board && (
                 <StyledImageSlider {...settings}>
-                  {board.attachedFiles.map((file, index) => (
+                  {board?.attachedFiles.map((file, index) => (
                     <ImageWrapper key={index}>
                       <a
                         href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
