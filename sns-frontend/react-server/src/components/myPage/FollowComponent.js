@@ -39,9 +39,12 @@ const ToggleLabel = styled.label`
 
 const StyledChatButton = styled.button`
   margin-top: 25px;
-  color: #426b1f; 
-  background-color: transparent; 
+  color: #426b1f;
+  background-color: transparent;
   border: 1px solid transparent;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const FollowComponent = ({
   user,
