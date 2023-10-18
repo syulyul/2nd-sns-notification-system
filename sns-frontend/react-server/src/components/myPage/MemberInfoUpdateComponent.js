@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { format } from 'date-fns';
 
 const FormContainer = styled.div`
   width: 600px;
@@ -206,7 +207,9 @@ const MemberInfoUpdateComponent = ({
         <FormInput
           type="date"
           name="birthday"
-          defaultValue={myPageData.birthday}
+          defaultValue={myPageData.birthday ?
+            format(new Date(myPageData.birthday), 'yyyy-MM-dd') :
+            myPageData.birthday}
           onChange={handleUpdateBirthday}
         />
       </FormGroup>
