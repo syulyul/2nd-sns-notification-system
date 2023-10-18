@@ -38,6 +38,14 @@ const buildLink = ({ location, query, page }) => {
 const Pagination = ({ page, lastPage, query }) => {
   const location = useLocation();
 
+  //페이지네이션 위로 스크롤
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
       <>
         <PageLabel>
@@ -53,6 +61,7 @@ const Pagination = ({ page, lastPage, query }) => {
                         })
                   }
                   className={page === 1 ? "pagination-link-active" : ""}
+                  onClick={scrollToTop}
               >
                 {1}
               </PaginationLink>
@@ -69,6 +78,7 @@ const Pagination = ({ page, lastPage, query }) => {
                         })
                   }
                   className={page === page - 1 ? "pagination-link-active" : ""}
+                  onClick={scrollToTop}
               >
                 {page - 1}
               </PaginationLink>
@@ -80,6 +90,7 @@ const Pagination = ({ page, lastPage, query }) => {
                 page,
               })}
               className="pagination-link-active"
+              onClick={scrollToTop}
           >
             {page}
           </PaginationLink>
@@ -95,6 +106,7 @@ const Pagination = ({ page, lastPage, query }) => {
                         })
                   }
                   className={page === lastPage - 1 ? "pagination-link-active" : ""}
+                  onClick={scrollToTop}
               >
                 {parseInt(page) + 1}
               </PaginationLink>
@@ -111,6 +123,7 @@ const Pagination = ({ page, lastPage, query }) => {
                         })
                   }
                   className={page === lastPage ? "pagination-link-active" : ""}
+                  onClick={scrollToTop}
               >
                 {lastPage}
               </PaginationLink>
