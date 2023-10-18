@@ -45,11 +45,14 @@ export const newNoti = async ({
   // Firebase 알림 메시지 전송
   if (fcmToken) {
     const message = {
-      data: {
+      notification: {
         title: title,
         body: content,
       },
       token: fcmToken,
+      data: {
+        url,
+      },
     };
 
     const response = await admin.messaging().send(message);
