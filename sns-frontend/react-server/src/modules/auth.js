@@ -244,9 +244,9 @@ const auth = handleActions(
       ...state,
       authError: null,
       user,
-      followList: user.followMemberSet,
-      likeBoardList: user.likeBoardSet,
-      likeGuestBookList: user.likeGuestBookSet,
+      followList: user ? user.followMemberSet : [],
+      likeBoardList: user ? user.likeBoardSet : [],
+      likeGuestBookList: user ? user.likeGuestBookSet : [],
       authMessage:
         response.status == 200
           ? null
