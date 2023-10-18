@@ -30,6 +30,7 @@ self.addEventListener('push', function (e) {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
+
 self.addEventListener('notificationclick', function (event) {
   console.log('notification click');
   console.log(messageData);

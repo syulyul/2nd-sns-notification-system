@@ -72,30 +72,31 @@ const MemberInfoUpdateContainer = () => {
     const updatedGender = updateGender || myPage.gender;
     const updatedStateMessage = updateStateMessage || myPage.stateMessage;
 
-    updateData.append(
-      'data',
-      new Blob(
-        [
-          JSON.stringify({
-            no: parseInt(userNo, 10),
-            name: myPage.name,
-            nick: updatedNick,
-            birthday: updatedBirthday,
-            email: updatedEmail,
-            phoneNumber: updatedPhoneNumber,
-            password: updatedPassword,
-            gender: updatedGender,
-            stateMessage: updatedStateMessage,
-          }),
-        ],
-        {
-          type: 'application/json',
-        }
-      )
-    );
-    dispatch(update({ updateData, userNo }));
-    navigate(`/myPage/${userNo}`);
-  };
+      updateData.append(
+        'data',
+        new Blob(
+          [
+            JSON.stringify({
+              no: parseInt(userNo, 10),
+              name: myPage.name,
+              nick: updatedNick,
+              birthday: updatedBirthday,
+              email: updatedEmail,
+              phoneNumber: updatedPhoneNumber,
+              password: updatedPassword,
+              gender: updatedGender,
+              stateMessage: updatedStateMessage,
+            })
+          ],
+          {
+            type: 'application/json'
+          }
+        )
+      );
+      dispatch(update({ updateData, userNo }));
+      navigate(`/myPage/${userNo}`);
+      window.location.reload();
+    };
 
   // 회원 삭제
   const onDelete = (e) => {
