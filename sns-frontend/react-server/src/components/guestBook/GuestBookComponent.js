@@ -120,6 +120,7 @@ const MetaInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  padding-right: 20px;
 `;
 
 const ClockIcon = styled.img`
@@ -269,6 +270,16 @@ const LikeButton = styled.button`
   right: 10px;
   padding: 0;
   font-size: 24px;
+
+  &:hover {
+    color: #426b1f;
+    cursor: pointer;
+    &::before {
+      content: '❤️';
+      position: absolute;
+      transition: top 0.2s, opacity 0.2s;
+    }
+  }
 `;
 
 const DeleteButtonContainer = styled.div`
