@@ -79,7 +79,7 @@ const FollowComponent = ({
               handleUnfollow={handleUnfollow}
               handleFollow={handleFollow}
             />
-            <Link to={`/room?mno1=${followItem.no}&mno2=${user.no}`}>
+            <Link to={`/room?mno1=${user.no}&mno2=${followItem.no}`}>
               <StyledChatButton>
                 <img src="/images/dm.png" alt="채팅하기" />
               </StyledChatButton>

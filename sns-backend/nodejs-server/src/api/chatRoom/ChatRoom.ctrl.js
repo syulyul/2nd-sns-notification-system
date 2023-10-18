@@ -2,6 +2,7 @@ import { redisClient } from '../../redis';
 import Chat from '../../schemas/chat';
 import Room from '../../schemas/room';
 import User from '../../schemas/user';
+import { addLog, newNoti } from '../notification/notification.ctrl';
 
 export const roomList = async (req, res, next) => {
   try {
@@ -44,6 +45,14 @@ export const enterRoom = async (req, res, next) => {
       room.populate('users');
       // const io = req.app.get('io');
       // io.of('/room').emit('newRoom', room);
+      const newNotiData = {
+        memberNo: user2.mno,
+        notiTypeNo: 4,
+        content: '새로운 채팅방이 생성되었습니다',
+        url: `/room?mno1=${user1.mno}&mno2=${user2.mno}`,
+        notiState: 0,
+      };
+      newNoti(newNotiData);
     }
     let chats = await Chat.find({ room: room })
       .sort({ _id: -1 })

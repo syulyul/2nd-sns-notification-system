@@ -2,6 +2,10 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import FloatingHeart from '../common/FloatingHeart';
+import Slider from 'react-slick'; // react-slick 라이브러리 추가
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { PrevArrow, NextArrow } from '../common/SliderArrows';
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +21,7 @@ const Container = styled.div`
 const ContentBox = styled.div`
   text-align: left;
   padding: 20px;
-  background: #f2f2f2;
+  background: #fafaf5;
   width: 600px;
   //height: 7000px;
   position: relative;
@@ -57,7 +61,6 @@ const StyledButton = styled.button`
 
   &:hover {
     pointer: cursor;
-    background-color: #5d962c;
   }
 `;
 
@@ -67,6 +70,16 @@ const LikeButton = styled(StyledButton)`
   background-color: transparent;
   color: black;
   font-size: 25px;
+
+  &:hover {
+    color: #426b1f;
+    cursor: pointer;
+    &::before {
+      content: '❤️';
+      position: absolute;
+      transition: top 0.2s, opacity 0.2s;
+    }
+  }
 `;
 
 const ClockIcon = styled.img`
@@ -99,6 +112,10 @@ const SubmitButton = styled(StyledButton)`
   justify-content: center;
   text-align: center;
   height: 50px;
+
+  &:hover {
+    background-color: #5d962c;
+  }
 `;
 
 const CommentTextArea = styled.textarea`
@@ -264,46 +281,37 @@ const FileInput = styled.input`
   cursor: pointer;
 `;
 
-// const FileInputWrapper = styled.div`
-//   position: relative;
-//   font-size: 12px;
+const ImageContainer = styled.div`
+  display: flex;
+  overflow-x: auto;
+  align-items: center;
+`;
 
-//   flex: 1;
-//   padding: 13px;
-//   margin-right: 5px;
-//   &:hover {
-//     cursor: pointer;
-//   }
+const ImageWrapper = styled.div`
+  margin-right: 10px;
+  position: relative;
+`;
 
-//   font-size: 12px;
-// `;
+const DeleteButton = styled.a`
+  position: absolute;
+  top: 0;
+  right: 0;
+  //background-color:#fafaf5;
+  color: #fafaf5;
+  cursor: pointer;
+  width: 25px; 
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1; 
+  text-align: center; /* 텍스트 가로 정렬을 위해 text-align 설정 */
+`;
 
-// const FileInputLabel = styled.label`
-//   background-color: #d3d3d3;
-//   color: light-gray;
-//   padding: 8px 8px;
-//   border: none;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   font-size: 0.65rem;
-//   // margin-left: 10px;
-//   margin-left: 0px;
-//   &:hover {
-//     background-color: #426b1f;
-//     color: white;
-//   }
-// `;
+const StyledImageSlider = styled(Slider)`
+  width: 100%; // 슬라이더 컨테이너의 너비를 100%로 설정
+`;
 
-// const FileInput = styled.input`
-//   display: none;
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   opacity: 0;
-//   cursor: pointer;
-// `;
 
 const BoardDetailComponent = ({
   user,
@@ -331,6 +339,17 @@ const BoardDetailComponent = ({
   const [visibleComments, setVisibleComments] = useState(5); // 처음에 댓글 5개만 보이도록 설정
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  const numImages = board.attachedFiles ? board.attachedFiles.length : 0; 
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: numImages >= 3 ? 3 : numImages,
+    slidesToScroll: 1,
+    prevArrow: <PrevArrow />, // 이전 버튼
+    nextArrow: <NextArrow />, // 다음 버튼
+  };
   const loadMoreComments = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
@@ -430,28 +449,28 @@ const BoardDetailComponent = ({
               onChange={handleUpdateContent}
             ></StyledTextArea>
             <div>
-              {board && board.attachedFiles
-                ? board.attachedFiles.map((file, index) => (
-                    <div key={index}>
-                      <a
-                        href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
-                      >
-                        <StyledImage
-                          src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
-                          alt="Attached file"
-                        />
-                      </a>
-
-                      {user.no === board.writer.no ? (
-                        <div>
-                          <a href="#" onClick={() => onPhotoDelete(file.no)}>
-                            X
+              {board && board.attachedFiles && (
+                  <StyledImageSlider {...settings}>
+                    {board.attachedFiles.map((file, index) => (
+                        <ImageWrapper key={index}>
+                          <a
+                              href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                          >
+                            <StyledImage
+                                src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                                alt={`Attached file ${index}`}
+                            />
                           </a>
-                        </div>
-                      ) : null}
-                    </div>
-                  ))
-                : null}
+                          {user && user.no === board.writer.no ? (
+                              <DeleteButton onClick={() => onPhotoDelete(file.no)}>X</DeleteButton>
+                          ) : null}
+                        </ImageWrapper>
+                    ))}
+                  </StyledImageSlider>
+              )}
+            </div>
               <FileInputWrapper>
                 <FileInputLabel>
                   파일 선택
@@ -459,7 +478,6 @@ const BoardDetailComponent = ({
                 </FileInputLabel>
                 &nbsp;&nbsp;파일을 선택해 주세요
               </FileInputWrapper>
-            </div>
           </form>
           <BoardDetailWrapper>
             <LikeButton onClick={() => handleLikeButtonClick(boardNo)}>

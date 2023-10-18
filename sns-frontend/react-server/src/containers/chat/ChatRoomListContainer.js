@@ -36,11 +36,6 @@ const ChatRoomListContainer = () => {
     }
   }, [dispatch, user]);
   const handleSelectRoom = (users) => {
-    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-    console.log(users);
-    console.log(users[0]);
-    console.log(users[1]);
-
     if (users && users[0] && users[1]) {
       navigate(`/room?mno1=${users[0].mno}&mno2=${users[1].mno}`);
     }

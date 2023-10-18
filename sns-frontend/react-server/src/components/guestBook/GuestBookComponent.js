@@ -26,7 +26,7 @@ const StyledTable = styled.table`
   &,
   th,
   td {
-    border: 1px solid #f2f2f2;
+    border: 1px solid #fafaf5;
   }
 
   th,
@@ -36,7 +36,7 @@ const StyledTable = styled.table`
   }
 
   th {
-    background-color: #f2f2f2;
+    background-color: #fafaf5;
   }
 `;
 
@@ -120,6 +120,7 @@ const MetaInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  padding-right: 20px;
 `;
 
 const ClockIcon = styled.img`
@@ -154,7 +155,7 @@ const PaginationLink = styled.a`
   text-align: center;
   margin-right: 4px;
   border-radius: 50%;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   text-decoration: none;
   color: black;
 
@@ -193,7 +194,7 @@ const TitleMetaCell = styled.td`
 `;
 
 const FirstRow = styled.tr`
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   height: 50px;
 `;
 
@@ -269,6 +270,16 @@ const LikeButton = styled.button`
   right: 10px;
   padding: 0;
   font-size: 24px;
+
+  &:hover {
+    color: #426b1f;
+    cursor: pointer;
+    &::before {
+      content: '❤️';
+      position: absolute;
+      transition: top 0.2s, opacity 0.2s;
+    }
+  }
 `;
 
 const DeleteButtonContainer = styled.div`

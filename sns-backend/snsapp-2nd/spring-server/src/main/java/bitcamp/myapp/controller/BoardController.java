@@ -410,7 +410,7 @@ public class BoardController {
       @RequestParam int category,
       @RequestParam(name = "searchTxt") String keyword,
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "6") int pageSize) {
+      @RequestParam(defaultValue = "5") int pageSize) {
     List<Board> resultList;
 //    String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
     try {

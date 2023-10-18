@@ -29,7 +29,7 @@ const TableCell = styled.td`
 const TableHeaderCell = styled.th`
   padding: 10px;
   text-align: center;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   //border: 1px solid #ddd;
   width: 200px;
 `;
@@ -82,13 +82,13 @@ const CommentTableCell = styled.td`
 const CommentTableHeaderCell = styled.th`
   padding: 10px;
   text-align: center;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   width: 200px;
 `;
 
 const CommentTitleHeaderCell = styled.th`
   width: 800px;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
 `;
 
 const ToggleButton = styled.button`
@@ -97,12 +97,17 @@ const ToggleButton = styled.button`
   border: none; /* 테두리 제거 */
 `;
 
+const BoardListBox = styled.div`
+  margin-top:-300px;
+`;
+
+
 const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
   const location = useLocation();
   const { userNo } = useParams(); // URL 파라미터에서 userNo를 추출
   const queryParams = new URLSearchParams(location.search);
-  const [isBoardListOpen, setIsBoardListOpen] = useState(false);
-  const [isCommentListOpen, setIsCommentListOpen] = useState(false);
+  const [isBoardListOpen, setIsBoardListOpen] = useState(true);
+  const [isCommentListOpen, setIsCommentListOpen] = useState(true);
 
   // URL이 /myPage/ 일때만 게시글과 댓글 섹션을 렌더링
   const shouldRenderSections = show === 'boardList';
@@ -125,7 +130,7 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
       <>
         <MyPageTemplate>
           {shouldRenderSections && (
-              <div className="boardListBox" data-th-unless="">
+              <BoardListBox>
                 <div>
                   <h2>
                     🌱 내가 쓴 게시글
@@ -222,7 +227,7 @@ const PageDetailComponent = ({ myBoardList, myCommentList, show }) => {
                   </tbody>
                 </CommentListTable>
                 )}
-              </div>
+              </BoardListBox>
           )}
         </MyPageTemplate>
       </>

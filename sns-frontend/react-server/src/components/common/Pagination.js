@@ -15,7 +15,7 @@ const PaginationLink = styled(Link)`
   text-align: center;
   margin-right: 4px;
   border-radius: 50%;
-  background-color: #f2f2f2;
+  background-color: #fafaf5;
   text-decoration: none;
   color: black;
 
