@@ -98,6 +98,7 @@ const MemberInfoUpdateContainer = () => {
       );
       dispatch(update({ updateData, userNo }));
       navigate(`/myPage/${userNo}`);
+      window.location.reload();
     };
 
   // 회원 삭제
