@@ -70,7 +70,7 @@ const MemberInfoUpdateContainer = () => {
     const updatedPhoneNumber = updatePhoneNumber || myPage.phoneNumber;
     const updatedPassword = updatePassword || myPage.password;
     const updatedGender = updateGender || myPage.gender;
-    const updatedStateMessage = updateStateMessage || myPage.updateStateMessage;
+    const updatedStateMessage = updateStateMessage || myPage.stateMessage;
 
     updateData.append(
       'data',
