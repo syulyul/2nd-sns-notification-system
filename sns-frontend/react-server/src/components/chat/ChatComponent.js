@@ -274,12 +274,11 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
       }
     >
       {chat}
-      {translated.map((result) => {
-        if (result.langCode === targetLanguage) {
-          return <span key={result.langCode}>({result.txt})</span>;
-        }
-        return null; // 조건을 만족하지 않으면 null 반환
-      })}
+      <span>
+        {translated?.[targetLanguage]
+          ? '(' + translated[targetLanguage] + ')'
+          : null}
+      </span>
     </ChatMessage>
   );
 };
