@@ -38,6 +38,7 @@ const buildLink = ({ location, query, page }) => {
 const Pagination = ({ page, lastPage, query }) => {
   const location = useLocation();
 
+  //페이지네이션 위로 스크롤
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
