@@ -109,6 +109,7 @@ const MemberInfoUpdateComponent = ({
   myPageData,
   onSubmit,
   onReset,
+  onDelete,
   onChange,
   onChangeFile,
   handleUpdateNick,
@@ -118,7 +119,6 @@ const MemberInfoUpdateComponent = ({
   handleUpdatePassword,
   handleUpdateGender,
   handleUpdateStateMessage}) => {
-  const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   if (myPageData == null) {
     return <div>loading...</div>;
   }
@@ -134,7 +134,7 @@ const MemberInfoUpdateComponent = ({
           onChange={onChangeFile}
         />
         {myPageData.photo ? (
-          <UserPhoto src={profileUrl} alt="User Profile" />
+          <UserPhoto src={`http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`} alt="User Profile" />
         ) : (
           <UserPhoto
             src={process.env.PUBLIC_URL + '/images/default.jpg'}
@@ -222,7 +222,7 @@ const MemberInfoUpdateComponent = ({
           초기화
         </CustomButton>
       </ButtonContainer>
-      <CustomLink href={`/myPage/${myPageData.no}/update`}>탈퇴하기</CustomLink>
+      <CustomLink onClick={onDelete}>탈퇴하기</CustomLink>
     </FormContainer>
   );
 };
