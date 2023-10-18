@@ -38,7 +38,7 @@ const CardContainer = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
   margin: 0 auto;
-  height: 550px;
+  height: 600px;
 `;
 
 const Card = styled.div`
