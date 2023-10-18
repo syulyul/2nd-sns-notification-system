@@ -2,6 +2,10 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import FloatingHeart from '../common/FloatingHeart';
+import Slider from 'react-slick'; // react-slick 라이브러리 추가
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { PrevArrow, NextArrow } from '../common/SliderArrows';
 
 const Container = styled.div`
   display: flex;
@@ -277,6 +281,20 @@ const FileInput = styled.input`
   cursor: pointer;
 `;
 
+const ImageContainer = styled.div`
+  display: flex;
+  overflow-x: auto;
+`;
+
+const ImageWrapper = styled.div`
+  margin-right: 10px;
+`;
+
+const StyledImageSlider = styled(Slider)`
+  width: 100%; // 슬라이더 컨테이너의 너비를 100%로 설정
+`;
+
+
 const BoardDetailComponent = ({
   user,
   board,
@@ -303,6 +321,15 @@ const BoardDetailComponent = ({
   const [visibleComments, setVisibleComments] = useState(5); // 처음에 댓글 5개만 보이도록 설정
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    prevArrow: <PrevArrow />, // 이전 버튼
+    nextArrow: <NextArrow />, // 다음 버튼
+  };
   const loadMoreComments = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
@@ -402,28 +429,32 @@ const BoardDetailComponent = ({
               onChange={handleUpdateContent}
             ></StyledTextArea>
             <div>
-              {board && board.attachedFiles
-                ? board.attachedFiles.map((file, index) => (
-                    <div key={index}>
-                      <a
-                        href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
-                      >
-                        <StyledImage
-                          src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
-                          alt="Attached file"
-                        />
-                      </a>
-
-                      {user.no === board.writer.no ? (
-                        <div>
-                          <a href="#" onClick={() => onPhotoDelete(file.no)}>
-                            X
+              {board && board.attachedFiles ? (
+                  <StyledImageSlider {...settings}>
+                    {board.attachedFiles.map((file, index) => (
+                        <ImageWrapper key={index}>
+                          <a
+                              href={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                          >
+                            <StyledImage
+                                src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_board/${file.filePath}`}
+                                alt={`Attached file ${index}`}
+                            />
                           </a>
-                        </div>
-                      ) : null}
-                    </div>
-                  ))
-                : null}
+                          {user.no === board.writer.no ? (
+                              <div>
+                                <a href="#" onClick={() => onPhotoDelete(file.no)}>
+                                  X
+                                </a>
+                              </div>
+                          ) : null}
+                        </ImageWrapper>
+                    ))}
+                  </StyledImageSlider>
+              ) : null}
+            </div>
               <FileInputWrapper>
                 <FileInputLabel>
                   파일 선택
@@ -431,7 +462,6 @@ const BoardDetailComponent = ({
                 </FileInputLabel>
                 &nbsp;&nbsp;파일을 선택해 주세요
               </FileInputWrapper>
-            </div>
           </form>
           <BoardDetailWrapper>
             <LikeButton onClick={() => handleLikeButtonClick(boardNo)}>
