@@ -29,7 +29,8 @@ const StyledTable = styled.table`
     border: 1px solid #f2f2f2;
   }
 
-  th, td {
+  th,
+  td {
     padding: 8px;
     text-align: left;
   }
@@ -62,7 +63,7 @@ const StyledButton = styled.button`
   align-items: center;
   padding: 5px 10px;
   font-size: 16px;
-  background-color: #426B1F;
+  background-color: #426b1f;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -76,6 +77,11 @@ const StyledButton = styled.button`
 
   &.actions {
     margin: 5px;
+  }
+
+  &:hover {
+    pointer: cursor;
+    background-color: #5d962c;
   }
 `;
 
@@ -153,7 +159,7 @@ const PaginationLink = styled.a`
   color: black;
 
   &.active {
-    background-color: #426B1F;
+    background-color: #426b1f;
     color: white;
   }
 `;
@@ -228,22 +234,25 @@ const LikeLabel = styled.label`
   background-color: transparent;
 `;
 
-const Table = styled.table`
-`;
+const Table = styled.table``;
 
-const ButtonContainer = styled.div`
-`;
+const ButtonContainer = styled.div``;
 
 const DeleteButton = styled.button`
   text-align: center;
   margin-bottom: 2%;
   padding: 5px 10px;
-  background-color: #426B1F;
+  background-color: #426b1f;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   margin-top: 10px;
+
+  &:hover {
+    pointer: cursor;
+    background-color: #5d962c;
+  }
 `;
 
 const ProfileLink = styled.a`
@@ -274,14 +283,13 @@ const formatDate = (dateString) => {
 
 const TitleSpan = styled.span`
   font-size: 20px;
-` ;
+`;
 
 const FloatingHeartsContainer = styled.div`
   position: absolute;
   top: 100px;
   right: 0;
 `;
-
 
 const GuestBookList = styled.div`
   opacity: ${(props) => (props.isVisible ? 1 : 0)};
@@ -311,7 +319,6 @@ const GuestBookComponent = ({
   query,
   user,
 }) => {
-
   const [floatingHearts, setFloatingHearts] = useState([]);
   const [likedGuestBooks, setLikedGuestBooks] = useState({});
   const [isListVisible, setListVisible] = useState(false);
@@ -337,13 +344,15 @@ const GuestBookComponent = ({
       } else {
         await handleLike(no);
         setLikedGuestBooks((prev) => ({ ...prev, [no]: true }));
-        setFloatingHearts((prev) => [...prev, { id: Date.now(), guestBookNo: no }]);
+        setFloatingHearts((prev) => [
+          ...prev,
+          { id: Date.now(), guestBookNo: no },
+        ]);
       }
     } catch (error) {
       console.error('좋아요 처리 중 오류 발생:', error);
     }
   };
-
 
   const removeHeart = (id) => {
     setFloatingHearts((prev) => prev.filter((heart) => heart.id !== id));
@@ -352,20 +361,22 @@ const GuestBookComponent = ({
   return (
     <>
       <GuestbookTitle>
-        <h2>🌱 {guestBookOwnerNick ? `${guestBookOwnerNick} 의 방명록 🌱` : ''}</h2>
+        <h2>
+          🌱 {guestBookOwnerNick ? `${guestBookOwnerNick} 의 방명록 🌱` : ''}
+        </h2>
       </GuestbookTitle>
 
       <AddGuestbookForm>
-        <StyledForm method='post' action='/guestBook/add'>
+        <StyledForm method="post" action="/guestBook/add">
           <StyledTable>
             <tbody>
               <tr>
                 <StyledTh>🌱 제목</StyledTh>
                 <td>
                   <StyledInput
-                    type='text'
-                    name='title'
-                    placeholder='제목을 입력하세요'
+                    type="text"
+                    name="title"
+                    placeholder="제목을 입력하세요"
                     required
                     value={title}
                     onChange={onChange}
@@ -376,10 +387,10 @@ const GuestBookComponent = ({
                 <StyledTh>🌱 내용</StyledTh>
                 <td>
                   <StyledTextarea
-                    name='content'
-                    rows='6'
-                    cols='150'
-                    placeholder='내용을 입력하세요'
+                    name="content"
+                    rows="6"
+                    cols="150"
+                    placeholder="내용을 입력하세요"
                     required
                     value={content}
                     onChange={onChange}
@@ -387,82 +398,97 @@ const GuestBookComponent = ({
                 </td>
               </tr>
             </tbody>
-            <input type='hidden' name='mpno' value={mpno} />
+            <input type="hidden" name="mpno" value={mpno} />
           </StyledTable>
           <StyledDiv>
-            <StyledButton type='submit' onClick={onSubmit}>작성하기</StyledButton>
+            <StyledButton type="submit" onClick={onSubmit}>
+              작성하기
+            </StyledButton>
           </StyledDiv>
         </StyledForm>
       </AddGuestbookForm>
 
       <GuestBookList isVisible={isListVisible}>
-      {Array.isArray(guestBookList) && guestBookList.map((guestBook, index) => (
-        <Container key={guestBook.no}>
-          <ContentContainer>
-            <ContentTable>
-              <tbody>
-                <FirstRow>
-                  <NoCell>
-                    <span>No. {guestBook.no}</span>
-                  </NoCell>
-                  <TitleMetaCell colSpan='3'>
-                    <HorizontalLayout>
-                      <TitleSpan>{guestBook.title}</TitleSpan>
-                      <MetaInfo>
-                        <ClockIcon src='/images/clock.png' />
-                        <span>{formatDate(guestBook.createdAt)}</span>
-                      </MetaInfo>
-                    </HorizontalLayout>
-                  </TitleMetaCell>
-                </FirstRow>
-                <SecondRow>
-                  <WriterCell>
-                    <ProfilePicture>
-                      <img
-                          src={
-                            guestBook.writer.photo
+        {Array.isArray(guestBookList) &&
+          guestBookList.map((guestBook, index) => (
+            <Container key={guestBook.no}>
+              <ContentContainer>
+                <ContentTable>
+                  <tbody>
+                    <FirstRow>
+                      <NoCell>
+                        <span>No. {guestBook.no}</span>
+                      </NoCell>
+                      <TitleMetaCell colSpan="3">
+                        <HorizontalLayout>
+                          <TitleSpan>{guestBook.title}</TitleSpan>
+                          <MetaInfo>
+                            <ClockIcon src="/images/clock.png" />
+                            <span>{formatDate(guestBook.createdAt)}</span>
+                          </MetaInfo>
+                        </HorizontalLayout>
+                      </TitleMetaCell>
+                    </FirstRow>
+                    <SecondRow>
+                      <WriterCell>
+                        <ProfilePicture>
+                          <img
+                            src={
+                              guestBook.writer.photo
                                 ? `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${guestBook.writer.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`
                                 : '/images/avatar.png'
-                          }
-                          alt="profile"
-                      />
-                    </ProfilePicture>
-                    <NickNameDiv>{guestBook.writer.nick
-                      || '임시 닉네임'}</NickNameDiv>
-                    {// 작성자와 로그인 사용자 번호가 일치하는 경우와
-                      // 본인 방명록에만 삭제 버튼 표시
-                    }
-                    {(user.no === guestBook.writer.no || guestBook.mpno === user.no) && (
-                        <DeleteButton
-                            onClick={(e) => onDelete(e, guestBook.no)}>삭제</DeleteButton>
-                    )}
-                  </WriterCell>
-                  <ContentLikeCell colSpan='3'>
-                    <GuestBookTextarea readOnly>
-                      {guestBook.content || '내용'}
-                    </GuestBookTextarea>
-                    <LikeButton onClick={() => handleLikeButtonClick(guestBook.no)}>
-                      {likeGuestBookSet.includes(guestBook.no) ? '️❤️' : '🤍'}
-                    </LikeButton>
-                    <FloatingHeartsContainer>
-                      {floatingHearts
-                      .filter((heart) => heart.guestBookNo === guestBook.no)
-                      .map((heart) => (
-                          <FloatingHeart key={heart.id} onComplete={() => removeHeart(heart.id)} />
-                      ))}
-                    </FloatingHeartsContainer>
-                  </ContentLikeCell>
-                </SecondRow>
-              </tbody>
-            </ContentTable>
-          </ContentContainer>
-          <DeleteButtonContainer>
-
-
-          </DeleteButtonContainer>
-        </Container>
-      ))}
-        </GuestBookList>
+                            }
+                            alt="profile"
+                          />
+                        </ProfilePicture>
+                        <NickNameDiv>
+                          {guestBook.writer.nick || '임시 닉네임'}
+                        </NickNameDiv>
+                        {
+                          // 작성자와 로그인 사용자 번호가 일치하는 경우와
+                          // 본인 방명록에만 삭제 버튼 표시
+                        }
+                        {(user.no === guestBook.writer.no ||
+                          guestBook.mpno === user.no) && (
+                          <DeleteButton
+                            onClick={(e) => onDelete(e, guestBook.no)}
+                          >
+                            삭제
+                          </DeleteButton>
+                        )}
+                      </WriterCell>
+                      <ContentLikeCell colSpan="3">
+                        <GuestBookTextarea readOnly>
+                          {guestBook.content || '내용'}
+                        </GuestBookTextarea>
+                        <LikeButton
+                          onClick={() => handleLikeButtonClick(guestBook.no)}
+                        >
+                          {likeGuestBookSet.includes(guestBook.no)
+                            ? '️❤️'
+                            : '🤍'}
+                        </LikeButton>
+                        <FloatingHeartsContainer>
+                          {floatingHearts
+                            .filter(
+                              (heart) => heart.guestBookNo === guestBook.no
+                            )
+                            .map((heart) => (
+                              <FloatingHeart
+                                key={heart.id}
+                                onComplete={() => removeHeart(heart.id)}
+                              />
+                            ))}
+                        </FloatingHeartsContainer>
+                      </ContentLikeCell>
+                    </SecondRow>
+                  </tbody>
+                </ContentTable>
+              </ContentContainer>
+              <DeleteButtonContainer></DeleteButtonContainer>
+            </Container>
+          ))}
+      </GuestBookList>
 
       <Pagination page={page} query={query} lastPage={lastPage} />
     </>

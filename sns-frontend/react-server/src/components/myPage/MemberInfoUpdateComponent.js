@@ -57,6 +57,10 @@ const CustomLink = styled.a`
   font-size: 15px;
   margin-top: 20px;
   margin-left: 540px;
+
+  &:hover {
+    color: #646464;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -78,6 +82,10 @@ const FormInput = styled.input`
   border-radius: 5px;
   width: 100%;
   margin-right: 26%;
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
 `;
 
 const FormSelect = styled.select`
@@ -89,16 +97,45 @@ const FormSelect = styled.select`
   margin-right: 26%;
 `;
 
-const FormFileInput = styled.input`
+const FileInputWrapper = styled.div`
+  position: relative;
+  font-size: 12px;
+
   flex: 1;
   padding: 13px;
   border: 1px solid #ccc;
   border-radius: 5px;
   width: 100%;
   margin-right: 5px;
+
+  font-size: 12px;
+`;
+
+const FileInputLabel = styled.label`
+  background-color: #d3d3d3;
+  color: light-gray;
+  padding: 8px 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.65rem;
+  margin-left: 0px;
+
   &:hover {
-    cursor: pointer;
+    background-color: #426b1f;
+    color: white;
   }
+`;
+
+const FileInput = styled.input`
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 `;
 
 const StyledH1 = styled.h1`
@@ -116,7 +153,8 @@ const MemberInfoUpdateComponent = ({
   handleUpdateEmail,
   handleUpdatePhoneNumber,
   handleUpdatePassword,
-  handleUpdateGender}) => {
+  handleUpdateGender,
+}) => {
   const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
   if (myPageData == null) {
     return <div>loading...</div>;
@@ -127,11 +165,24 @@ const MemberInfoUpdateComponent = ({
 
       <FormGroup>
         <FormLabel>🌱 사진</FormLabel>
-        <FormFileInput
-          type="file"
-          name="photo"
-          onChange={onChangeFile}
-        />
+
+        <FileInputWrapper>
+          <FileInputLabel>
+            파일 선택
+            <FileInput type="file" name="photo" onChange={onChangeFile} />
+          </FileInputLabel>
+          &nbsp;&nbsp;파일을 선택해 주세요
+        </FileInputWrapper>
+
+        {/* <FormFileInput type="file" name="photo" onChange={onChangeFile} />
+        {myPageData.photo ? (
+          <UserPhoto src={profileUrl} alt="User Profile" />
+        ) : (
+          <UserPhoto
+            src={process.env.PUBLIC_URL + '/images/default.jpg'}
+            alt="Default Image"
+          />
+        )} */}
         {myPageData.photo ? (
           <UserPhoto src={profileUrl} alt="User Profile" />
         ) : (
@@ -188,7 +239,11 @@ const MemberInfoUpdateComponent = ({
 
       <FormGroup>
         <FormLabel htmlFor="password">🌱 암호</FormLabel>
-        <FormInput type="password" name="password" onChange={handleUpdatePassword} />
+        <FormInput
+          type="password"
+          name="password"
+          onChange={handleUpdatePassword}
+        />
       </FormGroup>
 
       <FormGroup>
@@ -203,7 +258,7 @@ const MemberInfoUpdateComponent = ({
           <option value="2">여자</option>
         </FormSelect>
       </FormGroup>
-      <input type='hidden' name='no' value={myPageData.no} />
+      <input type="hidden" name="no" value={myPageData.no} />
       <ButtonContainer>
         <CustomButton type="submit" onClick={onSubmit}>
           수정
