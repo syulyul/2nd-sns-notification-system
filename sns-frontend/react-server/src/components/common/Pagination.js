@@ -42,95 +42,95 @@ const Pagination = ({ page, lastPage, query }) => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
   return (
-      <>
-        <PageLabel>
-          {page <= 1 ? null : (
-              <PaginationLink
-                  to={
-                    page === 1
-                        ? undefined
-                        : buildLink({
-                          location,
-                          query,
-                          page: 1,
-                        })
-                  }
-                  className={page === 1 ? "pagination-link-active" : ""}
-                  onClick={scrollToTop}
-              >
-                {1}
-              </PaginationLink>
-          )}
-          {page <= 2 ? null : (
-              <PaginationLink
-                  to={
-                    page === page - 1
-                        ? undefined
-                        : buildLink({
-                          location,
-                          query,
-                          page: parseInt(page) - 1,
-                        })
-                  }
-                  className={page === page - 1 ? "pagination-link-active" : ""}
-                  onClick={scrollToTop}
-              >
-                {page - 1}
-              </PaginationLink>
-          )}
+    <>
+      <PageLabel>
+        {page <= 1 ? null : (
           <PaginationLink
-              to={buildLink({
-                location,
-                query,
-                page,
-              })}
-              className="pagination-link-active"
-              onClick={scrollToTop}
+            to={
+              page === 1
+                ? undefined
+                : buildLink({
+                    location,
+                    query,
+                    page: 1,
+                  })
+            }
+            className={page === 1 ? 'pagination-link-active' : ''}
+            onClick={scrollToTop}
           >
-            {page}
+            {1}
           </PaginationLink>
-          {page >= lastPage - 1 ? null : (
-              <PaginationLink
-                  to={
-                    page === lastPage - 1
-                        ? undefined
-                        : buildLink({
-                          location,
-                          query,
-                          page: parseInt(page) + 1,
-                        })
-                  }
-                  className={page === lastPage - 1 ? "pagination-link-active" : ""}
-                  onClick={scrollToTop}
-              >
-                {parseInt(page) + 1}
-              </PaginationLink>
-          )}
-          {parseInt(page) == parseInt(lastPage) ? null : (
-              <PaginationLink
-                  to={
-                    page === lastPage
-                        ? undefined
-                        : buildLink({
-                          location,
-                          query,
-                          page: lastPage,
-                        })
-                  }
-                  className={page === lastPage ? "pagination-link-active" : ""}
-                  onClick={scrollToTop}
-              >
-                {lastPage}
-              </PaginationLink>
-          )}
-        </PageLabel>
-        <Spacer />
-      </>
+        )}
+        {page <= 2 ? null : (
+          <PaginationLink
+            to={
+              page === page - 1
+                ? undefined
+                : buildLink({
+                    location,
+                    query,
+                    page: parseInt(page) - 1,
+                  })
+            }
+            className={page === page - 1 ? 'pagination-link-active' : ''}
+            onClick={scrollToTop}
+          >
+            {page - 1}
+          </PaginationLink>
+        )}
+        <PaginationLink
+          to={buildLink({
+            location,
+            query,
+            page,
+          })}
+          className="pagination-link-active"
+          onClick={scrollToTop}
+        >
+          {page}
+        </PaginationLink>
+        {page >= lastPage - 1 ? null : (
+          <PaginationLink
+            to={
+              page === lastPage - 1
+                ? undefined
+                : buildLink({
+                    location,
+                    query,
+                    page: parseInt(page) + 1,
+                  })
+            }
+            className={page === lastPage - 1 ? 'pagination-link-active' : ''}
+            onClick={scrollToTop}
+          >
+            {parseInt(page) + 1}
+          </PaginationLink>
+        )}
+        {parseInt(page) >= parseInt(lastPage) ? null : (
+          <PaginationLink
+            to={
+              page === lastPage
+                ? undefined
+                : buildLink({
+                    location,
+                    query,
+                    page: lastPage,
+                  })
+            }
+            className={page === lastPage ? 'pagination-link-active' : ''}
+            onClick={scrollToTop}
+          >
+            {lastPage}
+          </PaginationLink>
+        )}
+      </PageLabel>
+      <Spacer />
+    </>
   );
 };
 export default Pagination;
