@@ -77,8 +77,5 @@
       + 채팅 화면
 
  ### 7.아키택처
-- API
-  ![img.png](image/ar2.png)
-
-- Cloud
-  ![img.png](image/ar1.JPG)
+- API & Cloud
+  ![img.png](image/2ndar231018.png)
