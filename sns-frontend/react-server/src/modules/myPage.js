@@ -11,9 +11,6 @@ const INITIALIZE_FORM = 'myPage/INITIALIZE_FORM';
 const [UPDATE, UPDATE_SUCCESS, UPDATE_FAILURE] =
   createRequestActionTypes('myPage/UPDATE');
 
-const [DELETE, DELETE_SUCCESS, DELETE_FAILURE] =
-  createRequestActionTypes('myPage/DELETE');
-
 const [LIST, LIST_SUCCESS, LIST_FAILURE] =
   createRequestActionTypes('myPage/LIST');
 
@@ -38,7 +35,6 @@ export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 
 export const update = createAction(
   UPDATE,({ updateData, userNo }) => ({ updateData, userNo }));
-export const deleteMember = createAction(DELETE, (userNo) => userNo);
 
 export const list = createAction(LIST, (userNo) => userNo);
 export const info = createAction(INFO, (userNo) => userNo);
@@ -47,7 +43,6 @@ export const follower = createAction(FOLLOWER, (userNo) => userNo);
 export const searchMembers = createAction(SEARCH_MEMBERS, (userNo) => userNo);
 
 const updateSaga = createRequestSaga(UPDATE, myPageAPI.update);
-const deleteMemberSaga = createRequestSaga(DELETE, myPageAPI.deleteMember);
 const listSaga = createRequestSaga(LIST, myPageAPI.list);
 const infoSaga = createRequestSaga(INFO, myPageAPI.info);
 const followingSaga = createRequestSaga(FOLLOWING, myPageAPI.following);
@@ -59,7 +54,6 @@ const searchMembersSaga = createRequestSaga(
 
 export function* myPageSaga() {
   yield takeLatest(UPDATE, updateSaga);
-  yield takeLatest(DELETE, deleteMemberSaga);
   yield takeLatest(LIST, listSaga);
   yield takeLatest(INFO, infoSaga);
   yield takeLatest(FOLLOWING, followingSaga);
@@ -99,15 +93,6 @@ const myPage = handleActions(
       myPage,
     }),
     [UPDATE_FAILURE]: (state, { payload: error }) => ({
-      ...state,
-      myPageError: error,
-    }),
-    [DELETE_SUCCESS]: (state) => ({
-      ...state,
-      myPageError: null,
-      myPage: initialState.myPage,
-    }),
-    [DELETE_FAILURE]: (state, { payload: error }) => ({
       ...state,
       myPageError: error,
     }),

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   changeField,
-  deleteMember,
   info,
   initializeForm,
   update
@@ -10,6 +9,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import MemberInfoUpdateComponent
   from '../../components/myPage/MemberInfoUpdateComponent';
+import { deleteMember } from '../../modules/auth';
 
 const MemberInfoUpdateContainer = () => {
     const dispatch = useDispatch();
@@ -104,7 +104,7 @@ const MemberInfoUpdateContainer = () => {
   const onDelete = (e) => {
     e.preventDefault();
     dispatch(deleteMember(userNo));
-    navigate(`/myPage/${userNo}`);
+    navigate(`/auth/login`);
   };
 
     return (
