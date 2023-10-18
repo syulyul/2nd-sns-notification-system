@@ -284,10 +284,28 @@ const FileInput = styled.input`
 const ImageContainer = styled.div`
   display: flex;
   overflow-x: auto;
+  align-items: center;
 `;
 
 const ImageWrapper = styled.div`
   margin-right: 10px;
+  position: relative;
+`;
+
+const DeleteButton = styled.a`
+  position: absolute;
+  top: 0;
+  right: 0;
+  //background-color:#fafaf5;
+  color: #fafaf5;
+  cursor: pointer;
+  width: 25px; 
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1; 
+  text-align: center; /* 텍스트 가로 정렬을 위해 text-align 설정 */
 `;
 
 const StyledImageSlider = styled(Slider)`
@@ -321,11 +339,13 @@ const BoardDetailComponent = ({
   const [visibleComments, setVisibleComments] = useState(5); // 처음에 댓글 5개만 보이도록 설정
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  const numImages = board.attachedFiles ? board.attachedFiles.length : 0; 
+
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: numImages >= 3 ? 3 : numImages,
     slidesToScroll: 1,
     prevArrow: <PrevArrow />, // 이전 버튼
     nextArrow: <NextArrow />, // 다음 버튼
@@ -429,7 +449,7 @@ const BoardDetailComponent = ({
               onChange={handleUpdateContent}
             ></StyledTextArea>
             <div>
-              {board && board.attachedFiles ? (
+              {board && board.attachedFiles && (
                   <StyledImageSlider {...settings}>
                     {board.attachedFiles.map((file, index) => (
                         <ImageWrapper key={index}>
@@ -443,17 +463,13 @@ const BoardDetailComponent = ({
                                 alt={`Attached file ${index}`}
                             />
                           </a>
-                          {user.no === board.writer.no ? (
-                              <div>
-                                <a href="#" onClick={() => onPhotoDelete(file.no)}>
-                                  X
-                                </a>
-                              </div>
+                          {user && user.no === board.writer.no ? (
+                              <DeleteButton onClick={() => onPhotoDelete(file.no)}>X</DeleteButton>
                           ) : null}
                         </ImageWrapper>
                     ))}
                   </StyledImageSlider>
-              ) : null}
+              )}
             </div>
               <FileInputWrapper>
                 <FileInputLabel>
