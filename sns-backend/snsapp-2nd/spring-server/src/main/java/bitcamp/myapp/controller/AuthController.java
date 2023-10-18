@@ -255,8 +255,12 @@ public class AuthController {
     String phoneNumber = bodyMap.get("phoneNumber");
     phoneNumber = phoneNumber.replaceAll("\\D+", "");
     try { // 이미 가입된 전화번호가 있으면
-      if (smsService.memberTelCount(phoneNumber) > 0) {
+      if (bodyMap.get("requestType").equals("resist")
+          && smsService.memberTelCount(phoneNumber) > 0) {
         return new ResponseEntity<>("이미 가입된 회원입니다", HttpStatus.OK);
+      } else if (bodyMap.get("requestType").equals("findPassword")
+          && smsService.memberTelCount(phoneNumber) == 0) {
+        return new ResponseEntity<>("가입되지 않은 회원입니다", HttpStatus.OK);
       } else {
         String code = smsService.sendRandomMessage(phoneNumber);
         redisService.getValueOps()

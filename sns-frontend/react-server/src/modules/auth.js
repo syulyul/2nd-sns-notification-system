@@ -61,9 +61,13 @@ export const initializeForm = createAction(INITIALIZE_FORM, () => {});
 export const register = createAction(REGISTER, ({ formData }) => ({
   formData,
 }));
-export const getAuthCode = createAction(GET_AUTH_CODE, ({ phoneNumber }) => ({
-  phoneNumber,
-}));
+export const getAuthCode = createAction(
+  GET_AUTH_CODE,
+  ({ phoneNumber, requestType }) => ({
+    phoneNumber,
+    requestType,
+  })
+);
 export const checkAuthCode = createAction(
   CHECK_AUTH_CODE,
   ({ phoneNumber, verificationCode }) => ({

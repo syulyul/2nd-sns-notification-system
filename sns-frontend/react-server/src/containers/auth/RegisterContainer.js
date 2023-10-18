@@ -88,7 +88,7 @@ const RegisterContainer = () => {
 
   const onAuthPhoneNumber = (e) => {
     e.preventDefault();
-    dispatch(getAuthCode({ phoneNumber }));
+    dispatch(getAuthCode({ phoneNumber, requestType: 'resist' }));
   };
   const onCheckPhoneNumber = (e) => {
     e.preventDefault();
