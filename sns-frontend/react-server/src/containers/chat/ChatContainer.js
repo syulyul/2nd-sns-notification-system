@@ -18,18 +18,27 @@ import { socket } from '../../socket';
 const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
-  const [targetLanguage, setTargetLanguage] = useState('ko');
-  const { room, chats, newChat, chatTxt, error, user, translatedChat, page } =
-    useSelector(({ chats, auth }) => ({
-      room: chats.room,
-      chats: chats.chats,
-      chatTxt: chats.chatTxt,
-      error: chats.error,
-      user: auth.user,
-      translatedChat: chats.translatedChat,
-      newChat: chats.newChat,
-      page: chats.nextPage,
-    }));
+  const {
+    room,
+    chats,
+    newChat,
+    chatTxt,
+    error,
+    user,
+    translatedChat,
+    page,
+    targetLanguage,
+  } = useSelector(({ chats, auth }) => ({
+    room: chats.room,
+    chats: chats.chats,
+    chatTxt: chats.chatTxt,
+    error: chats.error,
+    user: auth.user,
+    translatedChat: chats.translatedChat,
+    newChat: chats.newChat,
+    page: chats.nextPage,
+    targetLanguage: chats.targetLanguage,
+  }));
 
   const { search } = useLocation();
   const { mno1, mno2 } = qs.parse(search, { ignoreQueryPrefix: true });
@@ -46,6 +55,25 @@ const ChatContainer = () => {
         value,
       })
     );
+  };
+
+  const onChangeTargetLanguage = (targetLanguage) => {
+    dispatch(
+      changeField({
+        key: 'targetLanguage',
+        value: targetLanguage,
+      })
+    );
+  };
+
+  const onTranslate = (chatLog) => {
+    if (socket) {
+      socket.emit('translateChat', { targetLanguage, chatLog });
+    }
+  };
+
+  const onLoadBeforeChats = () => {
+    dispatch(loadBeforeChats({ roomId: room._id, mno1, mno2, page }));
   };
 
   useEffect(() => {
@@ -86,11 +114,6 @@ const ChatContainer = () => {
     };
   }, [room]);
 
-  useEffect(() => {
-    if (socket) {
-    }
-  }, [socket]);
-
   const onSendChat = (e) => {
     e.preventDefault();
 
@@ -103,20 +126,6 @@ const ChatContainer = () => {
     }
   };
 
-  const onTranslate = (chatLog) => {
-    // console.log(chatLog);
-    const req = {};
-    req.targetLanguage = targetLanguage;
-    req.chatLog = chatLog;
-    if (socket) {
-      socket.emit('translateChat', req);
-    }
-  };
-
-  const onLoadBeforeChats = () => {
-    dispatch(loadBeforeChats({ roomId: room._id, mno1, mno2, page }));
-  };
-
   return (
     <ChatComponent
       room={room}
@@ -127,10 +136,10 @@ const ChatContainer = () => {
       translatedChat={translatedChat}
       error={error}
       onChange={onChange}
+      targetLanguage={targetLanguage}
+      onChangeTargetLanguage={onChangeTargetLanguage}
       onSendChat={onSendChat}
       onTranslate={onTranslate}
-      targetLanguage={targetLanguage}
-      setTargetLanguage={setTargetLanguage}
       onLoadBeforeChats={onLoadBeforeChats}
     />
   );

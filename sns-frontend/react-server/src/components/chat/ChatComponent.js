@@ -349,7 +349,7 @@ const ChatComponent = ({
   onSendChat,
   onTranslate,
   targetLanguage,
-  setTargetLanguage,
+  onChangeTargetLanguage,
   onLoadBeforeChats,
 }) => {
   // const profileUrl = `http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${user.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`;
@@ -380,7 +380,7 @@ const ChatComponent = ({
               src={option.flag}
               alt={option.label}
               selected={option.value === targetLanguage}
-              onClick={() => setTargetLanguage(option.value)}
+              onClick={() => onChangeTargetLanguage(option.value)}
             />
           </div>
         ))}

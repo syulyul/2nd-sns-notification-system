@@ -80,6 +80,7 @@ const initialState = {
   chatTxt: '',
   error: null,
   newChat: null,
+  targetLanguage: 'ko',
 };
 
 const chats = handleActions(
