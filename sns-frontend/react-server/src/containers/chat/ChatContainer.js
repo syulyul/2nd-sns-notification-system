@@ -18,7 +18,7 @@ import { socket } from '../../socket';
 const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
-  const [targetLanguage, setTargetLanguage] = useState('ko');
+  const [targetLanguage, setTargetLanguage] = useState('en');
   const { room, chats, newChat, chatTxt, error, user, translatedChat, page } =
     useSelector(({ chats, auth }) => ({
       room: chats.room,
