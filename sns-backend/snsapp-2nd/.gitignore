@@ -12,15 +12,15 @@
 # //위의 커밋을 원격 저장소로 push함
 
 
-# Ignore Gradle project-specific cache directory
-.gradle
+# Ignore #gradle project-specific cache directory
+# .#gradle
 
-# Ignore Gradle build output directory
-build
+# Ignore #gradle build output directory
+# build
 
 
-# Created by https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,eclipse,intellij,linux,intellij+all,java,c++,react,reactnative,gradle,maven,node
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,visualstudiocode,eclipse,intellij,linux,intellij+all,java,c++,react,reactnative,gradle,maven,node
+# Created by https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,eclipse,intellij,linux,intellij+all,java,c++,react,reactnative,#gradle,maven,node
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,visualstudiocode,eclipse,intellij,linux,intellij+all,java,c++,react,reactnative,#gradle,maven,node
 
 ### C++ ###
 # Prerequisites
@@ -88,7 +88,7 @@ local.properties
 .factorypath
 
 # PDT-specific (PHP Development Tools)
-.buildpath
+# .buildpath
 
 # sbteclipse plugin
 .target
@@ -148,12 +148,12 @@ local.properties
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
-# Gradle
-.idea/**/gradle.xml
+# #gradle
+# .idea/**/#gradle.xml
 .idea/**/libraries
 
-# Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
+# #gradle and Maven with auto-import
+# When using #gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
 # .idea/artifacts
@@ -247,10 +247,10 @@ fabric.properties
 
 # Sensitive or high-churn files
 
-# Gradle
+# #gradle
 
-# Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
+# #gradle and Maven with auto-import
+# When using #gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
 # .idea/artifacts
@@ -552,24 +552,24 @@ xcuserdata/
 *.xcscmblueprint
 *.xccheckout
 
-### ReactNative.Gradle Stack ###
-.gradle
-**/build/
-!src/**/build/
+### ReactNative.#gradle Stack ###
+#.#gradle
+#**/build/
+#!src/**/build/
 
-# Ignore Gradle GUI config
-gradle-app.setting
+# Ignore #gradle GUI config
+##gradle-app.setting
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
+# Avoid ignoring #gradle wrapper jar file (.jar files are usually ignored)
+#!#gradle-wrapper.jar
 
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
+# Avoid ignore #gradle wrappper properties
+#gradle-wrapper.properties
 
 # Cache of project
-.gradletasknamecache
+#.gradletasknamecache
 
-# Eclipse Gradle plugin generated files
+# Eclipse #gradle plugin generated files
 # Eclipse Core
 # JDT-specific (Eclipse Java Development Tools)
 
@@ -674,9 +674,9 @@ buck-out/
 .fakebuckversion
 
 ### ReactNative.Android Stack ###
-# Gradle files
-.gradle/
-build/
+# gradle files
+#.gradle/
+#build/
 
 # Local configuration file (sdk path, etc)
 
@@ -751,33 +751,33 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-### Gradle ###
-.gradle
-**/build/
-!src/**/build/
+### #gradle ###
+# .#gradle
+# **/build/
+# !src/**/build/
 
-# Ignore Gradle GUI config
-gradle-app.setting
+# Ignore #gradle GUI config
+#gradle-app.setting
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
+# Avoid ignoring #gradle wrapper jar file (.jar files are usually ignored)
+#!gradle-wrapper.jar
 
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
+# Avoid ignore #gradle wrappper properties
+#!gradle-wrapper.properties
 
 # Cache of project
-.gradletasknamecache
+#.gradletasknamecache
 
-# Eclipse Gradle plugin generated files
+# Eclipse #gradle plugin generated files
 # Eclipse Core
 # JDT-specific (Eclipse Java Development Tools)
 
-### Gradle Patch ###
+### #gradle Patch ###
 # Java heap dump
 *.hprof
 
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,eclipse,intellij,linux,intellij+all,java,c++,react,reactnative,gradle,maven,node
+# End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,eclipse,intellij,linux,intellij+all,java,c++,react,reactnative,#gradle,maven,node
 
 *.exe
 node_modules/
