@@ -7,7 +7,7 @@
 ```
 #snsapp
 Host snsapp-proxy-server
-        HostName 223.130.136.59
+        HostName 175.45.203.167
         User root
         IdentityFile ~/.ssh/snsapp.pem
 ```
