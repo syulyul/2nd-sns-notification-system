@@ -782,8 +782,8 @@ gradle-app.setting
 *.exe
 node_modules/
 temp/
-jdbc.properties
-application.properties
-ncp.properties
-ncs.properties
+#jdbc.properties
+#application.properties
+#ncp.properties
+#ncs.properties
 
