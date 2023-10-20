@@ -87,7 +87,7 @@ const HeaderProfile = styled.div`
 `;
 
 const HeaderNotificationIcon = styled.img`
-  height: 20px;
+  height: 25px;
   cursor: pointer;
 `;
 
