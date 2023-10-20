@@ -12,7 +12,7 @@ const ChatRoomItemContainer = styled.div`
 `;
 
 const ChatRoomList = styled.div`
-  width: 350px;
+  width: 500px;
   height: 700px;
   display: inline-block;
   background-color: #fafaf5;
@@ -22,7 +22,7 @@ const ChatRoomList = styled.div`
 `;
 
 const ChatRoomListBox = styled.div`
-  width: 350px;
+  width: 500px;
   height: 600px;
   display: inline-block;
   background-color: #fafaf5;
@@ -45,18 +45,19 @@ const ProfileImage = styled.img`
   height: 50px;
   border-radius: 50%;
   position: absolute;
+  display: flex;
 
   /* 첫 번째 이미지 */
   &:first-of-type {
     left: 0;
-    top: -20px;
+    top: -5px;
     left: -10px;
   }
 
   /* 두 번째 이미지 */
   &:nth-of-type(2) {
     left: 50%; /* 이미지의 중간부터 시작되도록 설정 */
-    top: -15px;
+    top: -5px;
     transform: translate(
       -20px,
       20px
@@ -66,10 +67,40 @@ const ProfileImage = styled.img`
 
 const NicknameContainer = styled.div`
   position: relative;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
 `;
 
 const ListComponent = styled.div`
   display: flex;
+`;
+
+const StyledLeaveBtn = styled.button`
+  width: 100px;
+  height: 41px;
+  background: #426b1f;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 130%;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+  // align-self: flex-end; /* 맨 아래에 정렬 */
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #d11507;
+    color: #fff;
+  }
+`;
+
+const ChatLeaveBtnContainer = styled.div`
+  display: flex;
+  margin-left: auto;
 `;
 
 const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
@@ -101,6 +132,9 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
                   <NicknameContainer>
                     {`${room.users[0].nick}, ${room.users[1].nick}`}
                   </NicknameContainer>
+                  <ChatLeaveBtnContainer>
+                    <StyledLeaveBtn type="submit">채팅 나가기</StyledLeaveBtn>
+                  </ChatLeaveBtnContainer>
                 </ListComponent>
               </ChatRoomItem>
             </ChatRoomItemContainer>
