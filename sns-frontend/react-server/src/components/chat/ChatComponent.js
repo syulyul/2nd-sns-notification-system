@@ -10,7 +10,8 @@ const ChatContainer = styled.div`
   padding: 20px;
   background-color: #fafaf5;
   width: 600px;
-  margin: auto;
+  // margin: auto;
+  margin-top: 20px;
   margin-left: 20px;
   height: 700px;
   display: flex;
