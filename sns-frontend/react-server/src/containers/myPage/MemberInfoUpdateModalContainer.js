@@ -63,7 +63,7 @@ const MemberInfoUpdateContainer = ({ onClose }) => {
   };
 
   // 폼 등록 이벤트 핸들러
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const updatedNick = updateNick || myPage.nick;
     const updatedBirthday = updateBirthday || myPage.birthday;
@@ -95,8 +95,14 @@ const MemberInfoUpdateContainer = ({ onClose }) => {
             }
         )
     );
-    dispatch(update({ updateData, userNo }));
-    navigate(`/myPage/${userNo}`);
+    try {
+      await dispatch(update({ updateData, userNo }));
+      // 업데이트가 성공하면 모달을 닫음
+      onClose();
+      navigate(`/myPage/${userNo}`);
+    } catch (error) {
+      console.error('업데이트 오류:', error);
+    }
   };
 
   // 회원 삭제
