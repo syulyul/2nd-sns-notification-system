@@ -44,10 +44,10 @@ const CloseButton = styled.button`
   border: none;
   border-radius:50%;
   cursor: pointer;
-  font-size: 30px;
+  font-size: 28px;
   position: absolute;
-  margin-left: 670px;
-  top: -10px;
+  margin-left: 650px;
+  top: 10px;
   width: 40px;
   height: 40px;
   justify-content: center;
