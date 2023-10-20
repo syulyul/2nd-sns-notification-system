@@ -56,6 +56,12 @@ public class AuthController {
     System.out.println("AuthController 생성됨!");
   }
 
+  @GetMapping("test")
+  public ResponseEntity test() {
+    System.out.println("get 요청 수신@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    return new ResponseEntity<>("통신 성공!", HttpStatus.OK);
+  }
+
   @GetMapping("form")
   public void form(
       @CookieValue(required = false) String phoneNumber,
