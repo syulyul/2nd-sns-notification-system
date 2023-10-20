@@ -3,6 +3,7 @@ import Chat from '../../schemas/chat';
 import Room from '../../schemas/room';
 import User from '../../schemas/user';
 import { addLog, newNoti } from '../notification/notification.ctrl';
+import mongoose from 'mongoose';
 
 export const roomList = async (req, res, next) => {
   try {
@@ -103,14 +104,44 @@ export const loadBeforeChats = async (req, res, next) => {
   }
 };
 
-export const removeRoom = async (req, res, next) => {
+export const leaveRoom = async (req, res, next) => {
   try {
-    await Room.deleteOne({ _id: req.params.id });
-    await Chat.deleteMany({ room: req.params.id });
+    const userNo = await redisClient.get(req.cookies['sessionId']);
+    const sendUser = await User.findOne({ mno: userNo });
+    const roomId = req.params.roomId;
+
+    let room = await Room.findOne({
+      _id: roomId,
+      users: sendUser,
+    });
+
+    if (!room) {
+      res.status(403).end();
+      return;
+    }
+
+    room.users.pull(sendUser);
+    if (room.users.length === 0) {
+      await removeRoom(roomId);
+    } else {
+      await room.save();
+    }
+
     res.send('ok');
   } catch (error) {
     console.error(error);
     next(error);
+  }
+};
+
+const removeRoom = async (roomId) => {
+  try {
+    await Room.deleteOne({ _id: roomId });
+    await Chat.deleteMany({ room: roomId });
+    // res.send('ok');
+  } catch (error) {
+    console.error(error);
+    // next(error);
   }
 };
 
