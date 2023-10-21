@@ -70,11 +70,17 @@ export const translateAndDetectLang = async (data) => {
                 const translatedText =
                   JSON.parse(translateBody).message.result.translatedText;
 
+                const voiceFilePath = clovaVoiceAPI({
+                  language: targetLanguage,
+                  text: translatedText,
+                });
+
                 const translatedChatLog = await Chat.findByIdAndUpdate(
                   chatLog._id,
                   {
                     $set: {
                       [`translated.${targetLanguage}`]: translatedText,
+                      [`translated.${targetLanguage}-voice`]: voiceFilePath,
                     },
                   },
                   { new: true }
@@ -83,11 +89,6 @@ export const translateAndDetectLang = async (data) => {
                 // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
                 data.ioOfChat.to(chatLog.room).emit('translateChat', {
                   translatedChatLog,
-                });
-
-                clovaVoiceAPI({
-                  language: targetLanguage,
-                  text: translatedText,
                 });
               } else {
                 console.log('Translation Error:', translateResponse.statusCode);
@@ -144,7 +145,7 @@ const clovaVoiceAPI = ({ language, text }) => {
     },
   };
 
-  const filePath = `./clova/${crypto
+  const filePath = `clova/${crypto
     .createHash('sha512')
     .update(text)
     .digest('hex')}.mp3`;
@@ -163,4 +164,6 @@ const clovaVoiceAPI = ({ language, text }) => {
     }
   });
   // _req.pipe(res); // 브라우저로 출력
+
+  return filePath;
 };

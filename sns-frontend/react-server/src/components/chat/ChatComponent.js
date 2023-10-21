@@ -280,6 +280,18 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
           ? '(' + translated[targetLanguage] + ')'
           : null}
       </span>
+      <span>
+        {translated?.[targetLanguage + '-voice'] ? (
+          <audio
+            controls
+            src={
+              process.env.REACT_APP_NODE_SERVER_URL +
+              '/' +
+              translated?.[targetLanguage + '-voice']
+            }
+          />
+        ) : null}
+      </span>
     </ChatMessage>
   );
 };
