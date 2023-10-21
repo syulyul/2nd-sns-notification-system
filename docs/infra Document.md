@@ -1,6 +1,6 @@
 # infra Document
 
-```cp dowload/snsapp01.pem /.ssh```
+``` cp dowload/snsapp01.pem /.ssh```
 
 ```cd .ssh/config```
 
