@@ -1,13 +1,17 @@
 require('dotenv').config();
 import Chat from '../../schemas/chat';
 import request from 'request';
+import rp from 'request-promise';
 import fs from 'fs';
 import crypto from 'crypto';
+import AWS from 'aws-sdk';
 
 const client_id = process.env.NAVER_PAPAGO_CLIENT_ID;
 const client_secret = process.env.NAVER_PAPAGO_CLIENT_SECRET;
 const clova_client_id = process.env.NCP_CLOVA_CLIENT_ID;
 const clova_client_secret = process.env.NCP_CLOVA_CLIENT_SECRET;
+const obj_storage_access_key = process.env.NCP_OBJECT_STORAGE_ACCESS_KEY;
+const obj_storage_secret_key = process.env.NCP_OBJECT_STORAGE_SECRET_KEY;
 
 export const translateAndDetectLang = async (data) => {
   const chatLog = data.body.chatLog;
@@ -70,7 +74,7 @@ export const translateAndDetectLang = async (data) => {
                 const translatedText =
                   JSON.parse(translateBody).message.result.translatedText;
 
-                const voiceFilePath = clovaVoiceAPI({
+                const voiceFilePath = await clovaVoiceAPI({
                   language: targetLanguage,
                   text: translatedText,
                 });
@@ -103,7 +107,7 @@ export const translateAndDetectLang = async (data) => {
   );
 };
 
-const clovaVoiceAPI = ({ language, text }) => {
+export const clovaVoiceAPI = async ({ language, text }) => {
   const api_url = 'https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts';
   let speaker;
   switch (language) {
@@ -144,11 +148,8 @@ const clovaVoiceAPI = ({ language, text }) => {
       'X-NCP-APIGW-API-KEY': clova_client_secret,
     },
   };
-
-  const filePath = `clova/${crypto
-    .createHash('sha512')
-    .update(text)
-    .digest('hex')}.mp3`;
+  const fileName = crypto.createHash('sha512').update(text).digest('hex');
+  const filePath = `clova/${fileName}.mp3`;
   fs.open(filePath, 'r', function (err, file) {
     if (err) {
       // 파일이 없다면
@@ -159,11 +160,46 @@ const clovaVoiceAPI = ({ language, text }) => {
       });
       _req.pipe(writeStream); // file로 출력
       console.log('voice 파일 생성!');
+      writeStream.on('finish', async () => {
+        await uploadObjectStorage({
+          object_name: fileName,
+          local_file_path: filePath,
+        });
+      });
     } else {
       console.log('Saved!');
     }
   });
   // _req.pipe(res); // 브라우저로 출력
 
-  return filePath;
+  return fileName;
+};
+
+export const uploadObjectStorage = async ({ local_file_path, object_name }) => {
+  const bucket_name = 'bitcamp-nc7-bucket-25';
+  const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
+  const region = 'kr-standard';
+
+  const S3 = new AWS.S3({
+    endpoint: endpoint,
+    region: region,
+    credentials: {
+      accessKeyId: obj_storage_access_key,
+      secretAccessKey: obj_storage_secret_key,
+    },
+  });
+
+  let options = {
+    partSize: 5 * 1024 * 1024,
+  };
+
+  await S3.upload(
+    {
+      Bucket: bucket_name,
+      Key: 'clova_voice/' + object_name + '.mp3',
+      ACL: 'public-read',
+      Body: fs.createReadStream(local_file_path),
+    },
+    options
+  ).promise();
 };

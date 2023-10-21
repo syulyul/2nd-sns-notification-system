@@ -285,9 +285,9 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
           <audio
             controls
             src={
-              process.env.REACT_APP_NODE_SERVER_URL +
-              '/' +
-              translated?.[targetLanguage + '-voice']
+              'https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-25/clova_voice/' +
+              translated?.[targetLanguage + '-voice'] +
+              '.mp3'
             }
           />
         ) : null}
