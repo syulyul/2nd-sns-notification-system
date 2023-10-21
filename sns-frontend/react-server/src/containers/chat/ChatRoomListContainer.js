@@ -43,8 +43,8 @@ const ChatRoomListContainer = () => {
   };
 
   const handleOnLeaveRoom = (roomId) => {
-    navigate(`/room`);
     dispatch(leaveRoom({ roomId }));
+    navigate(`/room/list`);
   };
 
   return (

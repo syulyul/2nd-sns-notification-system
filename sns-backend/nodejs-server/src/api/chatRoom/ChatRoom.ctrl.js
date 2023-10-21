@@ -138,10 +138,8 @@ const removeRoom = async (roomId) => {
   try {
     await Room.deleteOne({ _id: roomId });
     await Chat.deleteMany({ room: roomId });
-    // res.send('ok');
   } catch (error) {
     console.error(error);
-    // next(error);
   }
 };
 

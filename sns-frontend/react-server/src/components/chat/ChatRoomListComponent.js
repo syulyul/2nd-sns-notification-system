@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const ChatRoomItemContainer = styled.div`
   background-color: #ffffff;
@@ -103,8 +104,6 @@ const ChatLeaveBtnContainer = styled.div`
   margin-left: auto;
 `;
 
-const StyledLeaveForm = styled.form``;
-
 const ChatRoomListComponent = ({ rooms, onSelectRoom, onLeaveRoom }) => {
   return (
     <ChatRoomList>
@@ -122,10 +121,12 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom, onLeaveRoom }) => {
               >
                 <ListComponent>
                   <ProfileImagesContainer>
-                    <ProfileImage
-                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[0]?.photo}`}
-                      alt="Profile 0"
-                    />
+                    {room.users[0] ? (
+                      <ProfileImage
+                        src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[0]?.photo}`}
+                        alt="Profile 0"
+                      />
+                    ) : null}
                     {room.users[1] ? (
                       <ProfileImage
                         src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[1]?.photo}`}
@@ -142,6 +143,7 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom, onLeaveRoom }) => {
                   <ChatLeaveBtnContainer>
                     <StyledLeaveBtn
                       onClick={(e) => {
+                        e.stopPropagation(); // 이벤트 전파 중지
                         onLeaveRoom(room._id);
                       }}
                     >
