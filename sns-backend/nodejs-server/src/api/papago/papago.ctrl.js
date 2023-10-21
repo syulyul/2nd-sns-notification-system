@@ -1,10 +1,13 @@
 require('dotenv').config();
 import Chat from '../../schemas/chat';
-
-const request = require('request');
+import request from 'request';
+import fs from 'fs';
+import crypto from 'crypto';
 
 const client_id = process.env.NAVER_PAPAGO_CLIENT_ID;
 const client_secret = process.env.NAVER_PAPAGO_CLIENT_SECRET;
+const clova_client_id = process.env.NCP_CLOVA_CLIENT_ID;
+const clova_client_secret = process.env.NCP_CLOVA_CLIENT_SECRET;
 
 export const translateAndDetectLang = async (data) => {
   const chatLog = data.body.chatLog;
@@ -81,6 +84,11 @@ export const translateAndDetectLang = async (data) => {
                 data.ioOfChat.to(chatLog.room).emit('translateChat', {
                   translatedChatLog,
                 });
+
+                clovaVoiceAPI({
+                  language: targetLanguage,
+                  text: translatedText,
+                });
               } else {
                 console.log('Translation Error:', translateResponse.statusCode);
               }
@@ -92,4 +100,67 @@ export const translateAndDetectLang = async (data) => {
       }
     }
   );
+};
+
+const clovaVoiceAPI = ({ language, text }) => {
+  const api_url = 'https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts';
+  let speaker;
+  switch (language) {
+    case 'ko':
+      speaker = 'nara';
+      break;
+    case 'en':
+      speaker = 'danna';
+      break;
+    case 'zh-CN':
+      speaker = 'meimei';
+      break;
+    case 'ja':
+      speaker = 'nnaomi';
+      break;
+    case 'zh-TW':
+      speaker = 'chiahua';
+      break;
+    case 'es':
+      speaker = 'carmen';
+      break;
+    default:
+      console.log('지원하지 않는 언어입니다');
+      return;
+  }
+  const options = {
+    url: api_url,
+    form: {
+      speaker: speaker,
+      volume: '0',
+      speed: '0',
+      pitch: '0',
+      text: text,
+      format: 'mp3',
+    },
+    headers: {
+      'X-NCP-APIGW-API-KEY-ID': clova_client_id,
+      'X-NCP-APIGW-API-KEY': clova_client_secret,
+    },
+  };
+
+  const filePath = `./clova/${crypto
+    .createHash('sha512')
+    .update(text)
+    .digest('hex')}.mp3`;
+  fs.open(filePath, 'r', function (err, file) {
+    if (err) {
+      // 파일이 없다면
+      const writeStream = fs.createWriteStream(filePath);
+      const _req = request.post(options).on('response', function (response) {
+        console.log(response.statusCode); // 200
+        console.log(response.headers['content-type']);
+      });
+      _req.pipe(writeStream); // file로 출력
+      console.log('voice 파일 생성!');
+    } else {
+      console.log('Saved!');
+    }
+  });
+  // _req.pipe(res); // 브라우저로 출력
 };
