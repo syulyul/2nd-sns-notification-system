@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const ChatRoomItemContainer = styled.div`
   background-color: #ffffff;
@@ -103,7 +104,7 @@ const ChatLeaveBtnContainer = styled.div`
   margin-left: auto;
 `;
 
-const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
+const ChatRoomListComponent = ({ rooms, onSelectRoom, onLeaveRoom }) => {
   return (
     <ChatRoomList>
       <h2>채팅방 목록</h2>
@@ -120,20 +121,34 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom }) => {
               >
                 <ListComponent>
                   <ProfileImagesContainer>
-                    <ProfileImage
-                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[0].photo}`}
-                      alt="Profile 0"
-                    />
-                    <ProfileImage
-                      src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[1].photo}`}
-                      alt="Profile 1"
-                    />
+                    {room.users[0] ? (
+                      <ProfileImage
+                        src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[0]?.photo}`}
+                        alt="Profile 0"
+                      />
+                    ) : null}
+                    {room.users[1] ? (
+                      <ProfileImage
+                        src={`https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${room.users[1]?.photo}`}
+                        alt="Profile 1"
+                      />
+                    ) : null}
                   </ProfileImagesContainer>
                   <NicknameContainer>
-                    {`${room.users[0].nick}, ${room.users[1].nick}`}
+                    {`${room.users[0]?.nick} ${
+                      room.users[1] ? ',' + room.users[1].nick : ''
+                    }`}
                   </NicknameContainer>
+
                   <ChatLeaveBtnContainer>
-                    <StyledLeaveBtn type="submit">채팅 나가기</StyledLeaveBtn>
+                    <StyledLeaveBtn
+                      onClick={(e) => {
+                        e.stopPropagation(); // 이벤트 전파 중지
+                        onLeaveRoom(room._id);
+                      }}
+                    >
+                      채팅 나가기
+                    </StyledLeaveBtn>
                   </ChatLeaveBtnContainer>
                 </ListComponent>
               </ChatRoomItem>
