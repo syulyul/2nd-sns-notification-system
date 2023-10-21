@@ -15,7 +15,7 @@ const ChatRoomList = styled.div`
 
 const CenteredContainer = styled.div`
   display: flex;
-  align-items: center;
+  // align-items: center;
   height: 100vh; /* 화면 높이의 100%로 컨테이너를 채움 */
 `;
 

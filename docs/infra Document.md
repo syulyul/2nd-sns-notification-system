@@ -1,6 +1,6 @@
 # infra Document
 
-```cp dowload/snsapp01.pem /.ssh```
+``` cp dowload/snsapp01.pem /.ssh```
 
 ```cd .ssh/config```
 
@@ -11,7 +11,7 @@ Host snsapp-proxy-server
         User root
         IdentityFile ~/.ssh/snsapp.pem
 ```
-> 핵심 통일
+> 핵심 기능
 
 모든 server == > ```snsapp01.pem```으로 <br/>
 PW : bitcamp!@#123tp 통일<br/>

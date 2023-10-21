@@ -1,5 +1,5 @@
 # Formats for Commit Message Rules
-  타입(Type): 제목(Subject)
+  타입 (Type): 제목(Subject)
   (공백 라인)
   본문(Body)
   (공백 라인)
