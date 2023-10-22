@@ -23,7 +23,9 @@ const {
 } = process.env;
 
 const HTTP_PORT = 80;
-const HTTPS_PORT = PORT || 443;
+// const HTTPS_PORT = PORT || 443;
+const HTTPS_PORT = PORT || 3001;
+
 
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/bitsns.site/privkey.pem'),
