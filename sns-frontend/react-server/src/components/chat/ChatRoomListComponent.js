@@ -92,9 +92,10 @@ const StyledLeaveBtn = styled.button`
   // align-self: flex-end; /* 맨 아래에 정렬 */
   display: flex;
   align-items: center;
+  font-weight: normal;
 
   &:hover {
-    background: #d11507;
+    background: #5d962c;
     color: #fff;
   }
 `;

@@ -73,6 +73,10 @@ const SubmitButton = styled(Button)`
   border-radius: 5px;
   cursor: pointer;
   font-weight: normal;
+
+  &:hover {
+    background-color: #5d962c;
+  }
 `;
 
 const CommonButton = styled(Button)`
@@ -87,6 +91,10 @@ const CommonButton = styled(Button)`
   margin-bottom: 100px;
   margin-top: 80px;
   font-weight: normal;
+
+  &:hover {
+    background-color: #5d962c;
+  }
 `;
 
 const PwFindComponent = ({
