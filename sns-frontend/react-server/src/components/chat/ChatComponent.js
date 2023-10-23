@@ -204,35 +204,6 @@ const StyledChatBtn = styled.button`
   }
 `;
 
-// const StyledChatMine = styled.div`
-//     position: relative;
-//     background: #426B1F;
-//     color: #FFFFFF;
-//     font-size: 16px;
-//     padding: 10px;
-//     border-radius: 10px;
-//     max-width: 60%;
-//     float: right;
-//     margin: 10px auto;
-//     margin-bottom:20px;
-//     align-self: flex-end;
-//     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
-// `;
-
-// const StyledChatOther = styled.div`
-//   position: relative;
-//   background: #ffffff;
-//   border: 1px solid #ddd;
-//   font-size: 16px;
-//   padding: 10px;
-//   border-radius: 10px;
-//   max-width: 80%;
-//   float: left;
-//   margin: 10px auto;
-//   align-self: flex-start;
-//   word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
-// `;
-
 const DateLine = styled.div`
   display: flex;
   flex-basis: 100%;
@@ -265,9 +236,9 @@ const TranslateButtonContainer = styled.div`
   margin-top: 10px; /* 번역 버튼을 상단에서 하단으로 이동 */
 `;
 
-const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
+const ChatItem = ({ chatLog, loginUser, targetLanguage, onTTS }) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
-  const roomId = _id;
+  const clovaVoiceSupportLanguages = ['ko', 'en', 'zh-CN', 'zh-TW', 'ja', 'es'];
   return (
     <ChatMessage
       className={
@@ -275,10 +246,34 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
       }
     >
       {chat}
+      {translated?.[targetLanguage] ? (
+        <span>{`(${translated[targetLanguage]})`}</span>
+      ) : null}
       <span>
-        {translated?.[targetLanguage]
-          ? '(' + translated[targetLanguage] + ')'
-          : null}
+        {translated?.[targetLanguage + '-voice'] ? (
+          <audio
+            controls
+            src={
+              'https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-25/clova_voice/' +
+              translated?.[targetLanguage + '-voice'] +
+              '.mp3'
+            }
+          />
+        ) : translated?.[targetLanguage] &&
+          clovaVoiceSupportLanguages.includes(targetLanguage) ? (
+          <button
+            onClick={(e) =>
+              onTTS({
+                chatId: _id,
+                roomId: room,
+                language: targetLanguage,
+                text: translated[targetLanguage],
+              })
+            }
+          >
+            tts
+          </button>
+        ) : null}
       </span>
     </ChatMessage>
   );
@@ -349,6 +344,7 @@ const ChatComponent = ({
   chatTxt,
   onSendChat,
   onTranslate,
+  onTTS,
   targetLanguage,
   setTargetLanguage,
   onLoadBeforeChats,
@@ -369,7 +365,11 @@ const ChatComponent = ({
   return (
     <ChatContainer>
       {room && (
-        <TitleStyle>{` ${room.users[0].nick}, ${room.users[1].nick}`}</TitleStyle>
+        // <TitleStyle>{` ${room.users[0].nick}, ${room.users[1].nick}`}</TitleStyle>
+        <TitleStyle>
+          {` ${room.users[0].nick}`}{' '}
+          {room.users.length > 1 ? `, ${room.users[1].nick}` : ''}
+        </TitleStyle>
       )}
       <LanguageSelectContainer>
         {LanguageOptions.map((option) => (
@@ -450,6 +450,7 @@ const ChatComponent = ({
                         chatLog={chatLog}
                         loginUser={user}
                         targetLanguage={targetLanguage}
+                        onTTS={onTTS}
                       />
                       {user.no !== chatLog.user.mno && (
                         <TimeStampOther>{`${new Date(

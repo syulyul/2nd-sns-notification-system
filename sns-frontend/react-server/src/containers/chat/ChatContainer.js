@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { useLocation, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { socket } from '../../socket';
+import { roomList } from '../../modules/rooms';
 
 const ChatContainer = () => {
   // const params = useParams();
@@ -38,11 +39,11 @@ const ChatContainer = () => {
     }));
 
   const { search } = useLocation();
-  const { mno1, mno2 } = qs.parse(search, { ignoreQueryPrefix: true });
+  const { mno1, mno2, roomId } = qs.parse(search, { ignoreQueryPrefix: true });
 
   useEffect(() => {
-    dispatch(enterRoom({ mno1, mno2 }));
-  }, [mno1, mno2]);
+    dispatch(enterRoom({ mno1, mno2, roomId }));
+  }, [mno1, mno2, roomId]);
 
   const onChange = (e) => {
     const { value, name } = e.target;
@@ -53,6 +54,12 @@ const ChatContainer = () => {
       })
     );
   };
+
+  useEffect(() => {
+    if (room) {
+      dispatch(roomList(user.no));
+    }
+  }, [room, user]);
 
   useEffect(() => {
     if (room && !error) {
@@ -119,6 +126,12 @@ const ChatContainer = () => {
     }
   };
 
+  const onTTS = ({ chatId, roomId, language, text }) => {
+    if (socket) {
+      socket.emit('tts', { chatId, roomId, language, text });
+    }
+  };
+
   const onLoadBeforeChats = () => {
     dispatch(loadBeforeChats({ roomId: room._id, mno1, mno2, page }));
   };
@@ -135,6 +148,7 @@ const ChatContainer = () => {
       onChange={onChange}
       onSendChat={onSendChat}
       onTranslate={onTranslate}
+      onTTS={onTTS}
       targetLanguage={targetLanguage}
       setTargetLanguage={setTargetLanguage}
       onLoadBeforeChats={onLoadBeforeChats}

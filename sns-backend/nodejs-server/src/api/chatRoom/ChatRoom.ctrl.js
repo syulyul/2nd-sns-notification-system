@@ -35,17 +35,16 @@ export const enterRoom = async (req, res, next) => {
       return;
     }
 
-    let room = await Room.findOne({
-      users: { $all: [user1._id, user2._id] },
-    }).populate('users');
+    let room = null;
 
-    if (!room) {
+    if (req.query.roomId) {
+      room = await Room.findOne({ _id: req.query.roomId }).populate('users');
+    } else {
       room = await Room.create({
         users: [user1._id, user2._id],
       });
-      room.populate('users');
-      // const io = req.app.get('io');
-      // io.of('/room').emit('newRoom', room);
+      await room.populate('users');
+
       const newNotiData = {
         memberNo: user2.mno,
         notiTypeNo: 4,
