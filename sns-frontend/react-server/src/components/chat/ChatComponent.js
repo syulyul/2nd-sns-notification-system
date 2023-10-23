@@ -204,35 +204,6 @@ const StyledChatBtn = styled.button`
   }
 `;
 
-// const StyledChatMine = styled.div`
-//     position: relative;
-//     background: #426B1F;
-//     color: #FFFFFF;
-//     font-size: 16px;
-//     padding: 10px;
-//     border-radius: 10px;
-//     max-width: 60%;
-//     float: right;
-//     margin: 10px auto;
-//     margin-bottom:20px;
-//     align-self: flex-end;
-//     word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
-// `;
-
-// const StyledChatOther = styled.div`
-//   position: relative;
-//   background: #ffffff;
-//   border: 1px solid #ddd;
-//   font-size: 16px;
-//   padding: 10px;
-//   border-radius: 10px;
-//   max-width: 80%;
-//   float: left;
-//   margin: 10px auto;
-//   align-self: flex-start;
-//   word-wrap: break-word; /* 긴 텍스트가 말풍선을 넘어갈 경우 자동으로 줄 바꿈 */
-// `;
-
 const DateLine = styled.div`
   display: flex;
   flex-basis: 100%;
@@ -381,7 +352,11 @@ const ChatComponent = ({
   return (
     <ChatContainer>
       {room && (
-        <TitleStyle>{` ${room.users[0].nick}, ${room.users[1].nick}`}</TitleStyle>
+        // <TitleStyle>{` ${room.users[0].nick}, ${room.users[1].nick}`}</TitleStyle>
+        <TitleStyle>
+          {` ${room.users[0].nick}`}{' '}
+          {room.users.length > 1 ? `, ${room.users[1].nick}` : ''}
+        </TitleStyle>
       )}
       <LanguageSelectContainer>
         {LanguageOptions.map((option) => (

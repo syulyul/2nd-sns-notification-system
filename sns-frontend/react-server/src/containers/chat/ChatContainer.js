@@ -39,11 +39,11 @@ const ChatContainer = () => {
     }));
 
   const { search } = useLocation();
-  const { mno1, mno2 } = qs.parse(search, { ignoreQueryPrefix: true });
+  const { mno1, mno2, roomId } = qs.parse(search, { ignoreQueryPrefix: true });
 
   useEffect(() => {
-    dispatch(enterRoom({ mno1, mno2 }));
-  }, [mno1, mno2]);
+    dispatch(enterRoom({ mno1, mno2, roomId }));
+  }, [mno1, mno2, roomId]);
 
   const onChange = (e) => {
     const { value, name } = e.target;

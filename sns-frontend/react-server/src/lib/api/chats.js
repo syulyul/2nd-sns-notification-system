@@ -13,10 +13,11 @@ export const createRoom = ({ mno1, mno2 }) => {
   return nodeClient.post(`chatRoom/room?${queryString}`);
 };
 
-export const enterRoom = ({ mno1, mno2, limit = 25 }) => {
+export const enterRoom = ({ mno1, mno2, roomId, limit = 25 }) => {
   const queryString = qs.stringify({
     mno1,
     mno2,
+    roomId,
     limit,
     page: 1,
   });
