@@ -116,7 +116,7 @@ const ChatRoomListComponent = ({ rooms, onSelectRoom, onLeaveRoom }) => {
                 key={room._id}
                 onClick={(e) => {
                   console.log(room);
-                  onSelectRoom(room.users);
+                  onSelectRoom({ users: room.users, roomId: room._id });
                 }}
               >
                 <ListComponent>

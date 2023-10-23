@@ -36,9 +36,13 @@ const ChatRoomListContainer = () => {
     }
   }, [dispatch, user]);
 
-  const handleSelectRoom = (users) => {
+  const handleSelectRoom = ({ users, roomId }) => {
     if (users && users[0] && users[1]) {
-      navigate(`/room?mno1=${users[0].mno}&mno2=${users[1].mno}`);
+      navigate(
+        `/room?mno1=${users[0].mno}&mno2=${users[1].mno}&roomId=${roomId}`
+      );
+    } else if (users && users[0] && roomId) {
+      navigate(`/room?mno1=${users[0].mno}&roomId=${roomId}`);
     }
   };
 
