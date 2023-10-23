@@ -7,7 +7,7 @@ import { translateAndDetectLang } from './api/papago/papago.ctrl';
 export default (server, app) => {
   const io = SocketIO(server, {
     cors: {
-      origin: ['http://localhost:3000'],
+      origin: ['http://localhost:3000', process.env.REACT_SERVER_URL],
       credentials: true,
     },
     path: '/socket.io',
