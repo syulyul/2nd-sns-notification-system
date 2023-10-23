@@ -267,6 +267,7 @@ const TranslateButtonContainer = styled.div`
 
 const ChatItem = ({ chatLog, loginUser, targetLanguage, onTTS }) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
+  const clovaVoiceSupportLanguages = ['ko', 'en', 'zh-CN', 'zh-TW', 'ja', 'es'];
   return (
     <ChatMessage
       className={
@@ -287,7 +288,8 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage, onTTS }) => {
               '.mp3'
             }
           />
-        ) : translated?.[targetLanguage] ? (
+        ) : translated?.[targetLanguage] &&
+          clovaVoiceSupportLanguages.includes(targetLanguage) ? (
           <button
             onClick={(e) =>
               onTTS({
