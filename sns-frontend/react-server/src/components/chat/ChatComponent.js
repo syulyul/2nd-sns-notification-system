@@ -265,9 +265,8 @@ const TranslateButtonContainer = styled.div`
   margin-top: 10px; /* 번역 버튼을 상단에서 하단으로 이동 */
 `;
 
-const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
+const ChatItem = ({ chatLog, loginUser, targetLanguage, onTTS }) => {
   const { _id, room, user, chat, files, createdAt, translated } = chatLog;
-  const roomId = _id;
   return (
     <ChatMessage
       className={
@@ -275,11 +274,9 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
       }
     >
       {chat}
-      <span>
-        {translated?.[targetLanguage]
-          ? '(' + translated[targetLanguage] + ')'
-          : null}
-      </span>
+      {translated?.[targetLanguage] ? (
+        <span>{`(${translated[targetLanguage]})`}</span>
+      ) : null}
       <span>
         {translated?.[targetLanguage + '-voice'] ? (
           <audio
@@ -290,6 +287,19 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
               '.mp3'
             }
           />
+        ) : translated?.[targetLanguage] ? (
+          <button
+            onClick={(e) =>
+              onTTS({
+                chatId: _id,
+                roomId: room,
+                language: targetLanguage,
+                text: translated[targetLanguage],
+              })
+            }
+          >
+            tts
+          </button>
         ) : null}
       </span>
     </ChatMessage>
@@ -361,6 +371,7 @@ const ChatComponent = ({
   chatTxt,
   onSendChat,
   onTranslate,
+  onTTS,
   targetLanguage,
   setTargetLanguage,
   onLoadBeforeChats,
@@ -462,6 +473,7 @@ const ChatComponent = ({
                         chatLog={chatLog}
                         loginUser={user}
                         targetLanguage={targetLanguage}
+                        onTTS={onTTS}
                       />
                       {user.no !== chatLog.user.mno && (
                         <TimeStampOther>{`${new Date(
