@@ -13,6 +13,29 @@ const clova_client_secret = process.env.NCP_CLOVA_CLIENT_SECRET;
 const obj_storage_access_key = process.env.NCP_OBJECT_STORAGE_ACCESS_KEY;
 const obj_storage_secret_key = process.env.NCP_OBJECT_STORAGE_SECRET_KEY;
 
+const updateLogToTranslationAndSend = async ({
+  chatLog,
+  targetLanguage,
+  translatedText,
+  data,
+}) => {
+  const translatedChatLog = await Chat.findByIdAndUpdate(
+    chatLog._id,
+    {
+      $set: {
+        [`translated.${targetLanguage}`]: translatedText,
+        // [`translated.${targetLanguage}-voice`]: voiceFilePath,
+      },
+    },
+    { new: true }
+  ).populate('user');
+
+  // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
+  data.ioOfChat.to(chatLog.room).emit('translateChat', {
+    translatedChatLog,
+  });
+};
+
 export const translateAndDetectLang = async (data) => {
   const chatLog = data.body.chatLog;
   const { chat } = chatLog; // 번역할 텍스트
@@ -41,19 +64,6 @@ export const translateAndDetectLang = async (data) => {
 
         let targetLanguage = data.body.targetLanguage;
 
-        const translateOptions = {
-          url: translateApiUrl,
-          form: {
-            source: langCode,
-            target: targetLanguage,
-            text: chat,
-          },
-          headers: {
-            'X-NCP-APIGW-API-KEY-ID': client_id,
-            'X-NCP-APIGW-API-KEY': client_secret,
-          },
-        };
-
         let isTranslated = false;
         // 불필요한 번역 요청 방지를 위해 검증 로직 추가 필요
         // const findChatLog = await Chat.findById(chatLog._id);
@@ -66,7 +76,27 @@ export const translateAndDetectLang = async (data) => {
           data.ioOfChat.to(chatLog.room).emit('translateChat', {
             translatedChatLog: '이미 번역된 언어',
           });
+
+          updateLogToTranslationAndSend({
+            chatLog,
+            targetLanguage,
+            translatedText: chat,
+            data,
+          });
         } else {
+          const translateOptions = {
+            url: translateApiUrl,
+            form: {
+              source: langCode,
+              target: targetLanguage,
+              text: chat,
+            },
+            headers: {
+              'X-NCP-APIGW-API-KEY-ID': client_id,
+              'X-NCP-APIGW-API-KEY': client_secret,
+            },
+          };
+
           request.post(
             translateOptions,
             async function (translateError, translateResponse, translateBody) {
@@ -74,25 +104,16 @@ export const translateAndDetectLang = async (data) => {
                 const translatedText =
                   JSON.parse(translateBody).message.result.translatedText;
 
-                const voiceFilePath = await clovaVoiceAPI({
-                  language: targetLanguage,
-                  text: translatedText,
-                });
+                // const voiceFilePath = await clovaVoiceAPI({
+                //   language: targetLanguage,
+                //   text: translatedText,
+                // });
 
-                const translatedChatLog = await Chat.findByIdAndUpdate(
-                  chatLog._id,
-                  {
-                    $set: {
-                      [`translated.${targetLanguage}`]: translatedText,
-                      [`translated.${targetLanguage}-voice`]: voiceFilePath,
-                    },
-                  },
-                  { new: true }
-                ).populate('user');
-
-                // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
-                data.ioOfChat.to(chatLog.room).emit('translateChat', {
-                  translatedChatLog,
+                updateLogToTranslationAndSend({
+                  chatLog,
+                  targetLanguage,
+                  translatedText,
+                  data,
                 });
               } else {
                 console.log('Translation Error:', translateResponse.statusCode);
@@ -165,6 +186,7 @@ export const clovaVoiceAPI = async ({ language, text }) => {
           object_name: fileName,
           local_file_path: filePath,
         });
+        fs.unlink(filePath);
       });
     } else {
       console.log('Saved!');
