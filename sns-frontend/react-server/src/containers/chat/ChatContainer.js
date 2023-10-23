@@ -14,11 +14,18 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { useLocation, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { socket } from '../../socket';
+import { roomList } from '../../modules/rooms';
 
 const ChatContainer = () => {
   // const params = useParams();
   const dispatch = useDispatch();
-  const [targetLanguage, setTargetLanguage] = useState('en');
+  const [targetLanguage, _setTargetLanguage] = useState('ko');
+  const targetLanguageRef = useRef(targetLanguage);
+  const setTargetLanguage = (data) => {
+    targetLanguageRef.current = data;
+    _setTargetLanguage(data);
+  };
+
   const { room, chats, newChat, chatTxt, error, user, translatedChat, page } =
     useSelector(({ chats, auth }) => ({
       room: chats.room,
@@ -47,6 +54,12 @@ const ChatContainer = () => {
       })
     );
   };
+
+  useEffect(() => {
+    if (room) {
+      dispatch(roomList(user.no));
+    }
+  }, [room, user]);
 
   useEffect(() => {
     if (room && !error) {
@@ -106,7 +119,7 @@ const ChatContainer = () => {
   const onTranslate = (chatLog) => {
     // console.log(chatLog);
     const req = {};
-    req.targetLanguage = targetLanguage;
+    req.targetLanguage = targetLanguageRef.current;
     req.chatLog = chatLog;
     if (socket) {
       socket.emit('translateChat', req);

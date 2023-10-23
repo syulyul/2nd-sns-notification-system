@@ -4,7 +4,7 @@ import ChatComponent from '../../components/chat/ChatComponent';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { roomList, concatRooms, removeRoom } from '../../modules/rooms';
+import { roomList, concatRooms, leaveRoom } from '../../modules/rooms';
 import styled from 'styled-components';
 import auth from '../../modules/auth';
 
@@ -15,7 +15,7 @@ const ChatRoomList = styled.div`
 
 const CenteredContainer = styled.div`
   display: flex;
-  align-items: center;
+  // align-items: center;
   height: 100vh; /* 화면 높이의 100%로 컨테이너를 채움 */
 `;
 
@@ -35,10 +35,16 @@ const ChatRoomListContainer = () => {
       dispatch(roomList(user.no));
     }
   }, [dispatch, user]);
+
   const handleSelectRoom = (users) => {
     if (users && users[0] && users[1]) {
       navigate(`/room?mno1=${users[0].mno}&mno2=${users[1].mno}`);
     }
+  };
+
+  const handleOnLeaveRoom = (roomId) => {
+    dispatch(leaveRoom({ roomId }));
+    navigate(`/room/list`);
   };
 
   return (
@@ -48,6 +54,7 @@ const ChatRoomListContainer = () => {
           <ChatRoomListComponent
             rooms={rooms}
             onSelectRoom={handleSelectRoom}
+            onLeaveRoom={handleOnLeaveRoom}
           />
         </div>
       </ChatRoomList>

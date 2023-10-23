@@ -10,7 +10,8 @@ const ChatContainer = styled.div`
   padding: 20px;
   background-color: #fafaf5;
   width: 600px;
-  margin: auto;
+  // margin: auto;
+  margin-top: 20px;
   margin-left: 20px;
   height: 700px;
   display: flex;
@@ -278,6 +279,18 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
         {translated?.[targetLanguage]
           ? '(' + translated[targetLanguage] + ')'
           : null}
+      </span>
+      <span>
+        {translated?.[targetLanguage + '-voice'] ? (
+          <audio
+            controls
+            src={
+              'https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-25/clova_voice/' +
+              translated?.[targetLanguage + '-voice'] +
+              '.mp3'
+            }
+          />
+        ) : null}
       </span>
     </ChatMessage>
   );
