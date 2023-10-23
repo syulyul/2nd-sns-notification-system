@@ -19,20 +19,33 @@ const updateLogToTranslationAndSend = async ({
   translatedText,
   data,
 }) => {
-  const translatedChatLog = await Chat.findByIdAndUpdate(
-    chatLog._id,
-    {
-      $set: {
-        [`translated.${targetLanguage}`]: translatedText,
+  const clovaVoiceSupportLanguages = ['ko', 'en', 'zh-CN', 'zh-TW', 'ja', 'es'];
+  if (clovaVoiceSupportLanguages.includes(targetLanguage)) {
+    const reqData = {
+      ...data,
+      body: {
+        chatId: chatLog._id,
+        roomId: chatLog.room,
+        language: targetLanguage,
+        text: translatedText,
       },
-    },
-    { new: true }
-  ).populate('user');
-
-  // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
-  data.ioOfChat.to(chatLog.room).emit('translateChat', {
-    translatedChatLog,
-  });
+    };
+    clovaVoiceAPI(reqData);
+  } else {
+    const translatedChatLog = await Chat.findByIdAndUpdate(
+      chatLog._id,
+      {
+        $set: {
+          [`translated.${targetLanguage}`]: translatedText,
+        },
+      },
+      { new: true }
+    ).populate('user');
+    // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
+    data.ioOfChat.to(chatLog.room).emit('translateChat', {
+      translatedChatLog,
+    });
+  }
 };
 
 export const translateAndDetectLang = async (data) => {
@@ -192,6 +205,7 @@ export const clovaVoiceAPI = async (data) => {
             chatId,
             {
               $set: {
+                [`translated.${language}`]: text,
                 [`translated.${language}-voice`]: fileName,
               },
             },
@@ -215,6 +229,7 @@ export const clovaVoiceAPI = async (data) => {
           chatId,
           {
             $set: {
+              [`translated.${language}`]: text,
               [`translated.${language}-voice`]: fileName,
             },
           },
