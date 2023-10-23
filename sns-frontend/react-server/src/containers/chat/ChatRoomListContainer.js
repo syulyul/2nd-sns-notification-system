@@ -23,11 +23,14 @@ const ChatRoomListContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { rooms, error, user } = useSelector(({ rooms, auth }) => ({
-    rooms: rooms.rooms,
-    error: rooms.error,
-    user: auth.user,
-  }));
+  const { rooms, roomsStatus, error, user } = useSelector(
+    ({ rooms, auth }) => ({
+      rooms: rooms.rooms,
+      roomsStatus: rooms.roomsStatus,
+      error: rooms.error,
+      user: auth.user,
+    })
+  );
 
   useEffect(() => {
     if (user && user.no) {
@@ -48,8 +51,13 @@ const ChatRoomListContainer = () => {
 
   const handleOnLeaveRoom = (roomId) => {
     dispatch(leaveRoom({ roomId }));
-    navigate(`/room/list`);
   };
+
+  useEffect(() => {
+    if (roomsStatus) {
+      navigate(`/room/list`);
+    }
+  }, [roomsStatus]);
 
   return (
     <CenteredContainer>
