@@ -275,8 +275,19 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage, onTTS }) => {
     >
       {chat}
       {translated?.[targetLanguage] ? (
-        <span>
-          {`(${translated[targetLanguage]})`}
+        <span>{`(${translated[targetLanguage]})`}</span>
+      ) : null}
+      <span>
+        {translated?.[targetLanguage + '-voice'] ? (
+          <audio
+            controls
+            src={
+              'https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-25/clova_voice/' +
+              translated?.[targetLanguage + '-voice'] +
+              '.mp3'
+            }
+          />
+        ) : translated?.[targetLanguage] ? (
           <button
             onClick={(e) =>
               onTTS({
@@ -289,18 +300,6 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage, onTTS }) => {
           >
             tts
           </button>
-        </span>
-      ) : null}
-      <span>
-        {translated?.[targetLanguage + '-voice'] ? (
-          <audio
-            controls
-            src={
-              'https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-25/clova_voice/' +
-              translated?.[targetLanguage + '-voice'] +
-              '.mp3'
-            }
-          />
         ) : null}
       </span>
     </ChatMessage>

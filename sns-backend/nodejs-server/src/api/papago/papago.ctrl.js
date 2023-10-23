@@ -169,22 +169,48 @@ export const clovaVoiceAPI = async (data) => {
     fs.mkdirSync('clova');
   }
   const filePath = `clova/${fileName}.mp3`;
-  fs.open(filePath, 'r', function (err, file) {
-    if (err) {
-      // 파일이 없다면
-      const writeStream = fs.createWriteStream(filePath);
-      const _req = request.post(options).on('response', function (response) {
-        console.log(response.statusCode); // 200
-        console.log(response.headers['content-type']);
-      });
-      _req.pipe(writeStream); // file로 출력
-      console.log('voice 파일 생성!');
-      writeStream.on('finish', async () => {
-        await uploadObjectStorage({
-          object_name: fileName,
-          local_file_path: filePath,
+  request.get(
+    `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-25/clova_voice/${fileName}.mp3`,
+    async function (error, response, body) {
+      console.log(response.statusCode);
+      if (response.statusCode == 404) {
+        console.log('objectStorage에 존재하지 않는 파일');
+        const writeStream = fs.createWriteStream(filePath);
+        const _req = request.post(options).on('response', function (response) {
+          console.log(response.statusCode); // 200
+          console.log(response.headers['content-type']);
         });
+        _req.pipe(writeStream); // file로 출력
+        console.log('voice 파일 생성!');
+        writeStream.on('finish', async () => {
+          await uploadObjectStorage({
+            object_name: fileName,
+            local_file_path: filePath,
+          });
 
+          const translatedChatLog = await Chat.findByIdAndUpdate(
+            chatId,
+            {
+              $set: {
+                [`translated.${language}-voice`]: fileName,
+              },
+            },
+            { new: true }
+          ).populate('user');
+
+          // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
+          data.ioOfChat.to(roomId).emit('translateChat', {
+            translatedChatLog,
+          });
+
+          fs.unlinkSync(filePath, (err) => {
+            if (err.code == 'ENOENT') {
+              console.log('파일 삭제 Error 발생');
+            }
+          });
+        });
+      } else {
+        console.log('objectStorage에 존재하는 파일');
         const translatedChatLog = await Chat.findByIdAndUpdate(
           chatId,
           {
@@ -199,18 +225,9 @@ export const clovaVoiceAPI = async (data) => {
         data.ioOfChat.to(roomId).emit('translateChat', {
           translatedChatLog,
         });
-
-        fs.unlinkSync(filePath, (err) => {
-          if (err.code == 'ENOENT') {
-            console.log('파일 삭제 Error 발생');
-          }
-        });
-      });
-    } else {
-      console.log('Saved!');
+      }
     }
-  });
-  // _req.pipe(res); // 브라우저로 출력
+  );
 
   return fileName;
 };
