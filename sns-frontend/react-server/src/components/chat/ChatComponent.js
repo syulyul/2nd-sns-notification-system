@@ -280,6 +280,18 @@ const ChatItem = ({ chatLog, loginUser, targetLanguage }) => {
           ? '(' + translated[targetLanguage] + ')'
           : null}
       </span>
+      <span>
+        {translated?.[targetLanguage + '-voice'] ? (
+          <audio
+            controls
+            src={
+              'https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-25/clova_voice/' +
+              translated?.[targetLanguage + '-voice'] +
+              '.mp3'
+            }
+          />
+        ) : null}
+      </span>
     </ChatMessage>
   );
 };
