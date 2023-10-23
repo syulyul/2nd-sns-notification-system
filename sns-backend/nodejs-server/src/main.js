@@ -32,7 +32,11 @@ const options = {
   cert: fs.readFileSync('/etc/letsencrypt/live/bitsns.site/fullchain.pem')
 };
 
+// app.set('port', PORT);
+
+
 const app = express();
+
 mongodbConnect();
 redisConnect();
 
@@ -57,6 +61,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(COOKIE_SECRET));
 
 app.use('/node', api);
+
+// 여기에 /test 엔드포인트를 추가합니다.
+app.get('/test', (req, res) => {
+  console.log("GET request received for /test");
+  res.status(200).send("통신 성공!");
+});
+
 
 app.use('*', function (req, res) {
   res.sendFile(path.resolve(__dirname, BUILD_DIRECTORY + '/index.html'));
