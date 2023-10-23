@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { useLocation, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { socket } from '../../socket';
+import { roomList } from '../../modules/rooms';
 
 const ChatContainer = () => {
   // const params = useParams();
@@ -53,6 +54,12 @@ const ChatContainer = () => {
       })
     );
   };
+
+  useEffect(() => {
+    if (room) {
+      dispatch(roomList(user.no));
+    }
+  }, [room, user]);
 
   useEffect(() => {
     if (room && !error) {
