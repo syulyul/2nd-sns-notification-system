@@ -43,7 +43,7 @@ export const enterRoom = async (req, res, next) => {
       room = await Room.create({
         users: [user1._id, user2._id],
       });
-      room.populate('users');
+      await room.populate('users');
 
       const newNotiData = {
         memberNo: user2.mno,
