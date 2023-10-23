@@ -106,6 +106,10 @@ const SubmitButton = styled(Button)`
   cursor: pointer;
   font-size: 25px;
   font-weight: normal;
+
+  &:hover {
+    background-color: #5d962c; 
+  }
 `;
 
 const CodeButton = styled(Button)`
@@ -115,7 +119,12 @@ const CodeButton = styled(Button)`
   cursor: pointer;
   margin-left: 10px;
   width: 150px;
+
+  &:hover {
+    background-color: #5d962c;
+  }
 `;
+
 const CodeButtonText = styled.span`
   font-size: 16px;
   font-weight: normal;
