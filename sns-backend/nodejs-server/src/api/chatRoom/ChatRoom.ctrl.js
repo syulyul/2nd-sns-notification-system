@@ -133,7 +133,7 @@ export const leaveRoom = async (req, res, next) => {
       await room.save();
     }
 
-    res.send('ok');
+    res.json({ roomId });
   } catch (error) {
     console.error(error);
     next(error);

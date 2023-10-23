@@ -35,6 +35,7 @@ export function* roomsSaga() {
 
 const initialState = {
   rooms: [],
+  roomsStatus: null,
   error: null,
 };
 
@@ -43,6 +44,7 @@ const rooms = handleActions(
     [LIST_ROOMS_SUCCESS]: (state, { payload: rooms, meta: response }) => ({
       ...state,
       rooms,
+      roomsStatus: null,
       error: null,
     }),
     [LIST_ROOMS_FAILURE]: (state, { payload: error }) => ({
@@ -53,9 +55,10 @@ const rooms = handleActions(
       ...state,
       rooms: [...state.rooms, newRoom],
     }),
-    [LEAVE_ROOM]: (state, { payload: { roomId } }) => ({
+    [LEAVE_ROOM_SUCCESS]: (state, { payload: { roomId } }) => ({
       ...state,
       rooms: state.rooms.filter((room) => room._id !== roomId),
+      roomsStatus: 'leaveRoom',
     }),
   },
   initialState
