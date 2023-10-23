@@ -119,6 +119,12 @@ const ChatContainer = () => {
     }
   };
 
+  const onTTS = ({ chatId, roomId, language, text }) => {
+    if (socket) {
+      socket.emit('tts', { chatId, roomId, language, text });
+    }
+  };
+
   const onLoadBeforeChats = () => {
     dispatch(loadBeforeChats({ roomId: room._id, mno1, mno2, page }));
   };
@@ -135,6 +141,7 @@ const ChatContainer = () => {
       onChange={onChange}
       onSendChat={onSendChat}
       onTranslate={onTranslate}
+      onTTS={onTTS}
       targetLanguage={targetLanguage}
       setTargetLanguage={setTargetLanguage}
       onLoadBeforeChats={onLoadBeforeChats}

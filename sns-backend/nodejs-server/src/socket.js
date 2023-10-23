@@ -1,7 +1,10 @@
 import SocketIO from 'socket.io';
 import cookieParser from 'cookie-parser';
 import { sendChatBySocket } from './api/chatRoom/ChatRoom.ctrl';
-import { translateAndDetectLang } from './api/papago/papago.ctrl';
+import {
+  clovaVoiceAPI,
+  translateAndDetectLang,
+} from './api/papago/papago.ctrl';
 // import Room from './schemas/room';
 
 export default (server, app) => {
@@ -45,6 +48,12 @@ export default (server, app) => {
         const reqData = { body: data };
         reqData.ioOfChat = chat;
         translateAndDetectLang(reqData);
+      });
+
+      socket.on('tts', (data) => {
+        const reqData = { body: data };
+        reqData.ioOfChat = chat;
+        const fileName = clovaVoiceAPI(reqData);
       });
 
       socket.on('disconnect', async () => {

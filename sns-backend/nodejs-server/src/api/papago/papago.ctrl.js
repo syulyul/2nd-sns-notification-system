@@ -24,7 +24,6 @@ const updateLogToTranslationAndSend = async ({
     {
       $set: {
         [`translated.${targetLanguage}`]: translatedText,
-        // [`translated.${targetLanguage}-voice`]: voiceFilePath,
       },
     },
     { new: true }
@@ -104,11 +103,6 @@ export const translateAndDetectLang = async (data) => {
                 const translatedText =
                   JSON.parse(translateBody).message.result.translatedText;
 
-                // const voiceFilePath = await clovaVoiceAPI({
-                //   language: targetLanguage,
-                //   text: translatedText,
-                // });
-
                 updateLogToTranslationAndSend({
                   chatLog,
                   targetLanguage,
@@ -128,7 +122,8 @@ export const translateAndDetectLang = async (data) => {
   );
 };
 
-export const clovaVoiceAPI = async ({ language, text }) => {
+export const clovaVoiceAPI = async (data) => {
+  const { chatId, roomId, language, text } = data.body;
   const api_url = 'https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts';
   let speaker;
   switch (language) {
@@ -170,6 +165,9 @@ export const clovaVoiceAPI = async ({ language, text }) => {
     },
   };
   const fileName = crypto.createHash('sha512').update(text).digest('hex');
+  if (!fs.existsSync('clova')) {
+    fs.mkdirSync('clova');
+  }
   const filePath = `clova/${fileName}.mp3`;
   fs.open(filePath, 'r', function (err, file) {
     if (err) {
@@ -186,7 +184,27 @@ export const clovaVoiceAPI = async ({ language, text }) => {
           object_name: fileName,
           local_file_path: filePath,
         });
-        fs.unlink(filePath);
+
+        const translatedChatLog = await Chat.findByIdAndUpdate(
+          chatId,
+          {
+            $set: {
+              [`translated.${language}-voice`]: fileName,
+            },
+          },
+          { new: true }
+        ).populate('user');
+
+        // 번역이 완료되면 Socket.io를 사용하여 클라이언트에게 결과를 전송
+        data.ioOfChat.to(roomId).emit('translateChat', {
+          translatedChatLog,
+        });
+
+        fs.unlinkSync(filePath, (err) => {
+          if (err.code == 'ENOENT') {
+            console.log('파일 삭제 Error 발생');
+          }
+        });
       });
     } else {
       console.log('Saved!');
