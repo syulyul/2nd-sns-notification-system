@@ -40,6 +40,12 @@ export const enterRoom = async (req, res, next) => {
     if (req.query.roomId) {
       room = await Room.findOne({ _id: req.query.roomId }).populate('users');
     } else {
+      room = await Room.findOne({
+        users: { $all: [user1._id, user2._id] },
+      }).populate('users');
+    }
+
+    if (!room) {
       room = await Room.create({
         users: [user1._id, user2._id],
       });
@@ -54,6 +60,7 @@ export const enterRoom = async (req, res, next) => {
       };
       newNoti(newNotiData);
     }
+
     let chats = await Chat.find({ room: room })
       .sort({ _id: -1 })
       .limit(req.query.limit)
@@ -126,7 +133,7 @@ export const leaveRoom = async (req, res, next) => {
       await room.save();
     }
 
-    res.send('ok');
+    res.json({ roomId });
   } catch (error) {
     console.error(error);
     next(error);

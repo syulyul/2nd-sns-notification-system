@@ -69,7 +69,7 @@ const StyledInput = styled.input`
     font-family: 'UhBeeKeongKeong', sans-serif;
 
     &:hover {
-      background: rgb(77, 77, 77);
+      background: #5d962c;
       color: #fff;
     }
   }
@@ -199,7 +199,7 @@ const StyledChatBtn = styled.button`
   align-self: flex-end; /* 맨 아래에 정렬 */
 
   &:hover {
-    background: rgb(77, 77, 77);
+    background: #5d962c;
     color: #fff;
   }
 `;
