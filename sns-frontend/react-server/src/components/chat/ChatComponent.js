@@ -363,149 +363,153 @@ const ChatComponent = ({
   let currentDate = null;
 
   return (
-    <ChatContainer>
-      {room && (
-        // <TitleStyle>{` ${room.users[0].nick}, ${room.users[1].nick}`}</TitleStyle>
-        <TitleStyle>
-          {` ${room.users[0].nick}`}{' '}
-          {room.users.length > 1 ? `, ${room.users[1].nick}` : ''}
-        </TitleStyle>
-      )}
-      <LanguageSelectContainer>
-        {LanguageOptions.map((option) => (
-          <div key={option.value}>
-            {' '}
-            {/* 각 요소를 div 등의 요소로 감싸기 */}
-            <LanguageAbbreviation>{option.abbreviation}</LanguageAbbreviation>
-            <FlagIcon
-              src={option.flag}
-              alt={option.label}
-              selected={option.value === targetLanguage}
-              onClick={() => setTargetLanguage(option.value)}
-            />
-          </div>
-        ))}
-      </LanguageSelectContainer>
+    user && (
+      <ChatContainer>
+        {room && (
+          // <TitleStyle>{` ${room.users[0].nick}, ${room.users[1].nick}`}</TitleStyle>
+          <TitleStyle>
+            {` ${room.users[0].nick}`}{' '}
+            {room.users.length > 1 ? `, ${room.users[1].nick}` : ''}
+          </TitleStyle>
+        )}
+        <LanguageSelectContainer>
+          {LanguageOptions.map((option) => (
+            <div key={option.value}>
+              {' '}
+              {/* 각 요소를 div 등의 요소로 감싸기 */}
+              <LanguageAbbreviation>{option.abbreviation}</LanguageAbbreviation>
+              <FlagIcon
+                src={option.flag}
+                alt={option.label}
+                selected={option.value === targetLanguage}
+                onClick={() => setTargetLanguage(option.value)}
+              />
+            </div>
+          ))}
+        </LanguageSelectContainer>
 
-      <StyledChatList
-        onScroll={async (e) => {
-          const element = e.target;
-          if (element.scrollTop === 0) {
-            setBeforeScrollHeight(element.scrollHeight);
-            await onLoadBeforeChats();
-            element.scrollTo({
-              top: element.scrollHeight - beforeScrollHeight,
-              left: 0,
-              behavior: 'instant',
-            });
-            console.log(element.scrollHeight - beforeScrollHeight);
-          }
-        }}
-      >
-        <ChatMessage>
-          {chats &&
-            chats.map((chatLog, index) => {
-              // 현재 메시지 날짜
-              const messageDate = new Date(
-                chatLog.createdAt
-              ).toLocaleDateString();
+        <StyledChatList
+          onScroll={async (e) => {
+            const element = e.target;
+            if (element.scrollTop === 0) {
+              setBeforeScrollHeight(element.scrollHeight);
+              await onLoadBeforeChats();
+              element.scrollTo({
+                top: element.scrollHeight - beforeScrollHeight,
+                left: 0,
+                behavior: 'instant',
+              });
+              console.log(element.scrollHeight - beforeScrollHeight);
+            }
+          }}
+        >
+          <ChatMessage>
+            {chats &&
+              chats.map((chatLog, index) => {
+                // 현재 메시지 날짜
+                const messageDate = new Date(
+                  chatLog.createdAt
+                ).toLocaleDateString();
 
-              // 날짜 변화 체크
-              const isDateChanged = currentDate !== messageDate;
+                // 날짜 변화 체크
+                const isDateChanged = currentDate !== messageDate;
 
-              // 현재 날짜 업데이트
-              currentDate = messageDate;
+                // 현재 날짜 업데이트
+                currentDate = messageDate;
 
-              return (
-                <div key={chatLog._id}>
-                  {isDateChanged && (
+                return (
+                  <div key={chatLog._id}>
+                    {isDateChanged && (
+                      <div>
+                        {/* 날짜가 바뀌었을 때 구분선과 날짜를 표시 */}
+                        <br />
+                        <DateLine>{messageDate}</DateLine>
+                        <br />
+                      </div>
+                    )}
+
+                    {/* 나머지 채팅 메시지 표시 */}
                     <div>
-                      {/* 날짜가 바뀌었을 때 구분선과 날짜를 표시 */}
-                      <br />
-                      <DateLine>{messageDate}</DateLine>
-                      <br />
-                    </div>
-                  )}
-
-                  {/* 나머지 채팅 메시지 표시 */}
-                  <div>
-                    <div>
-                      {user.no !== chatLog.user.mno && (
-                        <UserName className={'UserName'}>
-                          <Link to={`/myPage/${chatLog.user.mno}`}>
-                            <UserImage
-                              src={
-                                chatLog.user.photo
-                                  ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
-                                  : 'images/default.jpg'
-                              }
-                            />
-                          </Link>
-                          {`${chatLog.user.nick}`}
-                        </UserName>
-                      )}
-                    </div>
-                    <div>
-                      <ChatItem
-                        chatLog={chatLog}
-                        loginUser={user}
-                        targetLanguage={targetLanguage}
-                        onTTS={onTTS}
-                      />
-                      {user.no !== chatLog.user.mno && (
-                        <TimeStampOther>{`${new Date(
-                          chatLog.createdAt
-                        ).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}`}</TimeStampOther>
-                      )}
-                      {user.no === chatLog.user.mno && (
-                        <TimeStampMine>{`${new Date(
-                          chatLog.createdAt
-                        ).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}`}</TimeStampMine>
-                      )}
-                    </div>
-                    <div>
-                      {user.no !== chatLog.user.mno && (
-                        <div>
-                          <TranslateText onClick={(e) => onTranslate(chatLog)}>
-                            <img src="/images/tricon.png" alt="번역" />
-                          </TranslateText>
-                        </div>
-                      )}
+                      <div>
+                        {user && user.no !== chatLog.user.mno && (
+                          <UserName className={'UserName'}>
+                            <Link to={`/myPage/${chatLog.user.mno}`}>
+                              <UserImage
+                                src={
+                                  chatLog.user.photo
+                                    ? `https://kr.object.ncloudstorage.com/bitcamp-nc7-bucket-14/sns_member/${chatLog.user.photo}`
+                                    : 'images/default.jpg'
+                                }
+                              />
+                            </Link>
+                            {`${chatLog.user.nick}`}
+                          </UserName>
+                        )}
+                      </div>
+                      <div>
+                        <ChatItem
+                          chatLog={chatLog}
+                          loginUser={user}
+                          targetLanguage={targetLanguage}
+                          onTTS={onTTS}
+                        />
+                        {user.no !== chatLog.user.mno && (
+                          <TimeStampOther>{`${new Date(
+                            chatLog.createdAt
+                          ).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}`}</TimeStampOther>
+                        )}
+                        {user.no === chatLog.user.mno && (
+                          <TimeStampMine>{`${new Date(
+                            chatLog.createdAt
+                          ).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}`}</TimeStampMine>
+                        )}
+                      </div>
+                      <div>
+                        {user.no !== chatLog.user.mno && (
+                          <div>
+                            <TranslateText
+                              onClick={(e) => onTranslate(chatLog)}
+                            >
+                              <img src="/images/tricon.png" alt="번역" />
+                            </TranslateText>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          <div ref={messageEndRef}></div> {/* Scroll to this div */}
-        </ChatMessage>
-      </StyledChatList>
-      <SendChatBlock>
-        <StyledSubmitForm onSubmit={onSendChat}>
-          <StyledInput
-            type="text"
-            onChange={onChange}
-            value={chatTxt}
-            name="chatTxt"
-            className="inputChatTxt"
-            placeholder="메시지를 입력하세요"
-          />
-          {/* <StyledInput
+                );
+              })}
+            <div ref={messageEndRef}></div> {/* Scroll to this div */}
+          </ChatMessage>
+        </StyledChatList>
+        <SendChatBlock>
+          <StyledSubmitForm onSubmit={onSendChat}>
+            <StyledInput
+              type="text"
+              onChange={onChange}
+              value={chatTxt}
+              name="chatTxt"
+              className="inputChatTxt"
+              placeholder="메시지를 입력하세요"
+            />
+            {/* <StyledInput
             type="file"
             onChange={onChangeFile}
             accept="image/*"
             ref={inputFile}
             className="inputFile"
           /> */}
-          <StyledChatBtn type="submit">보내기</StyledChatBtn>
-        </StyledSubmitForm>
-      </SendChatBlock>
-    </ChatContainer>
+            <StyledChatBtn type="submit">보내기</StyledChatBtn>
+          </StyledSubmitForm>
+        </SendChatBlock>
+      </ChatContainer>
+    )
   );
 };
 
