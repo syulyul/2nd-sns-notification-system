@@ -56,7 +56,7 @@ const ChatContainer = () => {
   };
 
   useEffect(() => {
-    if (room) {
+    if (user && room) {
       dispatch(roomList(user.no));
     }
   }, [room, user]);
