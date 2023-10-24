@@ -264,6 +264,7 @@ const FileInputLabel = styled.label`
   cursor: pointer;
   font-size: 0.65rem;
   margin-left: 0px;
+  margin-right: 5px;
   &:hover {
     background-color: #426b1f;
     color: white;
@@ -482,9 +483,13 @@ const BoardDetailComponent = ({
                   type="file"
                   onChange={onChangeFile}
                   disabled={board?.writer?.no !== user?.no}
+                  multiple
                 />
               </FileInputLabel>
-              &nbsp;&nbsp;파일을 선택해 주세요
+              {/* &nbsp;&nbsp;파일을 선택해 주세요 */}
+              <span id="fileSelected">
+                <span id="fileLabelText">파일 선택해주세요</span>
+              </span>
             </FileInputWrapper>
           </form>
           <BoardDetailWrapper>
