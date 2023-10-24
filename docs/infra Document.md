@@ -1,7 +1,8 @@
 # infra Document
-
+- ssh 통신으로 서버 접속
+- 순서대로 입력
+  -
 ```cp dowload/snsapp01.pem /.ssh```
-
 ```cd .ssh/config```
 
 ```
@@ -19,7 +20,7 @@ VPC	sns-app<br/>
 
 Subnet 사항
 
-snsapp-public | KR-2 | puvlic
+snsapp-public | KR-2 | public
 snsapp-private-01 | KR-2 | Private
 
 
@@ -90,7 +91,7 @@ Port : 4000
 
 ### Node server 
 ssh snsapp-node<br/>
-ip : 172.16.2.18<br/>
+ip : 172.16.2.6<br/>
 Port : 3001
 
 ————————————
