@@ -103,7 +103,7 @@ public class AuthController {
         cookie.setPath("/");
 //        cookie.setHttpOnly(true);
         response.addCookie(cookie);
-        cookie.setDomain(".bitsns.site");
+        cookie.setDomain("bitsns.site");
         response.addCookie(cookie);
         redisService.getValueOps()
             .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.DAYS);
@@ -204,7 +204,7 @@ public class AuthController {
     cookie.setPath("/");
     cookie.setMaxAge(1000);
     response.addCookie(cookie);
-    cookie.setDomain(".bitsns.site");
+    cookie.setDomain("bitsns.site");
     response.addCookie(cookie);
 
     return null;
