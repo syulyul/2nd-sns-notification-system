@@ -103,6 +103,8 @@ public class AuthController {
         cookie.setPath("/");
 //        cookie.setHttpOnly(true);
         response.addCookie(cookie);
+        cookie.setDomain("bitsns.site");
+        response.addCookie(cookie);
         redisService.getValueOps()
             .set(sessionId, Integer.toString(loginUser.getNo()), 1, TimeUnit.DAYS);
         // 세션에 로그인 사용자 정보 저장
@@ -201,6 +203,8 @@ public class AuthController {
     Cookie cookie = new Cookie("sessionId", "invalidate");
     cookie.setPath("/");
     cookie.setMaxAge(1000);
+    response.addCookie(cookie);
+    cookie.setDomain("bitsns.site");
     response.addCookie(cookie);
 
     return null;
