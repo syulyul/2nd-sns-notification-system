@@ -295,7 +295,7 @@ const ImageWrapper = styled.div`
 const DeleteButton = styled.a`
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   //background-color:#fafaf5;
   color: #fafaf5;
   cursor: pointer;
