@@ -177,7 +177,7 @@ const MemberInfoUpdateComponent = ({
         </FileInputWrapper>
         {myPageData.photo ? (
           <UserPhoto
-            src={`http://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`}
+            src={`https://gjoxpfbmymto19010706.cdn.ntruss.com/sns_member/${myPageData.photo}?type=f&w=270&h=270&faceopt=true&ttype=jpg`}
             alt="User Profile"
           />
         ) : (

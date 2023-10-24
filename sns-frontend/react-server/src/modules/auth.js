@@ -271,9 +271,10 @@ const auth = handleActions(
       authError: error,
     }),
 
-    [LOGOUT]: (state) => ({
+    [LOGOUT_SUCCESS]: (state) => ({
       ...state,
       user: null,
+      authMessage: 'logoutSuccess',
     }),
 
     [DELETE]: (state) => ({
