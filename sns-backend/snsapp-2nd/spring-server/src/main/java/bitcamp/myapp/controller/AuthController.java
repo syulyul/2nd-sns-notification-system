@@ -204,6 +204,8 @@ public class AuthController {
     cookie.setPath("/");
     cookie.setMaxAge(1000);
     response.addCookie(cookie);
+    cookie.setDomain(".bitsns.site");
+    response.addCookie(cookie);
 
     return null;
   }
