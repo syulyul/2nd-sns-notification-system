@@ -61,6 +61,21 @@ const ChatContainer = () => {
     }
   }, [room, user]);
 
+  const chatEvent = function (data) {
+    // 채팅
+    const newChat = data.chat;
+    dispatch(concatChats({ newChat }));
+    if (user.no !== newChat.user.mno) {
+      onTranslate(newChat);
+    }
+  };
+
+  const translateChatEvent = function (data) {
+    // 채팅
+    const translatedChatLog = data.translatedChatLog;
+    dispatch(translateChat({ translatedChatLog }));
+  };
+
   useEffect(() => {
     if (room && !error) {
       if (!socket.connected) {
@@ -68,33 +83,13 @@ const ChatContainer = () => {
       }
 
       socket.emit('join', { roomId: room._id });
-      // socket.on('join', function (data) {
-      //   // 입장
-      //   const newChat = data.chat;
-      //   dispatch(concatChats({ newChat }));
-      // });
-      // socket.on('exit', function (data) {
-      //   // 퇴장
-      //   const newChat = data.chat;
-      //   dispatch(concatChats({ newChat }));
-      // });
-      socket.on('chat', function (data) {
-        // 채팅
-        const newChat = data.chat;
-        dispatch(concatChats({ newChat }));
-        if (user.no !== newChat.user.mno) {
-          onTranslate(newChat);
-        }
-      });
-
-      socket.on('translateChat', function (data) {
-        // 채팅
-        const translatedChatLog = data.translatedChatLog;
-        dispatch(translateChat({ translatedChatLog }));
-      });
+      socket.on('chat', chatEvent);
+      socket.on('translateChat', translateChatEvent);
     }
 
     return () => {
+      socket.off('chat', chatEvent);
+      socket.off('translateChat', translateChatEvent);
       socket.disconnect();
     };
   }, [room]);
