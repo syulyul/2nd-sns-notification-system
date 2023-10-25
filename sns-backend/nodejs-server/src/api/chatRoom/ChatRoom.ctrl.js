@@ -18,6 +18,7 @@ export const roomList = async (req, res, next) => {
 
     res.json(findRooms);
   } catch (error) {
+    res.status(500).end();
     console.error(error);
     next(error);
   }
@@ -72,7 +73,7 @@ export const enterRoom = async (req, res, next) => {
       res.json(roomAndChats);
     }
   } catch (error) {
-    res.status(403);
+    res.status(500).end();
     console.error(error);
     return next(error);
   }
@@ -97,7 +98,7 @@ export const loadBeforeChats = async (req, res, next) => {
       nextPage: parseInt(req.query.page) + 1,
     });
   } catch (error) {
-    res.status(403);
+    res.status(500).end();
     console.error(error);
     return next(error);
   }
@@ -128,6 +129,7 @@ export const leaveRoom = async (req, res, next) => {
 
     res.json({ roomId });
   } catch (error) {
+    res.status(500).end();
     console.error(error);
     next(error);
   }
