@@ -85,13 +85,6 @@ export const loadBeforeChats = async (req, res, next) => {
       res.status(403).end();
       return;
     }
-    let room = await Room.findOne({
-      users: { $all: [req.query.mno1, req.query.mno2] },
-    });
-    if (room._id != req.query.roomId) {
-      res.status(403).end();
-      return;
-    }
 
     let chats = await Chat.find({ room: req.query.roomId })
       .sort({ _id: -1 })
