@@ -80,6 +80,6 @@
 - API_architecture
   ![img.png](./docs/image/api_architecture.drawio.png)
 - Cloud_architecture
-  ![img.png](./docs/image/server_architecture.png) 
+  ![img.png](./CICD/server_architecture.png) 
 - CICD_architecture
-  ![img.png](./docs/image/CICD_architecture.png)
+  ![img.png](./CICD/CICD_architecture.png)
