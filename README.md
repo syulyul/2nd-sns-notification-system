@@ -78,7 +78,7 @@
 
  ### 7.아키택처
 - API_architecture
-  ![img.png](./docs/image/api_architecture.drawio.png)
+  ![img.png](./docs/image/API_architecture.png)
 - Cloud_architecture
   ![img.png](./CICD/server_architecture.png) 
 - CICD_architecture
