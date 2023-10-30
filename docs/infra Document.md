@@ -13,12 +13,11 @@ Host snsapp-proxy-server
         IdentityFile ~/.ssh/snsapp.pem
 ```
 > 핵심 통일
-
 모든 server == > ```snsapp01.pem```으로 <br/>
 PW : bitcamp!@#123tp 통일<br/>
 VPC	sns-app<br/>
 
-Subnet 사항
+- Subnet 사항
 
 snsapp-public | KR-2 | public
 snsapp-private-01 | KR-2 | Private
@@ -60,14 +59,12 @@ MONGODB_PASS=bitcamp%21%40%23123tp(인덱스 변환)
 mongo j2rhn.vpc.mg.naverncp.com:17017
 ```
 
-
-## redis
-
+### redis
 > 접속 COMMAND<br/>
 서비스 이름	sps-redis-spl<br/>
 Redis 버전	REDIS 4.0.14
 Hostname	sps-redis-spl-001-3isw
-Role	Stand Alone
+Role	Stand Alone(simple mode)
 Dns     redisc-j2h4f.vpc-cdb.ntruss.com
 
 - 접속 command
@@ -77,12 +74,14 @@ cd redis-6.2.6/src/
 ./redis-cli -c -h redisc-j2h4f.vpc-cdb.ntruss.com -p 6379
 ```
 
+
+----
 ## server
 
-모든 서버 config를 통해 접근가능!
+모든 서버 web server 통해 접근가능!
 (ssh snsapp-[tab][tab]!)
 
-> ### Private
+>### Private
 
 ### Spring server  
 ssh snsapp-spring<br/>
@@ -94,17 +93,20 @@ ssh snsapp-node<br/>
 ip : 172.16.2.6<br/>
 Port : 3001
 
-————————————
+------
 
 > ### Public
 
-<!-- React server == > 화면 렌더링
-(web02-snsapp)
-- 리액트로 프론트 엔드 이전하면서 로그인 세션관리 코드 좀 수정 -->
-
-
-### Foroxy server 
+### web server 
 (web01-snsapp) - 443 통신
 pem : snsapp01<br/>
 172.16.1.8<br/>
 공인 ip : 223.130.136.59
+
+### Load Blance
+
+>VPC	
+  : sns-app (172.16.0.0/16)
+
+>공인 IP : 	
+223.130.145.201 | KR-2
