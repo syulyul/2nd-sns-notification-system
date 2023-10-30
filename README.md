@@ -5,10 +5,10 @@
 >   - 목표
 >   - 구현목표
 >   - 프로젝트 정보
->2. 비즈니스 요구사항 
->4. 상세 요구사항 
->5. 5.유스케이스 모델링 
->6. ERD 
+>2. 비즈니스 요구사항
+>4. 상세 요구사항
+>5. 5.유스케이스 모델링
+>6. ERD
 >7. UI
 >8. 아키택처
 >   - API
@@ -77,5 +77,9 @@
       + 채팅 화면
 
  ### 7.아키택처
-- API & Cloud
-  ![img.png](./docs/image/2ndar231018.png)
+- API_architecture
+  ![img.png](./docs/image/api_architecture.drawio.png)
+- Cloud_architecture
+  ![img.png](./docs/image/server_architecture.png) 
+- CICD_architecture
+  ![img.png](./docs/image/CICD_architecture.png)
