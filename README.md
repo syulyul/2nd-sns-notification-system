@@ -70,11 +70,23 @@
 ![img_1.png](./docs/image/ERD.png)
 
 ## 6. UI
+### 메인 페이지
 ![img_1.png](./docs/image/UI1.png)
-![img_1.png](./docs/image/UI.png)
-![img_1.png](./docs/image/UI2.png)
-![img_1.png](./docs/image/UI3.png)
-      + 채팅 화면
+<br/><br/><br/>
+
+### 프로토타입
+#### 로그인/회원가입
+![img_1.png](./docs/image/UI_prototype_로그인:회원가입.png)
+<br/><br/>
+
+#### 마이페이지 + 채팅
+![img_1.png](./docs/image/UI_prototype_마이페이지.png)
+<br/><br/>
+
+#### 게시글
+![img_1.png](./docs/image/UI_prototype_게시글.png)
+<br/><br/>
+
 
  ### 7.아키택처
 - API_architecture
