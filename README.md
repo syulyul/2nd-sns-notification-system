@@ -1,4 +1,5 @@
-![header](https://capsule-render.vercel.app/api?section=header&type=waving&color=0:008000,100:008000&text=저를%20"힐링버튼"으로%20쓰세요&fontSize=35&fontAlignY=40&height=200)
+<!-- ![header](https://capsule-render.vercel.app/api?section=header&type=waving&color=0:008000,100:008000&text=저를%20"힐링버튼"으로%20쓰세요&fontSize=35&fontAlignY=40&height=200) -->
+<img width="676" alt="image" src="https://github.com/syulyul/2nd-sns-notification-system/assets/90892290/ddb5e178-4271-4116-9779-61887941e238">
 
 # 1조 힐링캠프 ( snsapp )
 <br/>
