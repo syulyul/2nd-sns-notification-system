@@ -53,6 +53,8 @@
 | API   | Papago Trnaslation Api, Papago Detect Api, naver Login Api   |
 | GIT   | https://github.com/NC7-1st-TeamProject-1st-Team   |
 
+![img_1.png](./docs/image/사용기술.png)
+
 <br/>
 
 ## 3. 비즈니스 상세 요구사항
