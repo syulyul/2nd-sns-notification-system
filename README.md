@@ -43,17 +43,15 @@
 
 ## 2. 프로젝트 정보
 ### 사용 기술
-> ### DB : MongoDB, MySQL, Redis
 
-> ### Language : JAVA, JavaScript
-
-> ### Framwork :  React, Node.js, Spring Boot
-
-> ### Tool : IntelliJ, VSCODE, Firebase
-
-> ### API :  Papago Translation Api, Papago Detect Api, Naver Login Api
-
-> ### GIT : https://github.com/NC7-1st-TeamProject-1st-Team
+| **분류** |             **기술**               |
+|------|-------------------------------------|
+| DB    | MongoDB, MySQL, Redis  |
+| Language    | Java, JavaScript  |
+| Framework    | React, Node.js, Spring Boot |
+| Tool   | IntelliJ, VsCode, Firebase   |
+| API   | Papago Trnaslation Api, Papago Detect Api, naver Login Api   |
+| GIT   | https://github.com/NC7-1st-TeamProject-1st-Team   |
 
 <br/>
 
