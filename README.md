@@ -104,6 +104,7 @@
 ### - API_architecture
   ![img.png](./docs/image/API_architecture.png)
 ### - Cloud_architecture
-  ![img.png](./CICD/server_architecture.png) 
+  <img src="./CICD/server_architecture.png" width="900" height="600"/>
+  
 ### - CICD_architecture
-  ![img.png](./CICD/CICD_architecture.png)
+  <img src="./CICD/CICD_architecture.png" width="750" height="550"/>
