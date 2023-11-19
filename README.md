@@ -57,7 +57,8 @@
 | Language    | Java, JavaScript  |
 | Framework    | React, Express.js, Spring Boot |
 | Tool   | IntelliJ, VScode, Postman   |
-| API   | Papago Translation Api, Papago Detect Api, clova voice, Firebase, Simple & Easy Notification Service   |
+| API   | Papago Translation Api, Papago Detect Api, Clova Voice, Firebase, Simple & Easy Notification Service   |
+| ETC   | Naver Cloud Service(Object Storage, Image Optimizer, Cloud DB for MySQL, Global DNS, VPC, Server, Load Balancer)   |
 | GIT   | https://github.com/NC7-1st-TeamProject-1st-Team   |
 
 ![img_1.png](./docs/image/사용기술.png)
