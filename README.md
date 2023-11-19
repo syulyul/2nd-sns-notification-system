@@ -55,9 +55,9 @@
 |:------:|-------------------------------------|
 | DB    | MongoDB, MySQL, Redis  |
 | Language    | Java, JavaScript  |
-| Framework    | React, Node.js, Spring Boot |
-| Tool   | IntelliJ, VsCode, Firebase   |
-| API   | Papago Translation Api, Papago Detect Api, naver Login Api   |
+| Framework    | React, Express.js, Spring Boot |
+| Tool   | IntelliJ, VScode, Postman   |
+| API   | Papago Translation Api, Papago Detect Api, clova voice, Firebase, Simple & Easy Notification Service   |
 | GIT   | https://github.com/NC7-1st-TeamProject-1st-Team   |
 
 ![img_1.png](./docs/image/사용기술.png)
