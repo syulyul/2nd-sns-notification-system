@@ -2,6 +2,8 @@
 <img width="676" alt="image" src="https://github.com/syulyul/2nd-sns-notification-system/assets/90892290/ddb5e178-4271-4116-9779-61887941e238">
 
 # 1조 힐링캠프 ( snsapp )
+[프로젝트 역할 분담 및 시연 영상](https://ncamp.magicecole.com/Home/Project/023ef993-a000-40b8-8cfa-0c1d9b19299c?page=1&groupId=0)
+
 <br/>
 
 ## 목차
